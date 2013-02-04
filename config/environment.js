@@ -2,6 +2,7 @@ module.exports = function (compound) {
 
     var express = require('express');
     var app = compound.app;
+    var hatch = require(app.root + '/lib/hatch');
 
     app.configure(function(){
         app.use(compound.assetsCompiler.init());
@@ -15,6 +16,8 @@ module.exports = function (compound) {
         app.use(express.cookieParser('secret'));
         app.use(express.session({secret: 'secret'}));
         app.use(express.methodOverride());
+        app.use(hatch.middleware(compound));
+        app.use('/on', hatch.modules(compound));
         app.use(app.router);
     });
 
