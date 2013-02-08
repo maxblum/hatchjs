@@ -59,7 +59,18 @@ PageController.prototype.editconsole = function editConsole(c) {
     c.req.widgets.push({
         name: 'static',
         module: 'admin',
-        info: {}
+        info: {
+            title: 'Static content',
+            icon: 'icon-edit',
+            settings: {
+                fields: {
+                    anchor: {
+                        type: 'checkbox',
+                        title: 'Create anchor link'
+                    }
+                }
+            }
+        }
     });
 
     c.req.grids = [];
