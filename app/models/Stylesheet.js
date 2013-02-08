@@ -24,7 +24,9 @@ var finder = require('findit');
 var _ = require('underscore');
 var csso = require('csso');
 
-module.exports = function (Stylesheet, api) {
+module.exports = function (compound, Stylesheet) {
+
+    var api = compound.hatch.api;
 
     /**
      * compiles the css from this less stylesheet

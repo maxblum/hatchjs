@@ -16,16 +16,16 @@
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 
-module.exports = function (ImportStream, api) {
+module.exports = function (compound, ImportStream) {
     var ticker;
+    var Group = compound.models.Group;
+    var Content = compound.models.Content;
 
     /**
      * runs this import stream and imports the data
      */
     ImportStream.prototype.run = function() {
         var stream = this;
-        var Group = api.db.models.Group;
-        var Content = api.db.models.Content;
 
         Group.find(stream.groupId, function(err, group) {
             api.importStream.runImport(stream, createContent);

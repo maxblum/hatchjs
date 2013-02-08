@@ -9,5 +9,5 @@ function ContentController(init) {
 require('util').inherits(ContentController, Application);
 
 ContentController.prototype.show = function (c) {
-    c.send('content');
+    c.next(new Error('404'));
 };

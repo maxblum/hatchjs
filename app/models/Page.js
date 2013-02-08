@@ -16,13 +16,13 @@
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 
-var ActionContext = require('../actionContext');
-var WidgetInstance = require('../widget').WidgetInstance;
 var async = require('async');
 var ejs = require('ejs');
 var path = require('path');
+var request = require('request');
 
-module.exports = function (Page, api) {
+module.exports = function (compound, Page) {
+    var api = compound.hatch.api;
 
     Page.validatesPresenceOf('title', {message: 'Please enter a title'});
     Page.validatesUniquenessOf('url');
@@ -57,6 +57,8 @@ module.exports = function (Page, api) {
 
         next();
     };
+
+    Page.grids = compound.hatch.grids;
 
     /**
      * creates a new page and saves to the database
@@ -218,7 +220,7 @@ module.exports = function (Page, api) {
         else {
             //special page - always set parent to homepage
             if(data.type != 'page') {
-                api.db.models.Group.find(data.groupId, function(err, group) {
+                compound.models.Group.find(data.groupId, function(err, group) {
                     data.parentId = group.homepage.id;
                     data.url = path.join(group.homepage.url, data.url);
 
@@ -265,6 +267,66 @@ module.exports = function (Page, api) {
                 done();
             });
         }
+    };
+
+    Page.prototype.renderHtml = function (req, cb) {
+        var index = {}, result = {}, self = this;
+        this.widgets.forEach(function (widget) {
+            index[widget.id] = widget;
+        });
+        var wait = 0;
+        this.columns.forEach(function (col) {
+            col.widgets.forEach(function (widgetId) {
+                wait += 1;
+                self.renderWidget(index[widgetId], req, function (err, html) {
+                    if (err) {
+                        result[widgetId] = err;
+                    } else {
+                        result[widgetId] = html;
+                    }
+                    done();
+                });
+            });
+        });
+
+        function done() {
+            var cols = ['', '', '', ''], sizes = [];
+            if (0 !== --wait) {
+                return;
+            }
+            self.columns.forEach(function (col) {
+                var html = '';
+                col.widgets.forEach(function (widgetId) {
+                    html += result[widgetId];
+                });
+                cols.push(html);
+                sizes.push(col.size);
+            });
+            var gridHtml = Page.grids[self.grid || '02-two-columns'] || [''];
+            cb(null, ejs.render(gridHtml[0], {
+                column: cols,
+                size: sizes,
+                filename: self.grid + (self.templateId || ''),
+                cache: true
+            }));
+        }
+    };
+
+    Page.prototype.renderWidget = function (widget, req, cb) {
+        var url = 'http://' + this.url.match(/^[^\/]+/)[0] + '/on/' + widget.type + '/widget/show';
+        var page = this.toObject();
+        request.post(
+            url,
+            {form: {
+                token: 'test',
+                data: JSON.stringify({
+                    page: page,
+                    user: req.user,
+                    widgetId: widget.id
+                })
+            }}, function (err, res) {
+            cb(err, res.body);
+        });
     };
 
     /**
@@ -361,7 +423,7 @@ module.exports = function (Page, api) {
                 });
             }
 
-            //if we are using a template, wrap the html in a template div
+            // if we are using a template, wrap the html in a template div
             if (page.templateId) {
                 gridHtml = '<div class="using-template" data-template-id="' + page.templateId + '">' + gridHtml + '</div>';
             }
@@ -387,7 +449,7 @@ module.exports = function (Page, api) {
      */
     Page.updateGroup = function (groupId, next) {
         console.log('updating group');
-        var Group = api.db.models.Group;
+        var Group = compound.models.Group;
         Group.find(groupId, function (err, group) {
             if(!group) {
                 if(next) next();

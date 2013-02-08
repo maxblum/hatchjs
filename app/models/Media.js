@@ -16,6 +16,6 @@
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 
-module.exports = function (Media, api) {
+module.exports = function (compound, Media) {
 
 };

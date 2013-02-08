@@ -16,6 +16,7 @@
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 
-module.exports = function (ContentFeedItem) {
+module.exports = function (compound, ContentFeedItem) {
     var Content = ContentFeedItem.schema.models.Content;
 };
+

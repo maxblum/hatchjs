@@ -16,7 +16,9 @@
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 
-module.exports = function (Notification, api) {
+module.exports = function (compound, Notification) {
+    var api = compound.hatch.api;
+
     /**
      * creates a new notification and saves to db
      * 

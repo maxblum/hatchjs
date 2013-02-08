@@ -16,8 +16,12 @@
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 
-module.exports = function (Content, api) {
-    var User = api.db.models.User;
+module.exports = function (compound, Content) {
+    var api = compound.hatch.api;
+    var User = compound.models.User;
+    var Page = compound.models.Page;
+
+    var Group = compound.models.Group;
     var redis = Content.schema.adapter;
     var _ = require('underscore');
     var moment = require('moment');
@@ -87,7 +91,6 @@ module.exports = function (Content, api) {
         var content = this;
 
         //get the group and check all tag filters
-        var Group = api.db.models.Group;
         Group.find(content.groupId, function(err, group) {
             if(!group) return;
             
@@ -123,8 +126,6 @@ module.exports = function (Content, api) {
         if (!content.url) {
             var slug = slugify(content.title || (content.createdAt || new Date(0)).getTime().toString());
             content.url = (group.homepage.url + '/' + slug).replace('//', '/');
-
-            var Page = api.db.models.Page;
 
             //check for duplicate pages and content in parallel
             async.parallel([
@@ -195,7 +196,6 @@ module.exports = function (Content, api) {
      * @param  {Function} callback [continuation function]
      */
     Content.populateUsers = function(list, callback) {
-        var User = api.db.models.User;
         var userIds = [];
 
         //if the list is not a list, make it a list
@@ -259,6 +259,7 @@ module.exports = function (Content, api) {
      * @param  {Function} done [continuation function]
      */
     Content.afterCreate = function (done) {
+        return done();
 
         // 1. send notifications to websockets
         api.socket.send(this.groupId, 'content:created', {

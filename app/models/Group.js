@@ -16,13 +16,43 @@
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 
-module.exports = function (Group, api) {
+module.exports = function (compound, Group) {
 
-    var Page = api.db.models.Page;
+    var Page = compound.models.Page;
+    var User = compound.models.User;
+    var Content = compound.models.Content;
     var _ = require('underscore');
     var async = require('async');
 
     Group.hasMany(Page, {as: 'pages', foreignKey: 'groupId'});
+
+    Group.getter.path = function () {
+        return this.url.replace(/[^\/]+/, '');
+    };
+
+    Group.prototype.match = function (path) {
+        if (this.subgroups) {
+            var l = this.subgroups.length, i;
+            for (i = 0; i < l; i += 1) {
+                if (path.indexOf(this.subgroups[i].path) === 0) {
+                    return this.subgroups[i];
+                }
+            }
+        }
+        return this;
+    };
+
+    Group.prototype.matchPage = function (path) {
+        var fullPagePath = this.url.match(/^[^\/]+/)[0] + path;
+        fullPagePath = fullPagePath.replace(/\/$/, '');
+        var found = null;
+        this.pagesCache.forEach(function (page) {
+            if (page.url === fullPagePath) {
+                found = page;
+            }
+        });
+        return found;
+    };
 
     /**
      * clones a group and saves the new one to the database
@@ -194,7 +224,7 @@ module.exports = function (Group, api) {
         }
     };
 
-    //TODO: replace profile fields with []
+    // TODO: replace profile fields with []
     Group.prototype.profileFields = function() {
         if(!this.customProfileFields) return [];
 
@@ -235,7 +265,6 @@ module.exports = function (Group, api) {
      * recalculates all tag content counts for this group
      */
     Group.prototype.recalculateTagContentCounts = function() {
-        var Content = api.db.models.Content;
         var group = this;
 
         async.forEach(group.tags || [], function(tag, next) {
@@ -294,7 +323,6 @@ module.exports = function (Group, api) {
      */
     Group.prototype.getContentForTag = function(tag, callback) {
         var fn = eval(tag.filter);
-        var Content = api.db.models.Content;
 
         Content.all({ groupId: this.id }, function(err, posts) {
             var matches = [];
@@ -314,7 +342,6 @@ module.exports = function (Group, api) {
      * @param  {Function}   next [continuation function]
      */
     Group.prototype.deleteTag = function(id, next) {
-        var Content = api.db.models.Content;
         var group = this;
 
         //delete the tag from all content
@@ -368,7 +395,6 @@ module.exports = function (Group, api) {
      */
     Group.prototype.getListFilterResults = function(list, callback) {
         var fn = eval(list.filter);
-        var User = api.db.models.User;
         var cond = {
             'membership:groupId': this.id,
             'membership:state': 'approved'
@@ -394,7 +420,6 @@ module.exports = function (Group, api) {
      * recalculates all tag member list counts
      */
     Group.prototype.recalculateMemberListCounts = function(done) {
-        var User = api.db.models.User;
         var group = this;
 
         async.forEach(group.memberLists || [], function(list, next) {
@@ -424,7 +449,6 @@ module.exports = function (Group, api) {
      * @param  {Function}   done   [continuation function]
      */
     Group.createFromScratch = function (params, done) {
-        var User = api.db.models.User;
         params.modules = params.modules || [
             { name: 'user', contract: { google: true, local: true }},
             { name: 'admin'},

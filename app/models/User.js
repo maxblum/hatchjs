@@ -21,7 +21,8 @@ var mailer = require('nodemailer');
 var async = require('async');
 var _ = require('underscore');
 
-module.exports = function (User, api) {
+module.exports = function (compound, User) {
+    var api = compound.hatch.api;
 
     User.validatesPresenceOf('username', {message: 'Please enter a username'});
     User.validatesPresenceOf('email', {message: 'Please enter an email address'});
@@ -61,7 +62,7 @@ module.exports = function (User, api) {
             this.username = this.username.toLowerCase();
         }
 
-        //set the default profile pic
+        // set the default profile pic
         if (!this.avatar) {
             this.avatar = '/img/default-profile-pic.png';
         }
@@ -70,21 +71,29 @@ module.exports = function (User, api) {
         var Group = api.db.models.Group;
 
         async.forEach(user.membership || [], function(membership, next) {
-            //get the group and check all tag filters
+            // get the group and check all tag filters
             Group.find(membership.groupId, function(err, group) {
                 //the group may have been deleted - so check first
-                if(!group) return next();
+                if (!group) {
+                    return next();
+                }
 
                 var lists = group.getListsForUser(user);
 
-                //add the tags that are not already present
-                if(!membership.customListIds) membership.customListIds = [];
+                // add the tags that are not already present
+                if (!membership.customListIds) {
+                    membership.customListIds = [];
+                }
 
                 lists.forEach(function(list) {
-                    if(membership.customListIds.indexOf(list.id) == -1) membership.customListIds.push(list.id);
+                    if (membership.customListIds.indexOf(list.id) == -1) {
+                        membership.customListIds.push(list.id);
+                    }
                 });
 
-                if(lists.length > 0) group.recalculateMemberListCounts();
+                if (lists.length > 0) {
+                    group.recalculateMemberListCounts();
+                }
 
                 next();
             });
@@ -614,6 +623,6 @@ module.exports = function (User, api) {
     function calcSha(payload) {
         if (!payload) return '';
         if (payload.length == 64) return payload;
-        return crypto.createHash('sha256').update(payload).update(api.app.config.passwordSalt).digest('hex');
+        return crypto.createHash('sha256').update(payload).update(api.app.config.passwordSalt || '').digest('hex');
     }
 };
