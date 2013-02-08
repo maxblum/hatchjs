@@ -1,23 +1,19 @@
 
-var Group = define('Group', function () {
-    property('url', String, {index: true});
-});
-
 var User = define('User', function () {
-    property('username', String,   { index: true, sort: true });
-    property('email', String, { index: true });
-    property('type', String, { index: true });
+    property('username', String, {index: true, sort: true});
+    property('email', String, {index: true});
+    property('type', String, {index: true});
     property('password', String);
     property('hasPassword', Boolean);
     property('avatar', String);
     property('name', String);
     property('firstname', String);
-    property('lastname', { sort: true });
-    property('lastnameLetter', String, { index: true });
-    property('displayName', String, { sort: true });
+    property('lastname', String, {sort: true});
+    property('lastnameLetter', String, {index: true});
+    property('displayName', String, {sort: true});
     property('oneLiner', String);
     property('membership', JSON);
-    property('customListIds', JSON, { index: true });
+    property('customListIds', JSON, {index: true});
     property('ifollow', JSON); // array of ids of user who followed by user
     property('otherFields', JSON);
     property('mailSettings', JSON);
@@ -29,7 +25,10 @@ var User = define('User', function () {
 User.schema.adapter.defineFulltextIndex('User', 'fulltext');
 
 var Group = define('Group', function () {
-    property('name',  { fulltext: true, sort: true });
+    property('url', String, {index: true});
+    property('path', String);
+    property('name', String,  {fulltext: true, sort: true});
+    property('subgroups', JSON);
     property('pagesCache', JSON);
     property('homepage', JSON);
     property('modules', JSON);
@@ -58,37 +57,37 @@ var Stylesheet = define('Stylesheet', function () {
     property('less', JSON);
 });
 
-var Page = define('Page', {
-    property('title', String, { fulltext: true });
-    property('url', String, { index: true });
+var Page = define('Page', function () {
+    property('title', String, {fulltext: true});
+    property('url', String, {index: true});
     property('customUrl', Boolean);
-    property('grid', String);
+    property('grid', String, {default: '02-two-columns'});
     property('columns', JSON); // JSON [ {size: 6, widgets: [1,2,3]}, {size: 6, widgets: [4,5,6]}]
-    property('widgets', [WidgetInstance]);
+    property('widgets', JSON);
     property('metaTitle', String);
     property('metaDescription', String);
     property('metaKeywords', String);
-    property('type', {type: String, index: true});
+    property('type', String, {index: true});
     property('tags', String);
     property('hideFromNavigation', Boolean);
     property('order', Number);
     property('templateId', Number);
-    property('parentId', {type: Number, index: true});
+    property('parentId', Number, {index: true});
     property('groupId', Number, {index: true});
 });
 
-var Content = define('Content', {
-    property('type', { type: String, index: true });
-    property('imported', { type: Boolean, index: true });
-    property('title', { type: String, index: true });
+var Content = define('Content', function () {
+    property('type', String, {index: true });
+    property('imported', Boolean, {index: true });
+    property('title', String, {index: true });
     property('text', String);
     property('excerpt', String);
     property('previewImage', String);
     property('attachment', JSON);
     property('poll', JSON);
     property('location', JSON);
-    property('comments', { type: [], fulltext: true });
-    property('repliesTotal', { type: Number, index: true, sort: true });
+    property('comments', [], {fulltext: true });
+    property('repliesTotal', Number, {index: true, sort: true });
     property('likes', []);
     property('dislikes', []);
     property('likesTotal', Number, {index: true, sort: true });
@@ -133,7 +132,7 @@ var Notification = define('Notification', function () {
     property('html', String);
 });
 
-var ImportStream = define('ImportStream', {
+var ImportStream = define('ImportStream', function () {
     property('groupId', Number, {index: true});
     property('type', String, {index: true});
     property('title', String);

@@ -1,11 +1,11 @@
 module.exports = 
   { "development":
-    { "driver":   "memory"
+    { "driver":   "redis-hq"
     }
   , "test":
-    { "driver":   "memory"
+    { "driver":   "redis-hq"
     }
   , "production":
-    { "driver":   "memory"
+    { "driver":   "redis-hq"
     }
   };
