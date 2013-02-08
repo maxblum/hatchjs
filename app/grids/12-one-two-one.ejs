@@ -1,0 +1,32 @@
+<div class="header-container">
+    <div class="container">
+        <div class="row">
+            <div class="column span<%- size[0] || 12 %> module-list">
+                <%- column[0] %>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="column span<%- size[1] || 12 %> module-list"><%- column[1] %></div>
+  </div>
+  <div class="row">
+    <div class="column span<%- size[2] || 6 %> module-list"><%- column[2] %></div>
+    <div class="column span<%- size[3] || 6 %> module-list"><%- column[3] %></div>
+  </div>
+  <div class="row">
+    <div class="column span<%- size[4] || 12 %> module-list"><%- column.slice(4).join(' ') %></div>
+  </div>
+</div>
+
+<div class="thirdHeight cols1">
+  <div class="col">1</div>
+</div>
+<div class="thirdHeight cols2">
+  <div class="col">2</div>
+  <div class="col">3</div>
+</div>
+<div class="thirdHeight cols1">
+  <div class="col">4</div>
+</div>
