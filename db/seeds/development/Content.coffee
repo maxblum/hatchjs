@@ -8,7 +8,7 @@ Content.seed ->
     attachment: null
     poll: null
     location: null
-    comments: null
+    comments: []
     repliesTotal: null
     likes: []
     dislikes: []
@@ -40,7 +40,7 @@ Content.seed ->
     attachment: null
     poll: null
     location: null
-    comments: null
+    comments: []
     repliesTotal: null
     likes: []
     dislikes: []
@@ -72,7 +72,7 @@ Content.seed ->
     attachment: null
     poll: null
     location: null
-    comments: null
+    comments: []
     repliesTotal: null
     likes: []
     dislikes: []
@@ -104,7 +104,7 @@ Content.seed ->
     attachment: null
     poll: null
     location: null
-    comments: null
+    comments: []
     repliesTotal: null
     likes: []
     dislikes: []
@@ -136,7 +136,7 @@ Content.seed ->
     attachment: null
     poll: null
     location: null
-    comments: null
+    comments: []
     repliesTotal: null
     likes: []
     dislikes: []
@@ -168,7 +168,7 @@ Content.seed ->
     attachment: null
     poll: null
     location: null
-    comments: null
+    comments: []
     repliesTotal: null
     likes: []
     dislikes: []
@@ -200,7 +200,7 @@ Content.seed ->
     attachment: null
     poll: null
     location: null
-    comments: null
+    comments: []
     repliesTotal: null
     likes: []
     dislikes: []
