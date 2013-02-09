@@ -1,10 +1,11 @@
 
-var csrfToken, csrfParam;
+var csrfToken, csrfParam, pageId;
 
 $(function () {
 
     csrfToken = $('meta[name=csrf-token]').attr('content');
     csrfParam = $('meta[name=csrf-param]').attr('content');
+    pageId = $('meta[name=pageId]').attr('content');
 
     $('.new-widgets-list a').live('click', function (e) {
         e.stopPropagation();
@@ -70,7 +71,7 @@ function widgetAction(handle, data) {
         href = href.substring(0, href.indexOf('?'));
     }
 
-    var path = href.replace(/\/$/, '').split('/do/')[0] +
+    var path =
         '/on/' + id + '/do/' + action + (h.length ? '/' + h.join('/') : '');
 
     if (data) {
@@ -91,15 +92,8 @@ function send(action, data, response, done) {
         response = null;
     }
     data[csrfParam] = csrfToken;
-    var href = location.href;
-    var query = '';
 
-    if(href.indexOf('?') > -1) {
-        query = href.substring(href.indexOf('?'));
-        href = href.substring(0, href.indexOf('?'));
-    }
-
-    var path = href.replace(/\/$/, '').split('/do/')[0] + '/do/admin/' + action + query;
+    var path = '/on/admin/' + action + '?pageId=' + pageId;
 
     $.post(path, data, function (data) {
         if (typeof done === 'function') {

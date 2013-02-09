@@ -57,13 +57,15 @@ var Stylesheet = define('Stylesheet', function () {
     property('less', JSON);
 });
 
+// function Widget(data, list) { };
+
 var Page = define('Page', function () {
     property('title', String, {fulltext: true});
     property('url', String, {index: true});
     property('customUrl', Boolean);
     property('grid', String, {default: '02-two-columns'});
     property('columns', JSON); // JSON [ {size: 6, widgets: [1,2,3]}, {size: 6, widgets: [4,5,6]}]
-    property('widgets', JSON);
+    property('widgets', []);
     property('metaTitle', String);
     property('metaDescription', String);
     property('metaKeywords', String);
