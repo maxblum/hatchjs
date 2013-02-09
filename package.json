@@ -11,6 +11,15 @@
   , "coffee-script":    ">= 1.1.1"
   , "stylus":           "latest"
   , "seedjs": "latest"
+  , "underscore": "latest"
+  , "request": "latest"
+  , "nodemailer": "latest"
+  , "moment": "latest"
+  , "less": "latest"
+  , "findit": "latest"
+  , "csso": "latest"
+  , "async": "latest"
+  , "jugglingdb-redis-hq": "latest"
   },
   "devDependencies":
   { "nodeunit":         "*"
