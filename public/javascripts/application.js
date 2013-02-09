@@ -235,8 +235,7 @@ function updateWidgetContent() {
 function removeWidget($widget) {
     var widgetId = $widget.attr('data-id');
     send('widget/' + widgetId, {
-        _method: 'PUT',
-        perform: 'remove'
+        _method: 'DELETE'
     }, function () {
         $.noty({text: "<i class='icon-ok'></i> Widget removed", type: "success"});
 
