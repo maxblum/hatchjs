@@ -290,7 +290,7 @@ module.exports = function (compound, Page) {
         });
 
         function done() {
-            var cols = ['', '', '', ''], sizes = [];
+            var cols = [], sizes = [];
             if (0 !== --wait) {
                 return;
             }

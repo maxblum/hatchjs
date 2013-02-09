@@ -95,8 +95,8 @@ PageController.prototype.editconsole = function editConsole(c) {
 };
 
 //updates the widgets in the grid
-PageController.prototype.updateGrid = function updateGrid() {
-    var Page = this.model('Page');
+PageController.prototype.updateGrid = function updateGrid(c) {
+    var Page = c.Page;
     var page = this.req.page;
     var ctx = this;
     var oldTemplateId = page.templateId;
@@ -169,13 +169,16 @@ PageController.prototype.updateGrid = function updateGrid() {
     }
 };
 
-//updates the column widths
-exports.updateColumns = function updateColumns() {
-    var page = this.req.page;
-    page.columns = JSON.parse(this.body.widgets);
+/**
+ * Update the column widths
+ */
+PageController.prototype.updateColumns = function updateColumns(c) {
+    var page = c.req.page;
+    page.columns = JSON.parse(c.body.widgets);
+    console.log(page.columns);
     page.save(function (err) {
-        this.send('ok');
-    }.bind(this));
+        c.send('ok');
+    });
 };
 
 //shows the richtext insert image modal dialog
