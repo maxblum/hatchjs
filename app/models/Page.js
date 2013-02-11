@@ -329,6 +329,27 @@ module.exports = function (compound, Page) {
         });
     };
 
+    Page.prototype.performWidgetAction = function(widgetId, req, cb) {
+        var widget = this.widgets[widgetId];
+        var url = 'http://' + this.url.match(/^[^\/]+/)[0] + '/on/' + widget.type + '/widget/' + req.body.perform;
+        var page = this.toObject();
+        request.post(
+            url,
+            {form: {
+                token: 'test',
+                data: JSON.stringify({
+                    page: page,
+                    user: req.user,
+                    data: req.body['with'],
+                    widgetId: widgetId
+                })
+            }},
+            function (err, res) {
+                cb(err, res.body);
+            }
+        );
+    };
+
     /**
      * renders a page and it's widgets to the response stream
      * 

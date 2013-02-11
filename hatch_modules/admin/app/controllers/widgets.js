@@ -19,8 +19,10 @@ WidgetController.prototype.create = function create(c) {
     w.save(function () {
         page.renderWidget(w, c.req, function (err, html) {
             c.send({
+                code: err ? 500 : 200,
                 html: html,
-                widget: w
+                widget: w,
+                error: err
             });
         });
     });
@@ -28,7 +30,15 @@ WidgetController.prototype.create = function create(c) {
 };
 
 WidgetController.prototype.update = function (c) {
-    c.send('ok');
+    var widgetId = parseInt(c.req.params.id, 10);
+    c.req.page.performWidgetAction(widgetId, c.req, function (err, res) {
+        console.log(res);
+        c.send({
+            code: err ? 500 : 200,
+            res: res,
+            error: err
+        });
+    });
 };
 
 WidgetController.prototype.destroy = function (c) {

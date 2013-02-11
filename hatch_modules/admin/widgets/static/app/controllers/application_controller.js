@@ -1,12 +1,11 @@
 
-before('init widget', function () {
+before('init env', function () {
     this.inlineEditAllowed = true;
     var data = JSON.parse(body.data);
-    this.widget;
-    data.page.widgets.forEach(function (w) {
-        if (w.id == data.widgetId) {
-            this.widget = w;
-        }
-    }.bind(this));
+    this.page = new Page(data.page);
+    this.widget = this.page.widgets[data.widgetId];
+    this.user = req.user || new User(data.user);
+    this.data = data.data;
+    this.canEdit = true;
     next();
 });
