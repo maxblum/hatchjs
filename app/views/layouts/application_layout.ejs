@@ -23,7 +23,7 @@
 
         <meta name="groupid" content="<%- req.group && req.group.id %>" />
         <meta name="userid" content="<%- req.user && req.user.id %>" />
-        <meta name="csrf-token" content="<%- req.session._csrf %>" />
+        <%- csrfMetaTag() %>
         <meta name="pageId" content="<%- req.page && req.page.id %>" />
 
         <script type="text/javascript">

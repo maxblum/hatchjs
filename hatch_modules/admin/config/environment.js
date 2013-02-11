@@ -15,6 +15,7 @@ module.exports = function (compound) {
         app.use(express.cookieParser('secret'));
         app.use(express.session({secret: 'secret'}));
         app.use(express.methodOverride());
+        // TODO automate
         app.use('/static', require('../widgets/static')());
         app.use(app.router);
     });
