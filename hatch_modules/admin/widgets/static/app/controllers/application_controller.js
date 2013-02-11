@@ -1,5 +1,8 @@
 
 before('init env', function () {
+    if (!body.token && body.token !== 'test') {
+        return next(403, 'Unauthorized');
+    }
     this.inlineEditAllowed = true;
     var data = JSON.parse(body.data);
     this.page = new Page(data.page);

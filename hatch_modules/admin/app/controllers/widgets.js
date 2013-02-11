@@ -32,7 +32,6 @@ WidgetController.prototype.create = function create(c) {
 WidgetController.prototype.update = function (c) {
     var widgetId = parseInt(c.req.params.id, 10);
     c.req.page.performWidgetAction(widgetId, c.req, function (err, res) {
-        console.log(res);
         c.send({
             code: err ? 500 : 200,
             res: res,
