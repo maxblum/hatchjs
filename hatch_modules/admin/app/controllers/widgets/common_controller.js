@@ -1,3 +1,4 @@
+layout('widgets');
 
 before('init env', function () {
     if (!body.token && body.token !== 'test') {

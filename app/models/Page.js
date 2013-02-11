@@ -313,7 +313,8 @@ module.exports = function (compound, Page) {
     };
 
     Page.prototype.renderWidget = function (widget, req, cb) {
-        var url = 'http://' + this.url.match(/^[^\/]+/)[0] + '/on/' + widget.type + '/widget/show';
+        var url = 'http://' + this.url.match(/^[^\/]+/)[0] + '/on/' +
+            widget.type.replace('/', '/widgets/') + '/show';
         var page = this.toObject();
         request.post(
             url,
@@ -331,7 +332,8 @@ module.exports = function (compound, Page) {
 
     Page.prototype.performWidgetAction = function(widgetId, req, cb) {
         var widget = this.widgets[widgetId];
-        var url = 'http://' + this.url.match(/^[^\/]+/)[0] + '/on/' + widget.type + '/widget/' + req.body.perform;
+        var url = 'http://' + this.url.match(/^[^\/]+/)[0] + '/on/' +
+            widget.type.replace('/', '/widgets/') + '/' + req.body.perform;
         var page = this.toObject();
         request.post(
             url,
