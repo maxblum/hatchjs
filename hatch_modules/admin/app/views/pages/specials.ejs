@@ -1,0 +1,62 @@
+<div class="row">
+
+  <%- partial('pages/sidebar', { locals: {pageName: 'specials'}}) %>
+
+  <div class="span10">
+    <div class="module">
+      <div class="content table-content">
+
+        <table class="table table-striped pages-table" id="pages-table">
+          <thead>
+            <tr>
+                <th width="40%">
+                    <%- __('Special pages') %>
+                </th>
+                <th width="33%">
+                    <%- __('URL') %>
+                </th>
+                <th width="10%">
+                    <%- __('Privacy') %>
+                </th>
+                <th width="10%">
+                    <%- __('Visibility') %>
+                </th>
+                <th width="7%">
+                    <%- __('Actions') %>
+                </th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (pages.length > 0) { %>
+                <%- partial('pages/specialsTable', {locals: {pages: pages}}) %>
+            <% } else { %>
+                <tr>
+                    <td colspan="5"><%- __('No special pages have been defined for this group yet') %></td>
+                </tr>
+            <% } %>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        //add delete confirmation
+        $("a[rel=delete-page]").die().live("click", function() {
+            var el = this;
+            if(confirm("<%- __('Are you sure you wish to delete this page?') %>")) {
+                $.ajax(this.href, {
+                    success: function() {
+                        //reload the page
+                        window.location = window.location;
+                    }
+                });
+            }
+
+            return false;
+        });
+    } );
+</script>

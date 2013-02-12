@@ -1,0 +1,25 @@
+<div class="row">
+
+  <%- partial('pages/sidebar', { locals: { pageName: !page.type || page.type == 'page' || page.type == 'home' ? 'manage' : 'specials' }}) %>
+
+  <div class="span10">
+    <div class="module">
+      <div class="content">
+
+        <h3><%- __('Edit page') %></h3>
+
+        <hr/>
+
+        <%- formTagRemote(pathTo.updatePage(page && page.id), { method: 'POST', id: 'page_form', class: 'form-vertical'}) %>
+          <input type="hidden" name="_method" value="PUT" />
+
+        <%- partial('pages/pageForm', {locals: {page: page}}) %>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i> <%- __('Update page') %></button>
+          <%- linkTo(__('Cancel'), pathTo.pages(), {class: 'btn'}) %>
+        </div>
+        <%- end() %>
+      </div>
+    </div>
+  </div>
+</div>

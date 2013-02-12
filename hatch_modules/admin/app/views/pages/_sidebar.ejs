@@ -1,0 +1,27 @@
+<div class="span2">
+  <div class="module">
+    <ul class="nav nav-list">
+
+        <li class="nav-header"><%- __('Pages') %></li>
+            <li<%- pageName === 'manage' ? ' class="active"' : '' %>>
+                <%- linkTo('<i class="icon-sitemap"></i> ' + __('Sitemap'), pathTo.pages()) %>
+            </li>
+            <li<%- pageName === 'specials' ? ' class="active"' : '' %>>
+                <%- linkTo('<i class="icon-star"></i> ' + __('Special pages'), pathTo('pages/specials')) %>
+            </li>
+
+        <li class="nav-header"><%- __('Actions') %></li>
+        <li<%- pageName === 'new-page' ? ' class="active"' : '' %>>
+            <%- linkTo('<i class="icon-plus"></i> ' + __('Add new page'), pathTo.newPages()) %>
+        </li>
+        <li<%- pageName === 'new-special' ? ' class="active"' : '' %>>
+            <%- linkTo('<i class="icon-star"></i> ' + __('Add special page'), pathTo('pages/newspecial')) %>
+        </li>
+        <!--
+        <li<%- pageName === 'new-special-template' ? ' class="active"' : '' %>>
+            <%- linkTo('<i class="icon-copy"></i> Add template', pathTo.newSpecial('template')) %>
+        </li>
+        -->
+    </ul>
+  </div>
+</div>
