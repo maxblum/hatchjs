@@ -62,7 +62,7 @@
                                     <li><%- linkTo('<i class="icon-user"></i> ' + __('View my profile'), specialPagePath('profile', { username: req.user.username })) %></li>
                                     <li><a href="<%- specialPagePath('account') %>"><i class="icon-cogs"></i> <%- __('Edit my account') %></a></li>
                                     <li class="divider"></li>
-                                    <li> <%- linkTo('<i class="icon-off"></i> ' + __('Sign out'), pathFor('user')('logout')) %> </li>
+                                    <li> <%- linkTo('<i class="icon-off"></i> ' + __('Sign out'), pathFor('user').logout) %> </li>
                                 </ul>
                             </li>
                         </ul>
@@ -77,7 +77,7 @@
     <div class="container" id="main">
 
         <div id="row-content">
-            <% var tabs = _.sortBy(module.tabs, 'rank'); %>
+            <% var tabs = _.sortBy(tabs, 'rank'); %>
 
             <header class="jumbotron subhead" id="overview" xmlns="http://www.w3.org/1999/html">
                 <div class="subnav">
@@ -85,10 +85,10 @@
                         <% tabs.forEach(function(tab) { %>
                             <% if(tab.module && !moduleEnabled(tab.module)) return; %>
                             <li<%- req.url.indexOf(tab.url) > -1 ? ' class="active"' : '' %>>
-                                <a href="<%- pathFor(tab.module || 'admin')(tab.url) %>"><%- __(tab.name) %></a></li>
+                                <a href="<%- pathFor(tab.module || 'admin')[tab.url] %>"><%- __(tab.name) %></a></li>
                         <% }) %>
 
-                        <li class="pull-right"><a href="<%- pathTo('') %>../../" rel="nopjax">
+                        <li class="pull-right"><a href="<%- pathTo.root %>../../" rel="nopjax">
                             <i class="icon-chevron-left"></i> <%- __('Back to group') %></a></li>
                     </ul>
                 </div>
