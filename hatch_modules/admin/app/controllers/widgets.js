@@ -79,4 +79,10 @@ WidgetController.prototype.configure = function (c) {
 };
 
 WidgetController.prototype.contrast = function(c) {
+    var map = { 0: 1, 1: 2, 2: 0 };
+    var settings = this.widget.settings;
+    settings.contrastMode = map[(settings.contrastMode || 0)];
+    this.widget.save(function() {
+        c.send('ok');
+    });
 };
