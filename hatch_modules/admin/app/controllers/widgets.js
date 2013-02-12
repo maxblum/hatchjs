@@ -35,6 +35,12 @@ WidgetController.prototype.create = function create(c) {
 
 };
 
+WidgetController.prototype.render = function render(c) {
+    this.page.renderWidget(this.widget, c.req, function (err, html) {
+        c.send(html);
+    });
+};
+
 WidgetController.prototype.update = function (c) {
     var widgetId = parseInt(c.req.params.id, 10);
     c.req.page.performWidgetAction(widgetId, c.req, function (err, res) {

@@ -17,3 +17,4 @@ action(function update() {
         render('show');
     });
 });
+

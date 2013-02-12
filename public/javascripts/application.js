@@ -65,8 +65,6 @@ function widgetAction(handle, data) {
     var action = h.shift();
     var id = h.shift();
 
-    if (action === 'render') action = 'show';
-
     var path = ['/on/admin/widget', pageId, id, action].join('/');
 
     if (data) {
