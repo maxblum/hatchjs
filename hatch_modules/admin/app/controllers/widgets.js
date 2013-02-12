@@ -56,6 +56,7 @@ WidgetController.prototype.destroy = function (c) {
     var page = c.req.page;
     page.widgets.remove(parseInt(c.req.param('id'), 10));
     page.save(function() {
+        // TODO: normalize widget response [API]
         c.send('ok');
     });
 };
@@ -67,8 +68,12 @@ WidgetController.prototype.settings = function(c) {
 };
 
 WidgetController.prototype.configure = function (c) {
-    this.widget.settings = c.body;
+    var settings = this.widget.settings;
+    Object.keys(c.body).forEach(function(key) {
+        settings[key] = c.body[key];
+    });
     this.widget.save(function () {
+        // TODO: normalize widget response [API]
         c.send('ok');
     });
 };
