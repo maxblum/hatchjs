@@ -3,7 +3,12 @@ var search = new SearchController();
 
 //pathTo is the client side routing function
 pathTo = function (action) {
-    return '/on/' + action + '?pageId=' + $('meta[name=pageId]').attr('content');
+    if (action.match(/\?/)) {
+        delim = '&';
+    } else {
+        delim = '?';
+    }
+    return '/on/' + action + delim + 'pageId=' + $('meta[name=pageId]').attr('content');
 }
 
 //init everything on page load
