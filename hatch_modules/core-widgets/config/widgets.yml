@@ -1,0 +1,9 @@
+static:
+  title: 'Static content'
+  icon: 'icon-edit'
+  inlineEditAllowed: on
+  settings:
+    fields:
+      anchor:
+        type: 'checkbox'
+        title: 'Create anchor link'
