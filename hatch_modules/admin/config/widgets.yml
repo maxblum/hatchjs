@@ -1,6 +1,7 @@
 static:
   title: 'Static content'
   icon: 'icon-edit'
+  inlineEditAllowed: on
   settings:
     fields:
       anchor:

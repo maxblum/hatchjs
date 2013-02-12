@@ -4,10 +4,16 @@ function WidgetController(init) {
 
     init.before(function loadPage(c) {
         var Page = c.Page;
-        Page.find(c.req.query.pageId, function (err, page) {
-            c.req.page = page;
+        var id = c.req.query.pageId || c.req.params.pageId;
+        var widgetId = c.req.query.widgetId || c.req.params.widgetId;
+        this.canEdit = c.req.user.canEdit;
+        Page.find(id, function (err, page) {
+            this.page = c.req.page = page;
+            if (widgetId) {
+                this.widget = page.widgets[widgetId];
+            }
             c.next();
-        });
+        }.bind(this));
     });
 }
 
@@ -46,4 +52,20 @@ WidgetController.prototype.destroy = function (c) {
     page.save(function() {
         c.send('ok');
     });
+};
+
+WidgetController.prototype.settings = function(c) {
+    this.widgetCore = c.compound.hatch.widget.getWidget(this.widget.type);
+    this.inlineEditAllowed = this.widget.inlineEditAllowed;
+    c.render();
+};
+
+WidgetController.prototype.configure = function (c) {
+    this.widget.settings = c.body;
+    this.widget.save(function () {
+        c.send('ok');
+    });
+};
+
+WidgetController.prototype.contrast = function(c) {
 };

@@ -7,7 +7,7 @@
       <a href="#move" class="move" rel="tooltip" title="<%= __('drag to move widget') %>"
       ><i class="icon-move"></i></a>
 
-      <a href="<%- widgetAction('contrast') %>" data-remote="true" class="adjust" rel="tooltip" title="<%= __('toggle widget style') %>"
+      <a href="<%- widgetCoreAction('contrast') %>" data-remote="true" class="adjust" rel="tooltip" title="<%= __('toggle widget style') %>"
       ><i class="icon-adjust"></i></a>
 
       <% if (inlineEditAllowed) { %>
@@ -15,7 +15,7 @@
       ><i class="icon-pencil"></i></a>
       <% } %>
 
-      <a href="<%- widgetAction('settings') %>" data-modal="true" data-remote="true" class="edit"
+      <a href="<%- widgetCoreAction('settings') %>" data-modal="true" data-remote="true" class="edit"
         rel="tooltip" title="<%= __('click to edit settings') %>"
       ><i class="icon-cog"></i></a>
 

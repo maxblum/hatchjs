@@ -1,7 +1,7 @@
 layout('widgets');
 
 before('init env', function () {
-    if (!body.token && body.token !== 'test') {
+    if (params.action !== 'settings' && !body.token && body.token !== 'test') {
         return next(403, 'Unauthorized');
     }
     this.inlineEditAllowed = true;

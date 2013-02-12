@@ -64,15 +64,10 @@ function widgetAction(handle, data) {
     var h = handle.split(':');
     var action = h.shift();
     var id = h.shift();
-    var href = location.href;
 
-    if(href.indexOf('?') > -1) {
-        data = (data != null ? data + '&':'') + href.substring(href.indexOf('?') +1);
-        href = href.substring(0, href.indexOf('?'));
-    }
+    if (action === 'render') action = 'show';
 
-    var path =
-        '/on/' + id + '/do/' + action + (h.length ? '/' + h.join('/') : '');
+    var path = ['/on/admin/widget', pageId, id, action].join('/');
 
     if (data) {
         path += '?' + data;

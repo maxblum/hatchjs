@@ -8,6 +8,7 @@ exports.routes = function (map) {
     map.get('/:controller/:action');
 
     map.post('/widget', 'widgets#create');
+    map.all('/widget/:pageId/:widgetId/:action', 'widgets');
 
     map.namespace('widgets', function (widgets) {
         widgets.all(':controller/:action');
