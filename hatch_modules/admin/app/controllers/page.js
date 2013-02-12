@@ -47,29 +47,14 @@ PageController.prototype.editconsole = function editConsole(c) {
         if (m) groupModulesIndex[m.name] = m;
     });
 
-    // c.api.widget.getWidgets().forEach(function (w) {
-    //     if (groupModulesIndex[w.module]) {
-    //         c.req.widgets.push({
-    //             name: w.name,
-    //             module: w.module,
-    //             info: w.widget.info
-    //         });
-    //     }
-    // });
-    c.req.widgets.push({
-        name: 'static',
-        module: 'admin',
-        info: {
-            title: 'Static content',
-            icon: 'icon-edit',
-            settings: {
-                fields: {
-                    anchor: {
-                        type: 'checkbox',
-                        title: 'Create anchor link'
-                    }
-                }
-            }
+    c.compound.hatch.widget.getWidgets().forEach(function (w) {
+        console.log(w);
+        if (groupModulesIndex[w.module]) {
+            c.req.widgets.push({
+                name: w.name,
+                module: w.module,
+                info: w.widget.info
+            });
         }
     });
 

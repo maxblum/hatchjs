@@ -1,0 +1,11 @@
+static:
+  title: 'Static content'
+  icon: 'icon-edit'
+  settings:
+    fields:
+      anchor:
+        type: 'checkbox'
+        title: 'Create anchor link'
+another:
+  title: 'Another widget'
+  icon: 'icon-user'
