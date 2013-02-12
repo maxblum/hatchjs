@@ -94,10 +94,7 @@ PagesController.prototype.create = function create(c) {
 
     Page.createPage(c.body, function (err, page) {
         if (err) {
-            c.error({
-                status: 'error',
-                message: err.message
-            })
+            c.next(err);
         } else {
             if (c.params.format === 'json') {
                 //bump all the other pages up one in the hierarchy order
@@ -165,7 +162,8 @@ PagesController.prototype.updateOrder = function updateOrder(c) {
     var Page = c.Page;
 
     // find and update the page that was dragged
-    Page.find(c.params.id, function(err, page) {
+    Page.find(c.params.page_id, function(err, page) {
+        delete c.body.authencity_token;
         page.update(c.body, function(err, page) {
             // update the order of all pages in the group
             Page.all({where: {groupId: c.req.group.id}}, function(err, pages) {
@@ -239,8 +237,8 @@ function prepareTree(c) {
 
 // Render the page tree to JSON
 function renderPageTree(c) {
-    var Page = c.model('Page');
-    c.group().pages(function (err, pages) {
+    var Page = c.Page;
+    c.req.group.pages(function (err, pages) {
         // filter page types to standard page types only
         pages = pages.filter(function(page) {
             return [null, '', 'page', 'homepage'].indexOf(page.type) !== -1;

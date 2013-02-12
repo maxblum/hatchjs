@@ -173,7 +173,7 @@ function savePageOrder(e, revert) {
     var order = $page.closest('table').find('tr.page-item').map(function () {
         return $(this).attr('data-id');
     });
-    send('pages/reorder/' + id + '.json', {
+    send('pages/' + id + '/reorder.json', {
         _method: 'PUT',
         url: $(this).attr('data-path'),
         order: [].slice.call(order)

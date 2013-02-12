@@ -190,7 +190,7 @@ module.exports = function (compound, Page) {
             var parentUrl = data.url.replace(Page.prototype.getUrlName(data), '');
             
             if (parentUrl[parentUrl.length -1] == '/') parentUrl = parentUrl.substring(0, parentUrl.length -1);
-            if (parentUrl.indexOf('/') === -1) parentUrl += '/';
+            // if (parentUrl.indexOf('/') === -1) parentUrl += '/';
 
             var currentUrl = this.url;
 

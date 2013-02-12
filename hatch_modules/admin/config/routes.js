@@ -13,6 +13,7 @@ exports.routes = function (map) {
         pages.get('renderTree', 'pages#renderTree', {
             collection: true, as: 'renderTree'
         });
+        pages.put('reorder.:format?', 'pages#updateOrder');
     });
 
     map.get('/pages/new-special/:type', 'pages#new', {as: 'newSpecial'});
