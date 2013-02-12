@@ -30,6 +30,7 @@ function PagesController(init) {
 }
 
 PagesController.prototype.index = function index(c) {
+    this.title = 'Manage pages';
     c.req.session.adminSection = 'pages';
     var Page = c.Page;
     Page.all({where: {groupId: c.req.group.id}}, function(err, pages) {

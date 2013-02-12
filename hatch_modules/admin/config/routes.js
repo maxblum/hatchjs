@@ -1,8 +1,18 @@
 exports.routes = function (map) {
     map.root('pages#index');
     map.resources('pages', function (pages) {
-        pages.get('new-special', 'pages#newSpecial', {collection: true, as: 'newSpecial'});
-        pages.get('new-special/:type', 'pages#newSpecial', {collection: true, as: 'newSpecialType'});
+        pages.get('new-special', 'pages#newSpecial', {
+            collection: true, as: 'newSpecial'
+        });
+        pages.get('new-special/:type', 'pages#newSpecial', {
+            collection: true, as: 'newSpecialType'
+        });
+        pages.get('specials', 'pages#specials', {
+            collection: true, as: 'specialPages'
+        });
+        pages.get('renderTree', 'pages#renderTree', {
+            collection: true, as: 'renderTree'
+        });
     });
 
     map.get('/pages/new-special/:type', 'pages#new', {as: 'newSpecial'});

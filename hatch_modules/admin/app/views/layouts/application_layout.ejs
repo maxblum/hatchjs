@@ -1,41 +1,142 @@
+<% if(!req.query._pjax) { %>
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title><%= title %></title>
-        <%- stylesheet_link_tag('bootstrap', 'application', 'bootstrap-responsive') %>
-        <%- javascript_include_tag('http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js', 'bootstrap', 'rails', 'application') %>
-        <%- csrf_meta_tag() %>
-    </head>
-    <body>
-        <div class="navbar">
-            <div class="navbar-inner">
-                <div class="container">
-                    <a class="brand" href="#">Project name</a>
-                </div>
+<head>
+    <title><%- __('Management area for %s', req.group.name) %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="<%- req.session._csrf %>" />
+
+    <link type="text/css" rel="stylesheet" href="/stylesheets/theme-admin.css" id="main-stylesheet" />
+
+    <style id="preview-stylesheet" type="text/css"></style>
+
+    <% if (req.group.favicon) { %>
+    <link rel="icon" type="image/png" href="<%- req.group.favicon %>" />
+    <% } %>
+
+    <!-- TODO: implement contentFor('footer') helper and put following line to footer -->
+    <script type="text/javascript">
+        canEdit = <%- (request.member && request.user.canEdit) ? "true":"false" %>;
+    </script>
+    <script src="/javascripts/all.js"></script>
+    <% if(request.member && request.user.canEdit) { %>
+        <script src="/javascripts/admin.js"></script>
+        <script src="/javascripts/redactor/redactor.js"></script>
+        <link rel="stylesheet" href="/javascripts/redactor/redactor.css" />
+    <% } %>
+</head>
+<body class="navbar-fixed">
+
+    <div id="meny"></div>
+    
+    <div id="all">
+    <% } else { %>
+    <!-- pjax title -->
+        <title><%- __('Management area for %s', req.group.name) %></title>
+    <% } %>
+
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <div class="navbar-container">
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="//<%- req.group.homepage.url -%>">
+                        <i class="icon-cog"></i>
+                        <%- __('Management area for %s', '<span class="group-name">' + req.group.name + '</span>') %>
+                    </a>
+                    <div class="pull-right">
+                        <%- hook('layout.topBar.left') %>
+                        <%- hook('layout.topBar.middle') %>
+                        <% if (request.user) { var user = request.user; %>
+                        <ul class="nav">
+                            <li class="dropdown" id="menu1">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="/">
+                                    <%= user.displayName || user.username || user.email %>
+                                    <b class="caret"></b>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><%- linkTo('<i class="icon-user"></i> ' + __('View my profile'), specialPagePath('profile', { username: req.user.username })) %></li>
+                                    <li><a href="<%- specialPagePath('account') %>"><i class="icon-cogs"></i> <%- __('Edit my account') %></a></li>
+                                    <li class="divider"></li>
+                                    <li> <%- linkTo('<i class="icon-off"></i> ' + __('Sign out'), pathFor('user')('logout')) %> </li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <% } %>
+                        <%- hook('layout.topBar.right') %>
+                    </div>
+                </div><!--/.nav-collapse -->
             </div>
         </div>
+    </div>
 
-        <div class="container">
-            <% var flash = request.flash('info').pop(); if (flash) { %>
-                <div class="alert alert-info">
-                    <a class="close" data-dismiss="alert">×</a>
-                    <%- flash %>
-                </div>
-            <% } %>
+    <div class="container" id="main">
 
-            <% flash = request.flash('error').pop(); if (flash) { %>
-                <div class="alert alert-error">
-                    <a class="close" data-dismiss="alert">×</a>
-                    <%- flash %>
+        <div id="row-content">
+            <% var tabs = _.sortBy(module.tabs, 'rank'); %>
+
+            <header class="jumbotron subhead" id="overview" xmlns="http://www.w3.org/1999/html">
+                <div class="subnav">
+                    <ul class="nav nav-pills">
+                        <% tabs.forEach(function(tab) { %>
+                            <% if(tab.module && !moduleEnabled(tab.module)) return; %>
+                            <li<%- req.url.indexOf(tab.url) > -1 ? ' class="active"' : '' %>>
+                                <a href="<%- pathFor(tab.module || 'admin')(tab.url) %>"><%- __(tab.name) %></a></li>
+                        <% }) %>
+
+                        <li class="pull-right"><a href="<%- pathTo('') %>../../" rel="nopjax">
+                            <i class="icon-chevron-left"></i> <%- __('Back to group') %></a></li>
+                    </ul>
                 </div>
-            <% }; %>
+            </header>
 
             <%- body %>
+        </div>
 
-            <hr />
+        <hr />
+
+        <div class="footer-container">
             <footer>
-                <p>&copy; Company 2012</p>
+                <div class="pull-right">
+                    <i class="icon-bolt"></i>
+                    <%- __('rendered in') %> <%- (new Date() - req.startedAt)/1000 %>s
+                </div>
+
+                <%- __('Built on the Hatch Platform') %>
             </footer>
         </div>
-    </body>
+
+        <%- hook('layout.body.end') %>
+
+    <% if(!req.query._pjax) { %>
+
+    </div>
+</div>
+
+<% if(req.group.googleAnalyticsId) { %>
+
+<script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', '<%- req.group.googleAnalyticsId %>']);
+    _gaq.push(['_setDomainName', '<%- req.headers.host %>']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+</script>
+
+<% } %>
+
+</body>
 </html>
+
+<% } %>
