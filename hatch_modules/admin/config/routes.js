@@ -16,6 +16,11 @@ exports.routes = function (map) {
         pages.put('reorder.:format?', 'pages#updateOrder');
     });
 
+    map.resources('modules');
+    map.resources('contents', {as: 'content', suffix: 'entry'});
+    map.resources('users', {as: 'community', suffix: 'member'});
+    map.resource('group');
+
     map.get('/pages/new-special/:type', 'pages#new', {as: 'newSpecial'});
 
     map.post('/page/columns', 'page#updateColumns');

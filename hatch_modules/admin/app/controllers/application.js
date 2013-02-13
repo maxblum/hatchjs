@@ -3,12 +3,12 @@ var Application = module.exports = function Application(init) {
         this.pageName = c.actionName;
         this.req = c.req;
         this.tabs = [
-            { name: 'Community', url: 'community', rank: 10 },
-            { name: 'Content', url: 'content', rank: 20 },
-            { name: 'Pages', url: 'pages', rank: 30 },
-            { name: 'Settings', url: 'group', rank: 40 },
-            { name: 'Modules', url: 'modules', rank: 50 }
-        ]
+            { url: 'community', rank: 10 },
+            { url: 'content',   rank: 20 },
+            { url: 'pages',     rank: 30 },
+            { url: 'group',     rank: 40 },
+            { url: 'modules',   rank: 50 }
+        ];
         c.next();
     });
 };

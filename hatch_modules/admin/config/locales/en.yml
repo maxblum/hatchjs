@@ -1,3 +1,14 @@
 en:
   admin:
-    title: Management area for %s
+    title: Management area for %
+  back: Back to group
+  user:
+    viewProfile: View my profile
+    editAccont: Edit my account
+    signOut: Sign out
+  tabs:
+    community: Community
+    content: Content
+    pages: Pages
+    group: Group
+    modules: Modules
