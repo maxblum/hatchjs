@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title><%- __('Management area for %s', req.group.name) %></title>
+    <title><%- t(['admin.title', req.group.name]) %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <%- csrfMetaTag() %>
 
@@ -32,7 +32,7 @@
     <div id="all">
     <% } else { %>
     <!-- pjax title -->
-        <title><%- __('Management area for %s', req.group.name) %></title>
+        <title><%- t(['admin.title', req.group.name]) %></title>
     <% } %>
 
     <div class="navbar navbar-fixed-top">
