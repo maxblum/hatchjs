@@ -86,7 +86,7 @@
                         <% tabs.forEach(function(tab) {
                            var tabUrl = pathFor(tab.module || 'admin')[tab.url](req.group.id);
                            if (!tab.module || moduleEnabled(tab.module)) { %>
-                            <li<%- tab.name === controllerName ? ' class="active"' : '' %>>
+                            <li<%- tab.name === sectionName ? ' class="active"' : '' %>>
                                 <%- linkTo(t('tabs.' + tab.name), tabUrl) %>
                             </li>
                         <% }

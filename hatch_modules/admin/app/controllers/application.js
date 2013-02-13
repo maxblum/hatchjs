@@ -1,6 +1,7 @@
 var Application = module.exports = function Application(init) {
     init.before(function initApp(c) {
         this.pageName = c.actionName;
+        this.sectionName = c.controllerName;
         this.req = c.req;
         this.tabs = [
             { name: 'community', url: 'group_community', rank: 10 },
