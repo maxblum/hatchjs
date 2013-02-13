@@ -1,27 +1,26 @@
 exports.routes = function (map) {
     map.root('pages#index');
-    map.resources('pages', function (pages) {
-        pages.get('new-special', 'pages#newSpecial', {
-            collection: true, as: 'newSpecial'
+
+    map.resources('groups', function (g) {
+        g.resources('modules');
+        g.resources('contents', {as: 'content', suffix: 'entry'});
+        g.resources('users', {as: 'community', suffix: 'member'});
+        g.resources('pages', function (pages) {
+            pages.get('new-special', 'pages#newSpecial', {
+                collection: true, as: 'newSpecial'
+            });
+            pages.get('new-special/:type', 'pages#newSpecial', {
+                collection: true, as: 'newSpecialType'
+            });
+            pages.get('specials', 'pages#specials', {
+                collection: true, as: 'specialPages'
+            });
+            pages.get('renderTree', 'pages#renderTree', {
+                collection: true, as: 'renderTree'
+            });
+            pages.put('reorder.:format?', 'pages#updateOrder');
         });
-        pages.get('new-special/:type', 'pages#newSpecial', {
-            collection: true, as: 'newSpecialType'
-        });
-        pages.get('specials', 'pages#specials', {
-            collection: true, as: 'specialPages'
-        });
-        pages.get('renderTree', 'pages#renderTree', {
-            collection: true, as: 'renderTree'
-        });
-        pages.put('reorder.:format?', 'pages#updateOrder');
     });
-
-    map.resources('modules');
-    map.resources('contents', {as: 'content', suffix: 'entry'});
-    map.resources('users', {as: 'community', suffix: 'member'});
-    map.resource('group');
-
-    map.get('/pages/new-special/:type', 'pages#new', {as: 'newSpecial'});
 
     map.post('/page/columns', 'page#updateColumns');
 

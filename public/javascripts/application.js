@@ -1,11 +1,12 @@
 
-var csrfToken, csrfParam, pageId;
+var csrfToken, csrfParam, pageId, groupId;
 
 $(function () {
 
     csrfToken = $('meta[name=csrf-token]').attr('content');
     csrfParam = $('meta[name=csrf-param]').attr('content');
     pageId = $('meta[name=pageId]').attr('content');
+    groupId = $('meta[name=groupId]').attr('content');
 
     $('.new-widgets-list a').live('click', function (e) {
         e.stopPropagation();
@@ -86,7 +87,7 @@ function send(action, data, response, done) {
     }
     data[csrfParam] = csrfToken;
 
-    var path = '/on/admin/' + action + '?pageId=' + pageId;
+    var path = '/on/admin/' + action + (pageId ? '?pageId=' + pageId : '');
 
     $.post(path, data, function (data) {
         if (typeof done === 'function') {
@@ -173,7 +174,7 @@ function savePageOrder(e, revert) {
     var order = $page.closest('table').find('tr.page-item').map(function () {
         return $(this).attr('data-id');
     });
-    send('pages/' + id + '/reorder.json', {
+    send('groups/' + groupId + '/pages/' + id + '/reorder.json', {
         _method: 'PUT',
         url: $(this).attr('data-path'),
         order: [].slice.call(order)

@@ -9,6 +9,7 @@
     <link type="text/css" rel="stylesheet" href="/stylesheets/theme-admin.css" id="main-stylesheet" />
 
     <style id="preview-stylesheet" type="text/css"></style>
+    <meta name="groupId" content="<%- req.group && req.group.id %>" />
 
     <% if (req.group.favicon) { %>
     <link rel="icon" type="image/png" href="<%- req.group.favicon %>" />
@@ -84,8 +85,8 @@
                     <ul class="nav nav-pills">
                         <% tabs.forEach(function(tab) {
                            if (!tab.module || moduleEnabled(tab.module)) { %>
-                            <li<%- req.url.indexOf(tab.url) > -1 ? ' class="active"' : '' %>>
-                                <%- linkTo(t('tabs.' + tab.url), pathFor(tab.module || 'admin')[tab.url]) %>
+                            <li<%- req.url.indexOf(tab.name) > -1 ? ' class="active"' : '' %>>
+                                <%- linkTo(t('tabs.' + tab.name), pathFor(tab.module || 'admin')[tab.url](req.group.id)) %>
                             </li>
                         <% }
                         }) %>

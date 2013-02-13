@@ -21,10 +21,10 @@
             <meta name="viewport" content="width=480, user-scalable=no" />
         <% } %>
 
-        <meta name="groupid" content="<%- req.group && req.group.id %>" />
         <meta name="userid" content="<%- req.user && req.user.id %>" />
         <%- csrfMetaTag() %>
         <meta name="pageId" content="<%- req.page && req.page.id %>" />
+        <meta name="groupId" content="<%- req.group && req.group.id %>" />
 
         <script type="text/javascript">
             canEdit = <%- (request.member && request.user.canEdit) ? "true":"false" %>;
