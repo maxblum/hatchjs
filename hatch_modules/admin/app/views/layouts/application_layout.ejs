@@ -84,9 +84,10 @@
                 <div class="subnav">
                     <ul class="nav nav-pills">
                         <% tabs.forEach(function(tab) {
+                           var tabUrl = pathFor(tab.module || 'admin')[tab.url](req.group.id);
                            if (!tab.module || moduleEnabled(tab.module)) { %>
-                            <li<%- req.url.indexOf(tab.name) > -1 ? ' class="active"' : '' %>>
-                                <%- linkTo(t('tabs.' + tab.name), pathFor(tab.module || 'admin')[tab.url](req.group.id)) %>
+                            <li<%- tab.name === controllerName ? ' class="active"' : '' %>>
+                                <%- linkTo(t('tabs.' + tab.name), tabUrl) %>
                             </li>
                         <% }
                         }) %>

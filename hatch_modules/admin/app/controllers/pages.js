@@ -108,7 +108,7 @@ PagesController.prototype.create = function create(c) {
                 if (page.type && page.type !== 'page') {
                     c.send({ redirect : c.pathTo.specials() });
                 } else {
-                    c.send({ redirect : c.pathTo.pages() });
+                    c.send({ redirect : c.pathTo.group_pages(c.req.group) });
                 }
             }
         }
@@ -130,7 +130,7 @@ PagesController.prototype.create = function create(c) {
 
 PagesController.prototype.destroy = function destroy(c) {
     c.page.destroyPage(function() {
-        c.redirect(c.pathTo.pages());
+        c.redirect(c.pathTo.group_pages(c.req.group));
     });
 };
 
@@ -151,9 +151,9 @@ PagesController.prototype.update = function update(c) {
         }
 
         if ([null, '', 'page', 'homepage'].indexOf(c.locals.page.type) != -1) {
-            c.send({ redirect: c.pathTo.pages() });
+            c.send({ redirect: c.pathTo.group_pages(c.req.group) });
         } else {
-            c.send({ redirect: c.pathTo.specialPages() });
+            c.send({ redirect: c.pathTo.specialPages(c.req.group) });
         }
     });
 };

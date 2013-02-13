@@ -6,9 +6,18 @@ var Application = module.exports = function Application(init) {
             { name: 'community', url: 'group_community', rank: 10 },
             { name: 'content',   url: 'group_content',   rank: 20 },
             { name: 'pages',     url: 'group_pages',     rank: 30 },
-            { name: 'groups',    url: 'groups',          rank: 40 },
+            { name: 'group',     url: 'group',           rank: 40 },
             { name: 'modules',   url: 'group_modules',   rank: 50 }
         ];
-        c.next();
+        var id = c.params.group_id || c.controllerName === 'groups' && c.params.id;
+        if (id != c.req.group.id) {
+            c.Group.find(id, function (err, group) {
+                group.parent = c.req.group;
+                c.req.group = group;
+                c.next();
+            });
+        } else {
+            c.next();
+        }
     });
 };
