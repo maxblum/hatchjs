@@ -7,7 +7,16 @@ exports.routes = function (map) {
             c.get('streams', 'content#streams', {
                 collection: true, as: 'groupContentStreams'
             });
+            c.get('filter/:filter', 'content#index', {
+                collection: true, as: 'filteredGroupContent'
+            });
+            c.del('destroyAll', 'content#destroyAll', {
+                collection: true, as: 'destroySelectedGroupContent'
+            });
+            c.get('load', 'content#load', {collection: true});
         });
+        g.resources('tags');
+        g.resources('streams');
         g.resources('users', {as: 'community', suffix: 'member'});
         g.resources('pages', function (pages) {
             pages.get('new-special', 'pages#newSpecial', {

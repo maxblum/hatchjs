@@ -12,3 +12,16 @@ en:
     pages: Pages
     group: Group
     modules: Modules
+  content:
+    header:
+      filter: Filter
+      tags: Tags
+    all: All content
+    blogpost: Blog posts
+    discussion: Discussions
+    statusupdate: Status updates
+    poll: Polls
+    imported: Imported posts
+    manageTags: Manage tags
+  tag:
+    new: New tag

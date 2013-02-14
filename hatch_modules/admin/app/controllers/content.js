@@ -26,11 +26,6 @@ module.exports = ContentController;
 
 function ContentController(init) {
     Application.call(this, init);
-
-    init.before(function setup(c) {
-        this._ = _;
-        c.next();
-    });
 }
 
 require('util').inherits(ContentController, Application);
@@ -49,15 +44,7 @@ function loadContent(c, cb) {
             groupId: c.req.group.id
         };
 
-        var query = c.req.query;
-        var limit = parseInt(query.iDisplayLength || 0, 10);
-        var offset = parseInt(query.iDisplayStart || 0, 10);
-        var colNames = ['', 'title', 'tagString', 'createdAt', 'score', ''];
-        var orderBy = query.iSortCol_0 > 0 ?
-            (colNames[query.iSortCol_0] + ' ' + query.sSortDir_0.toUpperCase()) :
-            'createdAt DESC';
-        var search = query.sSearch || c.req.body.search;
-        var filter = query.filter || c.req.body.filter;
+        var filter = c.req.query.filter || c.req.body.filter;
 
         if (filter === 'imported') {
             cond.imported = true;
@@ -74,7 +61,15 @@ function loadContent(c, cb) {
         return cond;
     }
 
-    function makeQuery(cb) {
+    function makeQuery(cond, cb) {
+        var query = c.req.query;
+        var limit = parseInt(query.iDisplayLength || 0, 10);
+        var offset = parseInt(query.iDisplayStart || 0, 10);
+        var colNames = ['', 'title', 'tagString', 'createdAt', 'score', ''];
+        var orderBy = query.iSortCol_0 > 0 ?
+            (colNames[query.iSortCol_0] + ' ' + query.sSortDir_0.toUpperCase()) :
+            'createdAt DESC';
+        var search = query.sSearch || c.req.body.search;
 
         c.Content.count(cond, function(err, count) {
             if (err) {
@@ -113,6 +108,7 @@ function loadContent(c, cb) {
 // TODO: show content
 ContentController.prototype.index = function index(c) {
     c.req.session.adminSection = 'content';
+    this.pageName = 'content' + (typeof this.filter == 'string' ? '-' + filter : '');
     this.filter = c.params.filter;
     c.render();
 };
@@ -337,229 +333,6 @@ ContentController.prototype.deleteMulti = function(c) {
     }
 };
 
-// Show the manage tags screen
-ContentController.prototype.manageTags = function(c) {
-    c.render();
-};
-
-// Edit a tag
-ContentController.prototype.editTag = function(c) {
-    c.locals.tag = c.params.id ? _.find(c.req.group.tags, function(tag) {
-        return tag.id == c.params.id;
-    }) : {};
-    c.locals.defaultFilter = 'filter = function(content) {\n\treturn false; //add your filter criteria here\n};';
-    c.render();
-};
-
-// Save a tag
-ContentController.prototype.saveTag = function(c) {
-    // validate
-    if (!c.body.name) {
-        return c.send({
-            message: 'Please enter a tag name',
-            status: 'error',
-            icon: 'warning-sign'
-        });
-    }
-
-    var group = c.req.group;
-    var tag = _.find(group.tags, function(tag) {
-        return tag.id.toString() === c.body.id.toString();
-    });
-
-    if (!tag) {
-        if (!group.tags) {
-            group.tags = [];
-        }
-        tag = { id: group.tags.length, contentCount: 0 };
-        group.tags.push(tag);
-    }
-
-    // update tag
-    tag.name = c.body.name;
-    tag.description = c.body.description;
-    tag.filter = c.body.filterEnabled ? c.body.filter : null;
-
-    // save the group
-    group.save(function() {
-        // add the existing content async
-        if (c.body.filterExisting) {
-            group.getContentForTag(tag, function(posts) {
-                async.forEach(posts, function(content, next) {
-                    if (!content.tags) {
-                        content.tags = [];
-                    }
-
-                    // if not already in this tag, add it
-                    if (!_.find(content.tags, function(t) {
-                        return t.tagId == tag.id;
-                    })) {
-                        content.tags.push({
-                            tagId: tag.id,
-                            name: tag.name,
-                            createdAt: new Date(),
-                            score: 0
-                        });
-
-                        // save and forget
-                        content.save(next);
-                    }
-                }, function() {
-                    // recalc tag counts
-                    group.recalculateTagContentCounts();
-                });
-            });
-        }
-
-        c.send({
-            message: 'Tag saved successfully',
-            status: 'success',
-            icon: 'ok'
-        });
-    });
-};
-
-// Show how many posts match this filter
-ContentController.prototype.tagFilterCount = function(c) {
-    var group = c.group();
-    var tag = group.tags[c.params.id];
-    if (!tag) tag = {};
-
-    if (c.body.filter) {
-        tag.filter = c.body.filter;
-    }
-
-    // count the number of posts matched
-    group.getContentForTag(tag, function(posts) {
-        c.send(posts.length.toString());
-    });
-};
-
-// Delete a tag from the group
-ContentController.prototype.deleteTag = function(c) {
-    c.req.group.deleteTag(c.params.id);
-    c.send({ redirect: c.pathTo.manageTags() });
-};
-
-// Add a tag to the specified posts
-ContentController.prototype.addTags = function(c) {
-    var Content = c.Content;
-    var group = c.req.group;
-    var selectedContent = c.body.selectedContent || [];
-    var unselectedContent = c.body.unselectedContent || [];
-    var count = 0;
-
-    if (selectedContent.indexOf('all') > -1) {
-        loadContent(c, function(posts) {
-            selectedContent = _.pluck(posts, 'id');
-            selectedContent = _.filter(selectedContent, function(id) { return unselectedContent.indexOf(id) == -1; });
-
-            addTag(selectedContent);
-        });
-    }
-    else {
-        addTag(selectedContent);
-    }
-
-    function addTag(selectedContent) {
-        async.forEach(selectedContent, function(id, next) {
-            Content.find(id, function(err, content) {
-                if (!content) {
-                    return next();
-                }
-
-                if (!content.tags) {
-                    content.tags = [];
-                }
-                if (!_.find(content.tags, function(tag) {
-                    return tag.tagId == c.params.id;
-                })) {
-                    var tag = _.find(group.tags, function(tag) { return tag.id == c.params.id; });
-                    content.tags.push({
-                        tagId: tag.id,
-                        name: tag.name,
-                        createdAt: new Date(),
-                        score: 0
-                    });
-
-                    content.save(function(err) {
-                        count++;
-                        next();
-                    });
-                }
-                else next();
-            });
-        }, function() {
-            //finally, update the group tag counts
-            group.recalculateTagContentCounts(c);
-
-            c.send({
-                message: count + ' posts tagged',
-                status: 'success',
-                icon: 'ok'
-            });
-        });
-    }
-};
-
-// Remove a tag from the specified posts
-ContentController.prototype.removeTags = function(c) {
-    var Content = c.Content;
-    var group = c.req.group;
-    var selectedContent = c.body.selectedContent || [];
-    var unselectedContent = c.body.unselectedContent || [];
-    var count = 0;
-
-    if (selectedContent.indexOf("all") > -1) {
-        loadContent(c, function(posts) {
-            selectedContent = _.pluck(posts, 'id');
-            selectedContent = _.filter(selectedContent, function(id) {
-                return unselectedContent.indexOf(id) == -1;
-            });
-
-            removeTag(selectedContent);
-        });
-    } else {
-        removeTag(selectedContent);
-    }
-
-    function removeTag(selectedContent) {
-        async.forEach(selectedContent, function(id, next) {
-            Content.find(id, function(err, content) {
-                if (!content) {
-                    return next();
-                }
-
-                if (!content.tags) {
-                    content.tags = [];
-                }
-                if (_.find(content.tags, function(tag) {
-                    return tag.tagId.toString() == c.params.id.toString();
-                })) {
-                    // remove the specified tag
-                    content.tags = _.reject(content.tags, function(tag) {
-                        return tag.tagId.toString() == c.params.id.toString();
-                    });
-
-                    content.save(function(err) {
-                        count++;
-                        next();
-                    });
-                }
-                else next();
-            });
-        }, function() {
-            // finally, update the group tag counts
-            group.recalculateTagContentCounts(c);
-
-            c.send({
-                message: count + ' posts un-tagged',
-                status: 'success',
-                icon: 'ok'
-            });
-        });
-    }
-};
 
 // TODO: move streams to another resource controller
 
