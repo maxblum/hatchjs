@@ -136,7 +136,7 @@
         window.table = $('#content-table').dataTable( {
             "bProcessing": true,
             "bServerSide": true,
-            "sAjaxSource": "<%- pathTo.load_group_content(req.group) %>?filter=<%- filter %>",
+            "sAjaxSource": "<%- pathTo.loadGroupContent(req.group) %>?filter=<%- filter %>",
             "fnDrawCallback": function() {
                 //setup tooltips
                 $('#content-table *[rel=tooltip]').tooltip();
@@ -190,7 +190,7 @@
                         var html = '<ul class="tags">';
 
                         $(val).each(function(i, tag) {
-                            html += '<li><a href="<%- pathTo.group_content(req.group) %>' + tag.tagId + '">' + tag.name + '</a></li>';
+                            html += '<li><a href="<%- pathTo.groupContent(req.group) %>' + tag.tagId + '">' + tag.name + '</a></li>';
                         });
 
                         html += '</ul>';
@@ -215,8 +215,8 @@
                         var content = obj.aData;
                         var html = '<div class="pull-right">';
 
-                        if(content.type == 'blogpost') html += '<a href="<%- pathTo.group_content(req.group) %>/' + content.id + '/edit"><%= __('Edit') %></a>';
-                        html += ' &nbsp; <a href="<%- pathTo.group_content(req.group) %>/' + content.id + '/delete" data-remote="true" data-confirm="<%= __('Are you sure you wish to delete this post?') %>" rel="tooltip" title="delete" data-success="<%= __('deleted post') %>"><i class="icon-remove"></i></a>';
+                        if(content.type == 'blogpost') html += '<a href="<%- pathTo.groupContent(req.group) %>/' + content.id + '/edit"><%= __('Edit') %></a>';
+                        html += ' &nbsp; <a href="<%- pathTo.groupContent(req.group) %>/' + content.id + '/delete" data-remote="true" data-confirm="<%= __('Are you sure you wish to delete this post?') %>" rel="tooltip" title="delete" data-success="<%= __('deleted post') %>"><i class="icon-remove"></i></a>';
 
                         html += '</div>';
 

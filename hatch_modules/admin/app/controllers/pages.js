@@ -50,6 +50,7 @@ PagesController.prototype.renderTree = function tree(c) {
 };
 
 PagesController.prototype.specials = function specials(c) {
+    this.pageName = 'specials';
     var Page = c.Page;
     Page.all({where: {groupId: c.req.group.id}}, function(err, pages) {
         // filter page types to special pages only
@@ -69,12 +70,16 @@ PagesController.prototype.specials = function specials(c) {
 }
 
 PagesController.prototype['new'] = function newPage(c) {
+    this.pageName = 'new-page';
     this.page = new c.Page;
     c.render('newPage');
 };
 
 PagesController.prototype.newSpecial = function newSpecial(c) {
-    c.render({page: new c.Page, type: c.req.params.type});
+    this.type = c.req.params.type;
+    this.page = new c.Page;
+    this.pageName = 'new-special' + (this.type ? '-' + this.type : '');
+    c.render();
 };
 
 PagesController.prototype.create = function create(c) {

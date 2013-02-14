@@ -4,7 +4,7 @@
             <% var li = matcher(pageName, '<li class="active">', '<li>'), liEnd = '</li>'; %>
             <li class="nav-header"><%= t('content.header.filter') %></li>
             <%- li('content') %>
-                <%- linkTo(icon('star') + t('content.all'), pathTo.group_content(req.group)) %>
+                <%- linkTo(icon('star') + t('content.all'), pathTo.groupContent(req.group)) %>
             <%- liEnd %>
             <% var iconFor = {
                 blogpost: 'align-left',
@@ -20,8 +20,9 @@
             <% }) %>
 
             <li class="nav-header"><%= t('content.header.tags') %></li>
+
             <%- li('manage-tags') %>
-                <%- linkTo(icon('tags') + t('content.manageTags'), pathTo.group_tags(req.group)) %>
+                <%- linkTo(icon('tags') + t('content.manageTags'), pathTo.groupTags(req.group)) %>
             <%- liEnd %>
             <%
                 var tags = (req.group.tags || []).slice(0, 5);
@@ -33,21 +34,34 @@
 
             <% tags.forEach(function(tag) { %>
                 <% if (tag) { %>
-                <li<%- pageName === 'content-' + tag.id ? ' class="active"' : '' %>>
-                    <%- linkTo(icon('tag') + tag.name +
-                    '<span class="badge pull-right">' + formatNumber(tag.contentCount), pathTo.filteredGroupContent(tag.id.toString())) %>
-                </li>
+                    <%- li('content-' + tag.id) %>
+                        <%- linkTo(icon('tag') + tag.name +
+                            '<span class="badge pull-right">' +
+                            formatNumber(tag.contentCount),
+                            pathTo.filteredGroupContent(tag.id.toString())) %>
+                    <%- liEnd %>
                 <% } %>
             <% }) %>
 
-            <li<%- pageName === 'new-tag' ? ' class="active"' : '' %>><a href="<%- pathTo.new_group_tag(req.group) %>"><i class="icon-plus"></i> <%= t('tag.new') %></a></li>
+            <%- li('new-tag') %>
+                <%- linkTo(icon('plus') + t('tag.new'), pathTo.newGroupTag(req.group)) %>
+            <%- liEnd %>
 
-            <li class="nav-header"><%= __('Import streams') %></li>
-            <li<%- pageName === 'manage-streams' ? ' class="active"' : '' %>><a href="<%- pathTo.group_streams(req.group) %>"><i class="icon-signin"></i> <%= __('Manage streams') %></a></li>
-            <li<%- pageName === 'new-stream' ? ' class="active"' : '' %>><a href="<%- pathTo.new_group_stream(req.group) %>"><i class="icon-plus"></i> <%= __('Add new stream') %></a></li>
+            <li class="nav-header"><%= t('stream.import') %></li>
 
-            <li class="nav-header"><%= __('Actions') %></li>
-            <li<%- pageName === 'new' ? ' class="active"' : '' %>><a href="<%- pathTo.new_group_content_entry(req.group) %>"><i class="icon-pencil"></i> <%= __('New blog post') %></a></li>
+            <%- li('manage-streams') %>
+                <%- linkTo(icon('signin') + t('streams.manage'), pathTo.groupStreams(req.group)) %>
+            <%- liEnd %>
+
+            <%- li('new-stream') %>
+                <%- linkTo(icon('plus') + t('streams.add'), pathTo.newGroupStream(req.group)) %>
+            <%- liEnd %>
+
+            <li class="nav-header"><%= ('content.header.actions') %></li>
+
+            <%- li('new') %>
+                <%- linkTo(icon('pencil') + t('content.new'), pathTo.newGroupContentEntry(req.group)) %>
+            <%- liEnd %>
         </ul>
     </div>
 </div>

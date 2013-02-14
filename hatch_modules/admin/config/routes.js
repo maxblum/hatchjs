@@ -13,7 +13,9 @@ exports.routes = function (map) {
                 items.get('load');
             });
         });
-        group.resources('tags');
+        group.resources('tags', function (tag) {
+            tag.get('count');
+        });
         group.resources('streams');
         group.resources('users', {as: 'community', suffix: 'member'});
         group.resources('pages', function (page) {

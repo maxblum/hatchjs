@@ -18,8 +18,6 @@
 
 var Application = require('./application');
 var async = require('async');
-var moment = require('moment');
-var chrono = require('chrono-node');
 
 module.exports = TagsController;
 
@@ -36,15 +34,27 @@ require('util').inherits(TagsController, Application);
 
 // Show the manage tags screen
 TagsController.prototype.index = function(c) {
+    this.pageName = 'manage-tags';
+    c.render();
+};
+
+// New tag
+TagsController.prototype.new = function(c) {
+    this.pageName = 'new-tag';
+    this.tag = {id: 'new'};
+    this.defaultFilter = 'filter = function(content) {\n\treturn false; ' + 
+        '//add your filter criteria here\n};';
     c.render();
 };
 
 // Edit a tag
 TagsController.prototype.edit = function(c) {
-    c.locals.tag = c.params.id ? _.find(c.req.group.tags, function(tag) {
+    this.pageName = 'manage-tags';
+    this.tag = _.find(c.req.group.tags, function(tag) {
         return tag.id == c.params.id;
-    }) : {};
-    c.locals.defaultFilter = 'filter = function(content) {\n\treturn false; //add your filter criteria here\n};';
+    });
+    this.defaultFilter = 'filter = function(content) {\n\treturn false; ' +
+        '//add your filter criteria here\n};';
     c.render();
 };
 

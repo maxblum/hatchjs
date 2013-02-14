@@ -14,6 +14,7 @@ en:
     modules: Modules
   content:
     header:
+      actions: Actions
       filter: Filter
       tags: Tags
     all: All content
@@ -23,5 +24,12 @@ en:
     poll: Polls
     imported: Imported posts
     manageTags: Manage tags
+    new: New blog post
   tag:
     new: New tag
+    add: Add new tag
+    edit: Edit tag
+  stream:
+    import: Import streams
+    manage: Manage streams
+    add: Add new stream

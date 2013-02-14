@@ -1,6 +1,6 @@
 <div class="row">
 
-  <%- partial('pages/sidebar', { locals: { pageName: 'new-page' }}) %>
+    <% include _sidebar %>
 
   <div class="span10">
     <div class="module">
@@ -10,13 +10,13 @@
 
         <hr/>
 
-        <%- formTagRemote(pathTo.pages(), { method: 'POST', id: 'page_form', class: 'form-vertical'}) %>
-          <%- partial('pages/pageForm', {locals: { page: page}}) %>
+        <%- formTagBegin({action: pathTo.groupPages(req.group), remote: true, id: 'page_form', class: 'form-vertical'}) %>
+        <% include _pageForm %>
           <div class="form-actions">
             <button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i> <%- __('Create page') %></button>
-            <%- linkTo(__('Cancel'), pathTo.pages(), {class: 'btn'}) %>
+            <%- linkTo(__('Cancel'), pathTo.groupPages(req.group), {class: 'btn'}) %>
           </div>
-        <%- end() %>
+        <%- formTagEnd() %>
 
       </div>
     </div>
