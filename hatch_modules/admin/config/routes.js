@@ -1,37 +1,29 @@
 exports.routes = function (map) {
+    map.camelCaseHelperNames = true;
+
     map.root('pages#index');
 
-    map.resources('groups', function (g) {
-        g.resources('modules');
-        g.resources('content', {as: 'content', suffix: 'entry'}, function (c) {
-            c.get('streams', 'content#streams', {
-                collection: true, as: 'groupContentStreams'
+    map.resources('groups', function (group) {
+        group.resources('modules');
+        group.resources('content', {as: 'content', suffix: 'entry'}, function (item) {
+            item.collection(function (items) {
+                items.get('streams', {as: 'groupContentStreams'});
+                items.get('filter/:filter', '#index', {as: 'filteredGroupContent' });
+                items.del('destroyAll', {as: 'destroySelectedGroupContent'});
+                items.get('load');
             });
-            c.get('filter/:filter', 'content#index', {
-                collection: true, as: 'filteredGroupContent'
-            });
-            c.del('destroyAll', 'content#destroyAll', {
-                collection: true, as: 'destroySelectedGroupContent'
-            });
-            c.get('load', 'content#load', {collection: true});
         });
-        g.resources('tags');
-        g.resources('streams');
-        g.resources('users', {as: 'community', suffix: 'member'});
-        g.resources('pages', function (pages) {
-            pages.get('new-special', 'pages#newSpecial', {
-                collection: true, as: 'newSpecial'
+        group.resources('tags');
+        group.resources('streams');
+        group.resources('users', {as: 'community', suffix: 'member'});
+        group.resources('pages', function (page) {
+            page.collection(function (pages) {
+                pages.get('new-special', '#newSpecial', {as: 'newSpecial'});
+                pages.get('new-special/:type', '#newSpecial', {as: 'newSpecialType'});
+                pages.get('specials', {as: 'groupSpecialPages'});
+                pages.get('renderTree', {as: 'renderTree'});
             });
-            pages.get('new-special/:type', 'pages#newSpecial', {
-                collection: true, as: 'newSpecialType'
-            });
-            pages.get('specials', 'pages#specials', {
-                collection: true, as: 'specialPages'
-            });
-            pages.get('renderTree', 'pages#renderTree', {
-                collection: true, as: 'renderTree'
-            });
-            pages.put('reorder.:format?', 'pages#updateOrder');
+            page.put('reorder.:format?', 'pages#updateOrder');
         });
     });
 
