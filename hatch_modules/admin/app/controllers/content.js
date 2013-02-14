@@ -26,6 +26,11 @@ module.exports = ContentController;
 
 function ContentController(init) {
     Application.call(this, init);
+
+    init.before(function setup(c) {
+        this._ = _;
+        c.next();
+    });
 }
 
 require('util').inherits(ContentController, Application);
@@ -34,66 +39,90 @@ ContentController.prototype.index = function (c) {
     c.render();
 };
 
+// loads content based on the current filter/critera
+function loadContent(c, cb) {
 
-exports._initialize = function () {
-    this.extendWith('baseController');
-    this.before(function setup(c, next) { c.locals._ = _; next(); });
-};
+    return makeQuery(makeCond(c), cb);
 
-//loads content based on the current filter/critera
-function loadContent(c, next) {
-    var Content = c.model('Content');
+    function makeCond(c) {
+        var cond = {
+            groupId: c.req.group.id
+        };
 
-    var cond = {
-        groupId: c.group().id
-    };
+        var query = c.req.query;
+        var limit = parseInt(query.iDisplayLength || 0, 10);
+        var offset = parseInt(query.iDisplayStart || 0, 10);
+        var colNames = ['', 'title', 'tagString', 'createdAt', 'score', ''];
+        var orderBy = query.iSortCol_0 > 0 ?
+            (colNames[query.iSortCol_0] + ' ' + query.sSortDir_0.toUpperCase()) :
+            'createdAt DESC';
+        var search = query.sSearch || c.req.body.search;
+        var filter = query.filter || c.req.body.filter;
 
-    var limit = parseInt(c.req.query.iDisplayLength || 0, 10);
-    var offset = parseInt(c.req.query.iDisplayStart || 0, 10);
-    var orderBy = c.req.query.iSortCol_0 > 0 ? (['', 'title', 'tagString', 'createdAt', 'score', ''][c.req.query.iSortCol_0] + ' ' + c.req.query.sSortDir_0.toUpperCase()) : 'createdAt DESC';
-    var search = c.req.query.sSearch || c.req.body.search;
-    var filter = c.req.query.filter || c.req.body.filter;
-
-    if(filter === 'imported') {
-        cond.imported = true;
-    } else if(typeof filter === 'string' && filter.indexOf("[native code]") === -1) {
-        //filter by tag
-        if(!isNaN(filter)) cond['tags:tagId'] = filter;
-        //filter by content type
-        else cond.type = filter;
+        if (filter === 'imported') {
+            cond.imported = true;
+        } else if (typeof filter === 'string' && filter.indexOf("[native code]") === -1) {
+            // filter by tag
+            if (!isNaN(filter)) {
+                cond['tags:tagId'] = filter;
+            }
+            // filter by content type
+            else {
+                cond.type = filter;
+            }
+        }
+        return cond;
     }
 
-    Content.count(cond, function(err, count) {
-        //redis fulltext search
-        if(search) {
-            Content.all({where: cond, fulltext: search, order: orderBy, offset: offset, limit: limit}, function(err, posts) {
-                posts.count = count;
-                next(posts);
-            });
-        }
-        //no filter, standard query
-        else {
-            Content.all({where: cond, order: orderBy, offset: offset, limit: limit}, function(err, posts) {
-                posts.count = count;
-                next(posts);
-            });
-        }
-    });
+    function makeQuery(cb) {
+
+        c.Content.count(cond, function(err, count) {
+            if (err) {
+                return c.next(err);
+            }
+            // redis fulltext search
+            if (search) {
+                c.Content.all({
+                    where: cond,
+                    fulltext: search,
+                    order: orderBy,
+                    offset: offset,
+                    limit: limit
+                }, function(err, posts) {
+                    posts.count = count;
+                    cb(posts);
+                });
+            }
+            // no filter, standard query
+            else {
+                c.Content.all({
+                    where: cond,
+                    order: orderBy,
+                    offset: offset,
+                    limit: limit
+                }, function(err, posts) {
+                    posts.count = count;
+                    cb(posts);
+                });
+            }
+        });
+
+    }
 }
 
-//TODO: show content
-exports.index = function(c) {
+// TODO: show content
+ContentController.prototype.index = function index(c) {
     c.req.session.adminSection = 'content';
-    c.locals.filter = c.params.filter;
-    c.render('content/index');
+    this.filter = c.params.filter;
+    c.render();
 };
 
-//loads all of the content and returns json
-exports.load = function(c) {
+// Load all of the content and returns json
+ContentController.prototype.load = function load(c) {
     loadContent(c, function(posts) {
         posts = fixDates(posts);
 
-        //json response
+        // json response
         c.send({
             sEcho: c.req.query.sEcho || 1,
             iTotalRecords: posts.count,
@@ -102,7 +131,7 @@ exports.load = function(c) {
         });
     });
 
-    //nicely formats the dates
+    // nicely formats the dates
     function fixDates(posts) {
         posts.forEach(function(post) {
             post.createdAt = moment(post.createdAt || new Date()).fromNow();
@@ -112,15 +141,15 @@ exports.load = function(c) {
     }
 }
 
-//shows the edit blog post form
-exports.edit = function(c) {
-    var Content = c.model('Content');
+// Show the edit blog post form
+ContentController.prototype.edit = function edit(c) {
     var post = {};
 
-    if(c.req.params.id) {
-        Content.find(c.params.id, function(err, content) {
+    if (c.req.params.id) {
+        c.Content.find(c.params.id, function(err, content) {
             post = content;
-            post.createdAt = moment(post.createdAt || new Date().toString()).format("D-MMM-YYYY HH:mm:ss");
+            post.createdAt = moment(post.createdAt ||
+                new Date().toString()).format("D-MMM-YYYY HH:mm:ss");
             done();
         });
     }
@@ -131,30 +160,36 @@ exports.edit = function(c) {
     function done() {
         c.locals._ = _;
         c.locals.post = post;
-        c.render('content/edit');
+        c.render();
     }
 };
 
-//saves a content record
-exports.save = function(c) {
-    var Content = c.model('Content');
+// Saves a content record
+// TODO: rename method to 'update'
+// TODO: move validation and date parse logic to model
+ContentController.prototype.save = function save(c) {
+    var Content = c.Content;
     var id = c.req.body.id;
     var group = c.req.group;
     var post = null;
     var data = c.body;
     var createdAt = null;
 
-    //parse the date
-    if(data.createdAt && ['now', 'immediately'].join(',').indexOf((data.createdAt || '').toString().toLowerCase()) > -1) createdAt = new Date();
-    else {
+    // parse the date
+    var isNow = 'now,immediately'.indexOf((data.createdAt || '').toString().toLowerCase()) > -1;
+    if (data.createdAt && isNow) {
+        createdAt = new Date();
+    } else {
         createdAt = new Date(data.createdAt);
-        if(createdAt.toString() == new Date('invalid').toString()) createdAt = chrono.parseDate(data.createdAt);
+        if (createdAt.toString() == new Date('invalid').toString()) {
+            createdAt = chrono.parseDate(data.createdAt);
+        }
     }
     data.createdAt = createdAt;
     data.updatedAt = new Date();
 
-    //validate dates
-    if(!data.createdAt) {
+    // validate dates
+    if (!data.createdAt) {
         return c.send({
             message: 'Please enter a valid publish date',
             status: 'error',
@@ -162,8 +197,8 @@ exports.save = function(c) {
         });
     }
 
-    //validate title and text
-    if(!data.title || !data.text) {
+    // validate title and text
+    if (!data.title || !data.text) {
         return c.send({
             message: 'Please enter a title and some text',
             status: 'error',
@@ -171,7 +206,7 @@ exports.save = function(c) {
         });
     }
 
-    //build the tags json
+    // build the tags json
     var tags = data.tags || [];
     data.tags = [];
 
@@ -184,24 +219,26 @@ exports.save = function(c) {
         });
     });
 
-    //build the tag string
+    // build the tag string
     data.tagString = _.pluck(data.tags, 'name').join(', ');
 
-    //update existing content
-    if(id) {
+    // update existing content
+    if (id) {
         Content.find(id, function(err, content) {
             post = content;
 
-            //merge tag scores/createdAt from the existing post
+            // merge tag scores/createdAt from the existing post
             tags.forEach(function(tag) {
-                var existing = _.find(content.tags, function(existingTag) { return existingTag.name == tag.name });
-                if(existing) {
+                var existing = _.find(content.tags, function(existingTag) {
+                    return existingTag.name == tag.name
+                });
+                if (existing) {
                     tag.createdAt = existing.createdAt;
                     tag.score = existing.score;
                 }
             });
 
-            //update the keys manually
+            // update the keys manually
             Object.keys(data).forEach(function(key) {
                 content[key] = data[key];
             });
@@ -211,7 +248,7 @@ exports.save = function(c) {
             });
         });
     }
-    //create new content
+    // create new content
     else {
         //set the groupId and authorId for the new post
         data.groupId = group.id;
@@ -226,7 +263,7 @@ exports.save = function(c) {
     }
 
     function done() {
-        //finally, update the group tag counts
+        // finally, update the group tag counts
         group.recalculateTagContentCounts(c);
 
         c.send({
@@ -238,14 +275,14 @@ exports.save = function(c) {
     }
 };
 
-//deletes a content record
-exports.delete = function(c) {
+// Delete a content record
+// TODO: rename to destroy
+ContentController.prototype['delete'] = function(c) {
     var group = c.req.group;
-    var Content = c.model('Content');
 
-    Content.find(c.params.id, function(err, content) {
+    c.Content.find(c.params.id, function(err, content) {
         content.destroy(function(err) {
-            //finally, update the group tag counts
+            // finally, update the group tag counts
             group.recalculateTagContentCounts(c);
 
             c.send('ok');
@@ -253,30 +290,34 @@ exports.delete = function(c) {
     });
 };
 
-//deletes multiple content records
-exports.deleteMulti = function(c) {
-    var Content = c.model('Content');
+// Delete multiple content records
+// TODO: rename to destroyAll
+ContentController.prototype.deleteMulti = function(c) {
+    var Content = c.Content;
     var group = c.req.group;
     var selectedContent = c.body.selectedContent || [];
     var unselectedContent = c.body.unselectedContent || [];
     var count = 0;
 
-    if(selectedContent.indexOf("all") > -1) {
+    if (selectedContent.indexOf('all') > -1) {
         loadContent(c, function(posts) {
             selectedContent = _.pluck(posts, 'id');
-            selectedContent = _.filter(selectedContent, function(id) { return unselectedContent.indexOf(id) == -1; });
+            selectedContent = _.filter(selectedContent, function(id) {
+                return unselectedContent.indexOf(id) == -1;
+            });
 
             deleteSelectedContent(selectedContent);
         });
-    }
-    else {
+    } else {
         deleteSelectedContent(selectedContent);
     }
 
     function deleteSelectedContent(selectedContent) {
         async.forEach(selectedContent, function(id, next) {
             Content.find(id, function(err, content) {
-                if(!content) return next();
+                if (!content) {
+                    return next();
+                }
 
                 content.destroy(function(err) {
                     count++;
@@ -284,7 +325,7 @@ exports.deleteMulti = function(c) {
                 });
             });
         }, function() {
-            //finally, update the group tag counts
+            // finally, update the group tag counts
             group.recalculateTagContentCounts(c);
 
             c.send({
@@ -296,22 +337,24 @@ exports.deleteMulti = function(c) {
     }
 };
 
-//shows the manage tags screen
-exports.manageTags = function(c) {
-    c.render('content/managetags');
+// Show the manage tags screen
+ContentController.prototype.manageTags = function(c) {
+    c.render();
 };
 
-//edits a tag
-exports.editTag = function(c) {
-    c.locals.tag = c.params.id ? _.find(c.req.group.tags, function(tag) { return tag.id == c.params.id; }) : {};
+// Edit a tag
+ContentController.prototype.editTag = function(c) {
+    c.locals.tag = c.params.id ? _.find(c.req.group.tags, function(tag) {
+        return tag.id == c.params.id;
+    }) : {};
     c.locals.defaultFilter = 'filter = function(content) {\n\treturn false; //add your filter criteria here\n};';
-    c.render('content/edittag');
+    c.render();
 };
 
-//saves a tag
-exports.saveTag = function(c) {
-    //validate
-    if(!c.body.name) {
+// Save a tag
+ContentController.prototype.saveTag = function(c) {
+    // validate
+    if (!c.body.name) {
         return c.send({
             message: 'Please enter a tag name',
             status: 'error',
@@ -320,29 +363,37 @@ exports.saveTag = function(c) {
     }
 
     var group = c.req.group;
-    var tag = _.find(group.tags, function(tag) { return tag.id.toString() === c.body.id.toString(); });
+    var tag = _.find(group.tags, function(tag) {
+        return tag.id.toString() === c.body.id.toString();
+    });
 
-    if(!tag) {
-        if(!group.tags) group.tags = [];
+    if (!tag) {
+        if (!group.tags) {
+            group.tags = [];
+        }
         tag = { id: group.tags.length, contentCount: 0 };
         group.tags.push(tag);
     }
 
-    //update tag
+    // update tag
     tag.name = c.body.name;
     tag.description = c.body.description;
     tag.filter = c.body.filterEnabled ? c.body.filter : null;
 
-    //save the group
+    // save the group
     group.save(function() {
-        //add the existing content async
-        if(c.body.filterExisting) {
+        // add the existing content async
+        if (c.body.filterExisting) {
             group.getContentForTag(tag, function(posts) {
                 async.forEach(posts, function(content, next) {
-                    if(!content.tags) content.tags = [];
+                    if (!content.tags) {
+                        content.tags = [];
+                    }
 
-                    //if not already in this tag, add it
-                    if(!_.find(content.tags, function(t) { return t.tagId == tag.id; })) {
+                    // if not already in this tag, add it
+                    if (!_.find(content.tags, function(t) {
+                        return t.tagId == tag.id;
+                    })) {
                         content.tags.push({
                             tagId: tag.id,
                             name: tag.name,
@@ -350,11 +401,11 @@ exports.saveTag = function(c) {
                             score: 0
                         });
 
-                        //save and forget
+                        // save and forget
                         content.save(next);
                     }
                 }, function() {
-                    //recalc tag counts
+                    // recalc tag counts
                     group.recalculateTagContentCounts();
                 });
             });
@@ -368,35 +419,37 @@ exports.saveTag = function(c) {
     });
 };
 
-//shows how many posts match this filter
-exports.tagFilterCount = function(c) {
+// Show how many posts match this filter
+ContentController.prototype.tagFilterCount = function(c) {
     var group = c.group();
     var tag = group.tags[c.params.id];
-    if(!tag) tag = {};
+    if (!tag) tag = {};
 
-    if(c.body.filter) tag.filter = c.body.filter;
+    if (c.body.filter) {
+        tag.filter = c.body.filter;
+    }
 
-    //count the number of posts matched
+    // count the number of posts matched
     group.getContentForTag(tag, function(posts) {
         c.send(posts.length.toString());
     });
 };
 
-//deletes a tag from the group
-exports.deleteTag = function(c) {
+// Delete a tag from the group
+ContentController.prototype.deleteTag = function(c) {
     c.req.group.deleteTag(c.params.id);
     c.send({ redirect: c.pathTo.manageTags() });
 };
 
-//adds a tag to the specified posts
-exports.addTags = function(c) {
-    var Content = c.model('Content');
+// Add a tag to the specified posts
+ContentController.prototype.addTags = function(c) {
+    var Content = c.Content;
     var group = c.req.group;
     var selectedContent = c.body.selectedContent || [];
     var unselectedContent = c.body.unselectedContent || [];
     var count = 0;
 
-    if(selectedContent.indexOf("all") > -1) {
+    if (selectedContent.indexOf('all') > -1) {
         loadContent(c, function(posts) {
             selectedContent = _.pluck(posts, 'id');
             selectedContent = _.filter(selectedContent, function(id) { return unselectedContent.indexOf(id) == -1; });
@@ -411,10 +464,16 @@ exports.addTags = function(c) {
     function addTag(selectedContent) {
         async.forEach(selectedContent, function(id, next) {
             Content.find(id, function(err, content) {
-                if(!content) return next();
+                if (!content) {
+                    return next();
+                }
 
-                if(!content.tags) content.tags = [];
-                if(!_.find(content.tags, function(tag) { return tag.tagId == c.params.id; })) {
+                if (!content.tags) {
+                    content.tags = [];
+                }
+                if (!_.find(content.tags, function(tag) {
+                    return tag.tagId == c.params.id;
+                })) {
                     var tag = _.find(group.tags, function(tag) { return tag.id == c.params.id; });
                     content.tags.push({
                         tagId: tag.id,
@@ -443,35 +502,44 @@ exports.addTags = function(c) {
     }
 };
 
-//removes a tag from the specified posts
-exports.removeTags = function(c) {
-    var Content = c.model('Content');
+// Remove a tag from the specified posts
+ContentController.prototype.removeTags = function(c) {
+    var Content = c.Content;
     var group = c.req.group;
     var selectedContent = c.body.selectedContent || [];
     var unselectedContent = c.body.unselectedContent || [];
     var count = 0;
 
-    if(selectedContent.indexOf("all") > -1) {
+    if (selectedContent.indexOf("all") > -1) {
         loadContent(c, function(posts) {
             selectedContent = _.pluck(posts, 'id');
-            selectedContent = _.filter(selectedContent, function(id) { return unselectedContent.indexOf(id) == -1; });
+            selectedContent = _.filter(selectedContent, function(id) {
+                return unselectedContent.indexOf(id) == -1;
+            });
 
             removeTag(selectedContent);
         });
-    }
-    else {
+    } else {
         removeTag(selectedContent);
     }
 
     function removeTag(selectedContent) {
         async.forEach(selectedContent, function(id, next) {
             Content.find(id, function(err, content) {
-                if(!content) return next();
+                if (!content) {
+                    return next();
+                }
 
-                if(!content.tags) content.tags = [];
-                if(_.find(content.tags, function(tag) { return tag.tagId.toString() == c.params.id.toString(); })) {
-                    //remove the specified tag
-                    content.tags = _.reject(content.tags, function(tag) { return tag.tagId.toString() == c.params.id.toString(); });
+                if (!content.tags) {
+                    content.tags = [];
+                }
+                if (_.find(content.tags, function(tag) {
+                    return tag.tagId.toString() == c.params.id.toString();
+                })) {
+                    // remove the specified tag
+                    content.tags = _.reject(content.tags, function(tag) {
+                        return tag.tagId.toString() == c.params.id.toString();
+                    });
 
                     content.save(function(err) {
                         count++;
@@ -481,7 +549,7 @@ exports.removeTags = function(c) {
                 else next();
             });
         }, function() {
-            //finally, update the group tag counts
+            // finally, update the group tag counts
             group.recalculateTagContentCounts(c);
 
             c.send({
@@ -493,41 +561,46 @@ exports.removeTags = function(c) {
     }
 };
 
-//shows the import streams
-exports.streams = function(c) {
-    var ImportStream = c.model('ImportStream');
+// TODO: move streams to another resource controller
+
+// Show the import streams
+// TODO: rename to index
+ContentController.prototype.streams = function(c) {
+    var ImportStream = c.ImportStream;
 
     ImportStream.all({ where: { groupId: c.req.group.id }}, function(err, streams) {
-        c.locals.streams = streams;
-        c.locals.importers = c.api.importStream.getImporters();
-        c.render('content/streams');
-    });
+        this.streams = streams;
+        this.importers = c.compound.hatch.importStream.getImporters();
+        c.render();
+    }.bind(this));
 };
 
-//edits an import stream
-exports.editStream = function(c) {
-    var ImportStream = c.model('ImportStream');
+// Edit an import stream
+// TODO: rename to edit
+ContentController.prototype.editStream = function(c) {
+    var importStream = c.compound.hatch.importStream;
 
-    if(c.params.id) {
-        ImportStream.find(c.params.id, function(err, stream) {
+    if (c.params.id) {
+        c.ImportStream.find(c.params.id, function(err, stream) {
             c.locals.stream = stream;
-            c.locals.importers = c.api.importStream.getImporters();
-            c.render('content/editstream');
+            c.locals.importers = importStream.getImporters();
+            c.render();
         });
-    }
-    else {
+    } else {
         c.locals.stream = {};
-        c.locals.importers = c.api.importStream.getImporters();
-        c.render('content/editstream');
+        c.locals.importers = importStream.getImporters();
+        c.render();
     }
 };
 
-//saves a stream
-exports.saveStream = function(c) {
-    var ImportStream = c.model('ImportStream');
+// Save a stream
+// TODO: refactor controller method (too big)
+// TODO: rename to update
+ContentController.prototype.saveStream = function(c) {
+    var ImportStream = c.ImportStream;
 
-    //validate
-    if(!c.body.title || !c.body.query) {
+    // validate
+    if (!c.body.title || !c.body.query) {
         return c.send({
             message: 'Please enter a title and a query',
             status: 'error',
@@ -535,16 +608,23 @@ exports.saveStream = function(c) {
         });
     }
 
-    //create stream data
-    var stream = {}
+    // create stream data
+    var stream = {};
 
-    if(!stream) {
-        if(!group.importStreams) group.importStreams = [];
-        stream = { id: group.importStreams.length, contentCount: 0, enabled: true };
+    // TODO: WTF? next if looks unnecessary (never works)
+    if (!stream) {
+        if (!group.importStreams) {
+            group.importStreams = [];
+        }
+        stream = {
+            id: group.importStreams.length,
+            contentCount: 0,
+            enabled: true
+        };
         group.importStreams.push(stream);
     }
 
-    //update stream
+    // update stream
     stream.id = c.body.id;
     stream.groupId = c.req.group.id;
     stream.type = c.body.type;
@@ -553,8 +633,10 @@ exports.saveStream = function(c) {
     stream.interval = c.body.interval;
     stream.tags = [];
 
-    //new streams should be enabled by default
-    if(!stream.id) stream.enabled = true;
+    // new streams should be enabled by default
+    if (!stream.id) {
+        stream.enabled = true;
+    }
 
     (c.body.tags || []).forEach(function(tag) {
         stream.tags.push({
@@ -566,7 +648,7 @@ exports.saveStream = function(c) {
     });
 
     //save the stream
-    if(stream.id) {
+    if (stream.id) {
         ImportStream.find(stream.id, function(err, existing) {
             existing.updateAttributes(stream, done);
         });
@@ -583,23 +665,23 @@ exports.saveStream = function(c) {
     }
 };
 
-//deletes a stream from the group
-exports.deleteStream = function(c) {
-    var ImportStream = c.model('ImportStream');
-    ImportStream.find(c.params.id, function(err, stream) {
+// Delete a stream from the group
+// TODO: rename to destroy
+ContentController.prototype.deleteStream = function(c) {
+    c.ImportStream.find(c.params.id, function(err, stream) {
         stream.destroy(function() {
-            c.send({ redirect: c.pathTo.streams() });
+            c.send({ redirect: c.pathTo.groupContentStreams(c.req.group) });
         });
     });
 };
 
-//pauses or unpauses a stream
-exports.toggleStream = function(c) {
-    var ImportStream = c.model('ImportStream');
-    ImportStream.find(c.params.id, function(err, stream) {
+// Pause or unpauses a stream
+// TODO: rename to toggle
+ContentController.prototype.toggleStream = function(c) {
+    c.ImportStream.find(c.params.id, function(err, stream) {
         stream.enabled = !stream.enabled;
         stream.save(function() {
-            c.send({ redirect: c.pathTo.streams() });
+            c.send({ redirect: c.pathTo.groupContentStreams(c.req.group) });
         });
     });
 };

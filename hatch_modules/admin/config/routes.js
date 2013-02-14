@@ -3,7 +3,11 @@ exports.routes = function (map) {
 
     map.resources('groups', function (g) {
         g.resources('modules');
-        g.resources('content', {as: 'content', suffix: 'entry'});
+        g.resources('content', {as: 'content', suffix: 'entry'}, function (c) {
+            c.get('streams', 'content#streams', {
+                collection: true, as: 'groupContentStreams'
+            });
+        });
         g.resources('users', {as: 'community', suffix: 'member'});
         g.resources('pages', function (pages) {
             pages.get('new-special', 'pages#newSpecial', {
