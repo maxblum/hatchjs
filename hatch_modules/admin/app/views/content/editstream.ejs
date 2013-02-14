@@ -1,0 +1,97 @@
+<div class="row">
+
+    <%- partial('content/sidebar', { locals: {pageName: isNaN(stream.id) ? 'new-stream' : 'manage-streams' }}) %>
+
+    <div class="span10">
+        <div class="module">
+            <div class="content">
+                <% if(stream.id != null) { %>
+                    <h3><%= __('Edit stream') %></h3>
+                <% } else { %>
+                    <h3><%= __('Add new stream') %></h3>
+                <% } %>
+
+                <hr/>
+
+                <%- formTagRemote(pathTo.saveStream(), { method: 'post', id: 'stream-form' }) %>
+                    <input type="hidden" name="id" value="<%- stream && stream.id %>" />
+
+                    <div class="control-group">
+                        <label class="control-label" for="title"><%= __('Stream title') %></label>
+                        <div class="controls">
+                            <input type="text" class="input-xlarge" id="title" name="title" value="<%- stream && stream.title %>">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="type"><%= __('Stream source') %></label>
+                        <div class="controls">
+                            <select id="type" name="type" class="">
+                                <% Object.keys(importers).forEach(function(key) { var type = importers[key]; %>
+                                    <option value="<%- type.name %>"<%- stream.type == type.name ? ' selected="selected"':'' %>><%- type.description %></option>
+                                <% }); %>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="query"><%= __('Query') %></label>
+                        <div class="controls">
+                            <input type="text" class="input-xlarge" id="query" name="query" value="<%- stream && stream.query %>">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="tags" rel="popover" title="Help" data-content="<%= __('Enter tags separated by a space or comma') %>">
+                            <%= __('Tags') %>
+                            <i class="icon-info-sign"></i>
+                        </label>
+                        <div class="controls">
+                            <select id="tags" name="tags[]" multiple="multiple" class="span3 chzn-select-create" data-placeholder="<%= __('Enter tags...') %>">
+                                <% (req.group.tags || []).forEach(function(tag) { %>
+                                    <% if(!tag) return; %>
+                                    <option<%- _.find(stream.tags && stream.tags.items || [], function(t) { return t.tagId == tag.id }) ? ' selected="selected"':'' %>><%- tag.name %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="interval"><%= __('How often') %></label>
+                        <div class="controls">
+                            <select id="type" name="interval">
+                                <option value="60000"<%- stream.interval == 60000 ? 'selected="selected"':''%>><%= __('Every minute') %></option>
+                                <option value="300000"<%- stream.interval == 300000 ? 'selected="selected"':''%>><%= __('Every 5 minutes') %></option>
+                                <option value="600000"<%- stream.interval == 600000 ? 'selected="selected"':''%>><%= __('Every 10 minutes') %></option>
+                                <option value="3600000"<%- stream.interval == 3600000 ? 'selected="selected"':''%>><%= __('Every hour') %></option>
+                                <option value="86400000"<%- stream.interval == 86400000 ? 'selected="selected"':''%>><%= __('Every day') %></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary"><%= __('Save changes') %></button>
+                        <a href="<%- pathTo.streams() %>" class="btn"><%= __('Cancel') %></a>
+                    </div>
+                <%- end() %>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(".content .chzn-select").chosen();
+
+        //bind the form ajax
+        $('#stream-form').bind('ajax:success', function(e, data) {
+            $.noty({text: '<i class="icon-' + data.icon + '"></i> ' + data.message, type: data.status});
+
+            if(data.status == "success") {
+                //refresh the page
+                setTimeout(function() { window.location = '<%- pathTo.streams() %>'; }, 1000);
+            }
+        });
+    });
+</script>

@@ -1,0 +1,36 @@
+<div class="span2">
+    <div class="module">
+        <ul class="nav nav-list">
+            <li class="nav-header"><%= __('Filter') %></li>
+            <li<%- pageName === 'content' ? ' class="active"' : '' %>><a href="<%- pathTo.content() %>"><i class="icon-star"></i> <%= __('All content') %></a></li>
+            <li<%- pageName === 'content-blogpost' ? ' class="active"' : '' %>><a href="<%- pathTo.content('blogpost') %>"><i class="icon-align-left"></i> <%= __('Blog posts') %></a></li>
+            <li<%- pageName === 'content-discussion' ? ' class="active"' : '' %>><a href="<%- pathTo.content('discussion') %>"><i class="icon-comments"></i> <%= __('Discussions') %></a></li>
+            <li<%- pageName === 'content-statusupdate' ? ' class="active"' : '' %>><a href="<%- pathTo.content('statusupdate') %>"><i class="icon-user"></i> <%= __('Status updates') %></a></li>
+            <li<%- pageName === 'content-poll' ? ' class="active"' : '' %>><a href="<%- pathTo.content('poll') %>"><i class="icon-bar-chart"></i> <%= __('Polls') %></a></li>
+            <li<%- pageName === 'content-imported' ? ' class="active"' : '' %>><a href="<%- pathTo.content('imported') %>"><i class="icon-cloud"></i> <%= __('Imported posts') %></a></li>
+
+            <li class="nav-header"><%= __('Tags') %></li>
+            <li<%- pageName === 'manage-tags' ? ' class="active"' : '' %>><a href="<%- pathTo.manageTags() %>"><i class="icon-tags"></i> <%= __('Manage tags') %></a></li>
+            <%
+                var tags = (req.group.tags || []).slice(0, 5);
+                tags = _.filter(tags, function(tag) { return tag && tag.contentCount > 0; });
+                if(typeof filter != 'undefined' && filter && !_.find(tags, function(t) { return t && t.id == filter; })) {
+                    tags.push(_.find(req.group.tags || [], function(t) { return t && t.id == filter; }));
+                }
+            %>
+            <% tags.forEach(function(tag) { %>
+                <% if(tag) { %>
+                    <li<%- pageName === 'content-' + tag.id ? ' class="active"' : '' %>><a href="<%- pathTo.content(tag.id.toString()) %>"><i class="icon-tag"></i> <%- tag.name %> <span class="badge pull-right"><%- formatNumber(tag.contentCount) %></span></a></li>
+                <% } %>
+            <% }) %>
+            <li<%- pageName === 'new-tag' ? ' class="active"' : '' %>><a href="<%- pathTo.newTag() %>"><i class="icon-plus"></i> <%= __('Add new tag') %></a></li>
+
+            <li class="nav-header"><%= __('Import streams') %></li>
+            <li<%- pageName === 'manage-streams' ? ' class="active"' : '' %>><a href="<%- pathTo.streams() %>"><i class="icon-signin"></i> <%= __('Manage streams') %></a></li>
+            <li<%- pageName === 'new-stream' ? ' class="active"' : '' %>><a href="<%- pathTo.newStream() %>"><i class="icon-plus"></i> <%= __('Add new stream') %></a></li>
+
+            <li class="nav-header"><%= __('Actions') %></li>
+            <li<%- pageName === 'new' ? ' class="active"' : '' %>><a href="<%- pathTo.newContent() %>"><i class="icon-pencil"></i> <%= __('New blog post') %></a></li>
+        </ul>
+    </div>
+</div>

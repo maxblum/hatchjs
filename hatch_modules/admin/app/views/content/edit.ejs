@@ -1,0 +1,141 @@
+<div class="row">
+
+<%- partial('content/sidebar', { locals: {pageName: post.id ? 'content' : 'new'}}) %>
+
+    <%- formTagRemote(pathTo.saveContent(), { id: 'content-form', class: 'content-form', method: 'post' }) %>
+        <input type="hidden" name="id" value="<%- post.id %>" />
+        <input type="hidden" name="type" value="blogpost" />
+
+        <div class="span7">
+            <div class="module">
+                <div class="content">
+                    <div class="control-group">
+                        <label class="control-label" for="title"><%= __('Blog post title') %></label>
+                        <div class="controls">
+                            <input type="text" id="title" name="title" class="span7" value="<%- post.title %>"/>
+                        </div>
+                    </div>
+
+                    <textarea class="span6 richtext" name="text" rows="28"><%- post.text %></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="span3">
+            <div class="module">
+                <div class="content">
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary"><%= __('Publish post') %></button>
+                        <button class="btn"><%= __('Save draft') %></button>
+                    </div>
+
+                    <div class="control-group pull-left">
+                        <label class="control-label" for="publishDate">
+                            <%= __('Publish date') %> <i class="icon-info-sign" rel="popover" title="Help" data-content="<%= __('Enter a date in any format - e.g. \'1st March 2012 13:30\', \'tomorrow\' or \'now\' to publish immediately') %>"></i>
+                        </label>
+                        <div class="controls">
+                            <div class="input-append">
+                                <input type="text" id="publishDate" name="createdAt" class="input-small date-picker" value="<%- post.createdAt || 'immediately' %>" /><span class="add-on"><i class="icon-calendar"></i></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--
+                    <div class="control-group pull-right">
+                        <label class="control-label" for="priority">
+                            <%= __('Priority') %>
+                            <i class="icon-info-sign" rel="popover" title="Help" data-content="<%= __('Priority combined with publish date determines the position on the page that this post will show') %>"></i>
+                        </label>
+                        <div class="controls">
+                            <select id="priority" name="priority" class="input-small">
+                                <option value="1"><%= __('Low') %></option>
+                                <option value="2" selected="selected"><%= __('Normal') %></option>
+                                <option value="3"><%= __('High') %></option>
+                                <option value="4"><%= __('Featured') %></option>
+                                <option value="5"><%= __('Headline') %></option>
+                            </select>
+                        </div>
+                    </div>
+                    -->
+
+                    <div class="clearfix"></div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="tags">
+                            <%= __('Tags') %>
+                            <i class="icon-info-sign" rel="popover" title="Help" data-content="Enter tags separated by a space or comma"></i>
+                        </label>
+                        <p class="instructions"><%= __('Determines which pages and widgets this post will show up on.') %></p>
+                        <div class="controls">
+                            <select id="tags" name="tags[]" multiple="multiple" class="span3 chzn-select-create" data-placeholder="<%= __('Enter tags...') %>">
+                                <% (req.group.tags || []).forEach(function(tag) { %>
+                                    <% if(!tag) return; %>
+                                    <option<%- _.find(post.tags || [], function(t) { return t.name == tag.name }) ? ' selected="selected"':'' %>><%- tag.name %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="excerpt"><%= __('Excerpt (optional)') %></label>
+                        <p class="instructions"><%= __('Shows on the timeline or as a summary with a \'read more\' link.') %></p>
+                        <div class="controls">
+                            <textarea id="excerpt" name="excerpt" rows="3" class="input-large"><%- post.excerpt %></textarea>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="previewImage">
+                            <%= __('Preview image') %>
+                            <i class="icon-info-sign" rel="popover" title="Help" data-content="The preview image will show along-side the excerpt in the timeline or overview page"></i>
+                        </label>
+                        <div class="controls">
+                            <a href="#" id="previewImageUploadButton"><i class="icon-picture"></i> <%= __('Click to upload a preview image') %></a>
+                            <a href="#" id="removePreviewImage"><i class="icon-remove"></i></a>
+                            <input type="hidden" name="previewImage" id="previewImage" value="<%- post.previewImage %>" />
+                        </div>
+                    </div>
+
+                    <img src="<%- post.previewImage %>" id="previewImageImage" style="<%- post.previewImage ? '':'display : none;' %>" />
+                </div>
+            </div>
+        </div>
+    <%- end() %>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(".content .chzn-select").chosen();
+
+        setupRichtextEditors();
+
+        //bind form success
+        $('#content-form').bind('ajax:success', function(e, data) {
+            $.noty({text: '<i class="icon-' + data.icon + '"></i> ' + data.message, type: data.status});
+
+            if(data.status == "success") {
+                //refresh the page
+                setTimeout(function() { window.location = '<%- pathTo.content() %>'; }, 1000);
+            }
+        });
+
+        var uploader = new qq.FileUploader({
+            params: { _csrf: $('meta[name=csrf-token]').attr('content') },
+            element: $('#previewImageUploadButton').get(0),
+            action: '<%- pathFor('upload')('add') -%>',
+            uploadButtonText: $('#previewImageUploadButton').html(),
+            encoding: 'multipart',
+            onComplete: function(id, filename, data) {
+                $('#previewImage').val(data.url);
+                $('#previewImageImage').show().attr('src', data.url);
+
+                $.noty({ text: '<i class="icon-ok"></i> Preview image uploaded', type: 'success' });
+            }
+        });
+
+        $('#removePreviewImage').bind("click", function() {
+            $('#previewImage').val('');
+            $('#previewImageImage').hide();
+            return false;
+        })
+    });
+</script>
