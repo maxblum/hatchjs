@@ -13,6 +13,19 @@ var Application = module.exports = function Application(init) {
             { name: 'group',     url: 'group',           rank: 40 },
             { name: 'modules',   url: 'groupModules',   rank: 50 }
         ];
+        if (c.controllerName.match(/content|tags|streams/)) {
+            var tags = (c.req.group.tags || []).slice(0, 5);
+            var filter = c.req.params.filter;
+            tags = _.filter(tags, function(tag) { return tag && tag.contentCount > 0; });
+            if (typeof filter != 'undefined' && filter && !_.find(tags, function(t) {
+                return t && t.id == filter;
+            })) {
+                tags.push(_.find(c.req.group.tags || [], function(t) {
+                    return t && t.id == filter;
+                }));
+            }
+            this.tags = tags;
+        }
         var id = c.params.group_id || c.controllerName === 'groups' && c.params.id;
         if (id != c.req.group.id) {
             c.Group.find(id, function (err, group) {

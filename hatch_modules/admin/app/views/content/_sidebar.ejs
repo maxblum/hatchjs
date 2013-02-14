@@ -1,67 +1,12 @@
+<% var li = matcher(pageName, '<li class="active">', '<li>'),
+    liEnd = '</li>'; %>
+
 <div class="span2">
     <div class="module">
         <ul class="nav nav-list">
-            <% var li = matcher(pageName, '<li class="active">', '<li>'), liEnd = '</li>'; %>
-            <li class="nav-header"><%= t('content.header.filter') %></li>
-            <%- li('content') %>
-                <%- linkTo(icon('star') + t('content.all'), pathTo.groupContent(req.group)) %>
-            <%- liEnd %>
-            <% var iconFor = {
-                blogpost: 'align-left',
-                discussion: 'comments',
-                statusupdate: 'user',
-                poll: 'bar-chart',
-                imported: 'cloud'
-            } %>
-            <% 'blogpost discussion statusupdate poll imported'.split(' ').forEach(function (f) { %>
-                <%- li('content-' + f) %>
-                    <%- linkTo(icon(iconFor[f]) + t('content.' + f), pathTo.filteredGroupContent(req.group, f)) %>
-                <%- liEnd %>
-            <% }) %>
-
-            <li class="nav-header"><%= t('content.header.tags') %></li>
-
-            <%- li('manage-tags') %>
-                <%- linkTo(icon('tags') + t('content.manageTags'), pathTo.groupTags(req.group)) %>
-            <%- liEnd %>
-            <%
-                var tags = (req.group.tags || []).slice(0, 5);
-                tags = _.filter(tags, function(tag) { return tag && tag.contentCount > 0; });
-                if (typeof filter != 'undefined' && filter && !_.find(tags, function(t) { return t && t.id == filter; })) {
-                    tags.push(_.find(req.group.tags || [], function(t) { return t && t.id == filter; }));
-                }
-            %>
-
-            <% tags.forEach(function(tag) { %>
-                <% if (tag) { %>
-                    <%- li('content-' + tag.id) %>
-                        <%- linkTo(icon('tag') + tag.name +
-                            '<span class="badge pull-right">' +
-                            formatNumber(tag.contentCount),
-                            pathTo.filteredGroupContent(tag.id.toString())) %>
-                    <%- liEnd %>
-                <% } %>
-            <% }) %>
-
-            <%- li('new-tag') %>
-                <%- linkTo(icon('plus') + t('tag.new'), pathTo.newGroupTag(req.group)) %>
-            <%- liEnd %>
-
-            <li class="nav-header"><%= t('stream.import') %></li>
-
-            <%- li('manage-streams') %>
-                <%- linkTo(icon('signin') + t('streams.manage'), pathTo.groupStreams(req.group)) %>
-            <%- liEnd %>
-
-            <%- li('new-stream') %>
-                <%- linkTo(icon('plus') + t('streams.add'), pathTo.newGroupStream(req.group)) %>
-            <%- liEnd %>
-
-            <li class="nav-header"><%= ('content.header.actions') %></li>
-
-            <%- li('new') %>
-                <%- linkTo(icon('pencil') + t('content.new'), pathTo.newGroupContentEntry(req.group)) %>
-            <%- liEnd %>
+            <% include _sideContent %>
+            <% include _sideTags %>
+            <% include _sideStream %>
         </ul>
     </div>
 </div>

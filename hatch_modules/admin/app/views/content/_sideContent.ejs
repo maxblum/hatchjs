@@ -1,0 +1,29 @@
+<li class="nav-header"><%= t('content.header.actions') %></li>
+
+<%- li('new') %>
+    <%- linkTo(icon('pencil') + t('content.new'),
+        pathTo.newGroupContentEntry(req.group)) %>
+<%- liEnd %>
+
+<li class="nav-header"><%= t('content.header.filter') %></li>
+
+<%- li('content') %>
+    <%- linkTo(icon('star') + t('content.all'),
+        pathTo.groupContent(req.group)) %>
+<%- liEnd %>
+
+<% var iconFor = {
+    blogpost: 'align-left',
+    discussion: 'comments',
+    statusupdate: 'user',
+    poll: 'bar-chart',
+    imported: 'cloud'
+} %>
+<% 'blogpost discussion statusupdate poll imported'.split(' ')
+    .forEach(function (f) { %>
+    <%- li('content-' + f) %>
+        <%- linkTo(
+            icon(iconFor[f]) + t('content.' + f),
+            pathTo.filteredGroupContent(req.group, f)) %>
+    <%- liEnd %>
+<% }) %>

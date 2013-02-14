@@ -1,0 +1,12 @@
+<li class="nav-header"><%= t('stream.import') %></li>
+
+<%- li('manage-streams') %>
+    <%- linkTo(icon('signin') + t('stream.manage'),
+        pathTo.groupStreams(req.group)) %>
+<%- liEnd %>
+
+<%- li('new-stream') %>
+    <%- linkTo(icon('plus') + t('stream.add'),
+        pathTo.newGroupStream(req.group)) %>
+<%- liEnd %>
+
