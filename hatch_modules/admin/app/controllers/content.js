@@ -114,6 +114,7 @@ ContentController.prototype.create = function create(c) {
                         html: helpers.errorMessagesFor(content)
                     });
                 } else {
+                    group.recalculateTagContentCounts(c);
                     c.send({
                         code: 200,
                         html: c.t('models.Content.messages.saved')
@@ -121,17 +122,8 @@ ContentController.prototype.create = function create(c) {
                 }
             });
         });
-        group.recalculateTagContentCounts(c);
 
     });
-
-    function done() {
-        c.send({
-            message: 'Post saved successfully',
-            status: 'success',
-            icon: 'ok'
-        });
-    }
 };
 
 // Saves a content record
