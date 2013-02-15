@@ -20,6 +20,7 @@
   , "csso": "latest"
   , "async": "latest"
   , "jugglingdb-redis-hq": "latest"
+  , "chrono-node": "latest"
   },
   "devDependencies":
   { "nodeunit":         "*"
