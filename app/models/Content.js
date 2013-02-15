@@ -25,7 +25,10 @@ module.exports = function (compound, Content) {
     var redis = Content.schema.adapter;
     var _ = require('underscore');
     var moment = require('moment');
+    var chrono = require('chrono-node');
     var async = require('async');
+
+    Content.validatesPresenceOf('createdAt', 'title', 'text');
 
 
     /**
@@ -35,6 +38,18 @@ module.exports = function (compound, Content) {
      */
     Content.getter.score = function() {
         return Math.min(Math.floor(((this.likes || []).length + (this.comments || []).length) / 2), 5);
+    };
+
+    Content.setter.createdAt = function(value) {
+        value = value || '';
+        if (value && value.match(/now|immediately/i)) {
+            this._createdAt = new Date();
+        } else {
+            this._createdAt = new Date(value);
+            if (isNaN(this._createdAt.valueOf())) {
+                this._createdAt = chrono.parseDate(value);
+            }
+        }
     };
 
     /**

@@ -27,7 +27,7 @@ module.exports = function (compound, Group) {
     Group.hasMany(Page, {as: 'pages', foreignKey: 'groupId'});
 
     Group.getter.path = function () {
-        return this.url.replace(/[^\/]+/, '');
+        return this._url.replace(/[^\/]+/, '');
     };
 
     Group.prototype.match = function (path) {

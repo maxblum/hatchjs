@@ -21,6 +21,8 @@ module.exports = function (compound, ImportStream) {
     var Group = compound.models.Group;
     var Content = compound.models.Content;
 
+    ImportStream.validatesPresenceOf('title', 'query');
+
     /**
      * runs this import stream and imports the data
      */
