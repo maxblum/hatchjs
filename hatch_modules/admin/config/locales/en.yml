@@ -25,6 +25,15 @@ en:
     imported: Imported posts
     manageTags: Manage tags
     new: New blog post
+  post:
+    actions:
+      publish: Publish post
+      draft: Save draft
+      previewImage: Click to upload a preview image
+      enterTags: Enter tags...
+    instructions:
+      tags: 'Determines which pages and widgets this post will show up on'
+      excerpt: "Shows on the timeline or as a summary with a 'read more' link"
   tag:
     new: New tag
     add: Add new tag

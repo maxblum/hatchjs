@@ -1,3 +1,24 @@
 en:
   common:
     cancel: Cancel
+  models:
+    Content:
+      messages:
+        saved: Post saved successfully
+      fields:
+        title: Blog post title
+        excerpt:
+          label: Excerpt
+          description: "Shows on the timeline or as a summary with a 'read more' link"
+        previewImage:
+          label: Preview image
+          description: "The preview image will show along-side the excerpt in the timeline or overview page"
+        tags:
+          label: Tags
+          description: Enter tags separated by a space or comma
+        createdAt:
+          label: Publish date
+          description: "Enter a date in any format - e.g. '1st March 2012 13:30', 'tomorrow' or 'now' to publish immediately"
+        priority:
+          label: Priority
+          description: "Priority combined with publish date determines the position on the page that this post will show"
