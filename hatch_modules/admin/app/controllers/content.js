@@ -20,7 +20,6 @@ var Application = require('./application');
 var _ = require('underscore');
 var async = require('async');
 var moment = require('moment');
-var chrono = require('chrono-node');
 
 module.exports = ContentController;
 
@@ -30,115 +29,45 @@ function ContentController(init) {
 
 require('util').inherits(ContentController, Application);
 
-ContentController.prototype.index = function (c) {
-    c.render();
-};
-
-// loads content based on the current filter/critera
-function loadContent(c, cb) {
-
-    return makeQuery(makeCond(c), cb);
-
-    function makeCond(c) {
-        var cond = {
-            groupId: c.req.group.id
-        };
-
-        var filter = c.req.query.filter || c.req.body.filter;
-
-        if (filter === 'imported') {
-            cond.imported = true;
-        } else if (typeof filter === 'string' && filter.indexOf("[native code]") === -1) {
-            // filter by tag
-            if (!isNaN(filter)) {
-                cond['tags:tagId'] = filter;
-            }
-            // filter by content type
-            else {
-                cond.type = filter;
-            }
-        }
-        return cond;
-    }
-
-    function makeQuery(cond, cb) {
-        var query = c.req.query;
-        var limit = parseInt(query.iDisplayLength || 0, 10);
-        var offset = parseInt(query.iDisplayStart || 0, 10);
-        var colNames = ['', 'title', 'tagString', 'createdAt', 'score', ''];
-        var orderBy = query.iSortCol_0 > 0 ?
-            (colNames[query.iSortCol_0] + ' ' + query.sSortDir_0.toUpperCase()) :
-            'createdAt DESC';
-        var search = query.sSearch || c.req.body.search;
-
-        c.Content.count(cond, function(err, count) {
-            if (err) {
-                return c.next(err);
-            }
-            // redis fulltext search
-            if (search) {
-                c.Content.all({
-                    where: cond,
-                    fulltext: search,
-                    order: orderBy,
-                    offset: offset,
-                    limit: limit
-                }, function(err, posts) {
-                    posts.count = count;
-                    cb(posts);
-                });
-            }
-            // no filter, standard query
-            else {
-                c.Content.all({
-                    where: cond,
-                    order: orderBy,
-                    offset: offset,
-                    limit: limit
-                }, function(err, posts) {
-                    posts.count = count;
-                    cb(posts);
-                });
-            }
-        });
-
-    }
-}
-
-// TODO: show content
+/**
+ * GET /group/:group_id/content.format
+ * respond to JSON, HTML
+ */
 ContentController.prototype.index = function index(c) {
     c.req.session.adminSection = 'content';
-    this.pageName = 'content' + (typeof this.filter == 'string' ? '-' + filter : '');
-    this.filter = c.params.filter;
-    c.render();
-};
+    this.filter = c.req.query.filter;
+    var suffix = 'string' === typeof this.filter ? '-' + this.filter : '';
+    this.pageName = 'content' + suffix;
 
-// Load all of the content and returns json
-ContentController.prototype.load = function load(c) {
-    loadContent(c, function(posts) {
-        posts = fixDates(posts);
+    c.respondTo(function(format) {
+        format.html(function() {
+            c.render();
+        });
+        format.json(function() {
+            loadContent(c, function(posts) {
+                posts.forEach(function(post) {
+                    post.createdAt = moment(post.createdAt || new Date()).fromNow();
+                });
 
-        // json response
-        c.send({
-            sEcho: c.req.query.sEcho || 1,
-            iTotalRecords: posts.count,
-            iTotalDisplayRecords: posts.countBeforeLimit || 0,
-            aaData: posts
+                c.send({
+                    sEcho: c.req.query.sEcho || 1,
+                    iTotalRecords: posts.count,
+                    iTotalDisplayRecords: posts.countBeforeLimit || 0,
+                    aaData: posts
+                });
+            });
         });
     });
+};
 
-    // nicely formats the dates
-    function fixDates(posts) {
-        posts.forEach(function(post) {
-            post.createdAt = moment(post.createdAt || new Date()).fromNow();
-        });
-
-        return posts;
-    }
-}
+ContentController.prototype.new = function(c) {
+    this.post = new c.Content;
+    c.render();
+};
 
 // Show the edit blog post form
 ContentController.prototype.edit = function edit(c) {
+    this.pageName = 'content';
     var post = {};
 
     if (c.req.params.id) {
@@ -148,8 +77,7 @@ ContentController.prototype.edit = function edit(c) {
                 new Date().toString()).format("D-MMM-YYYY HH:mm:ss");
             done();
         });
-    }
-    else {
+    } else {
         done();
     }
 
@@ -160,28 +88,62 @@ ContentController.prototype.edit = function edit(c) {
     }
 };
 
+ContentController.prototype.create = function create(c) {
+    var group = this.group;
+    var data = c.body.Content;
+
+    // TODO: move to model hook (beforeSave)
+    data.updatedAt = new Date();
+
+    // set the groupId and authorId for the new post
+    data.groupId = group.id;
+    data.authorId = c.req.user.id;
+    data.score = 0;
+
+    c.Content.create(data, function(err, content) {
+        c.respondTo(function(format) {
+            format.json(function () {
+                console.log(err);
+                console.log(content.errors);
+                if (err) {
+                    var HelperSet = c.compound.helpers.HelperSet;
+                    var helpers = new HelperSet(c);
+                    c.send({
+                        code: 500,
+                        errors: content.errors,
+                        html: helpers.errorMessagesFor(content)
+                    });
+                } else {
+                    c.send({
+                        code: 200,
+                        html: c.t('models.Content.messages.saved')
+                    });
+                }
+            });
+        });
+        group.recalculateTagContentCounts(c);
+
+    });
+
+    function done() {
+        c.send({
+            message: 'Post saved successfully',
+            status: 'success',
+            icon: 'ok'
+        });
+    }
+};
+
 // Saves a content record
-// TODO: rename method to 'update'
 // TODO: move validation and date parse logic to model
-ContentController.prototype.save = function save(c) {
+ContentController.prototype.update = function save(c) {
     var Content = c.Content;
     var id = c.req.body.id;
     var group = c.req.group;
     var post = null;
     var data = c.body;
-    var createdAt = null;
 
-    // parse the date
-    var isNow = 'now,immediately'.indexOf((data.createdAt || '').toString().toLowerCase()) > -1;
-    if (data.createdAt && isNow) {
-        createdAt = new Date();
-    } else {
-        createdAt = new Date(data.createdAt);
-        if (createdAt.toString() == new Date('invalid').toString()) {
-            createdAt = chrono.parseDate(data.createdAt);
-        }
-    }
-    data.createdAt = createdAt;
+    data.createdAt = data.createdAt;
     data.updatedAt = new Date();
 
     // validate dates
@@ -218,45 +180,29 @@ ContentController.prototype.save = function save(c) {
     // build the tag string
     data.tagString = _.pluck(data.tags, 'name').join(', ');
 
-    // update existing content
-    if (id) {
-        Content.find(id, function(err, content) {
-            post = content;
+    Content.find(id, function(err, content) {
+        post = content;
 
-            // merge tag scores/createdAt from the existing post
-            tags.forEach(function(tag) {
-                var existing = _.find(content.tags, function(existingTag) {
-                    return existingTag.name == tag.name
-                });
-                if (existing) {
-                    tag.createdAt = existing.createdAt;
-                    tag.score = existing.score;
-                }
+        // merge tag scores/createdAt from the existing post
+        tags.forEach(function(tag) {
+            var existing = _.find(content.tags, function(existingTag) {
+                return existingTag.name == tag.name
             });
-
-            // update the keys manually
-            Object.keys(data).forEach(function(key) {
-                content[key] = data[key];
-            });
-
-            content.save(function (err, content) {
-                done();
-            });
+            if (existing) {
+                tag.createdAt = existing.createdAt;
+                tag.score = existing.score;
+            }
         });
-    }
-    // create new content
-    else {
-        //set the groupId and authorId for the new post
-        data.groupId = group.id;
-        data.authorId = c.req.user.id;
-        data.score = 0;
 
-        Content.create(data, function(err, content) {
-            post = content;
+        // update the keys manually
+        Object.keys(data).forEach(function(key) {
+            content[key] = data[key];
+        });
 
+        content.save(function (err, content) {
             done();
         });
-    }
+    });
 
     function done() {
         // finally, update the group tag counts
@@ -272,8 +218,7 @@ ContentController.prototype.save = function save(c) {
 };
 
 // Delete a content record
-// TODO: rename to destroy
-ContentController.prototype['delete'] = function(c) {
+ContentController.prototype.destroy = function(c) {
     var group = c.req.group;
 
     c.Content.find(c.params.id, function(err, content) {
@@ -288,7 +233,7 @@ ContentController.prototype['delete'] = function(c) {
 
 // Delete multiple content records
 // TODO: rename to destroyAll
-ContentController.prototype.deleteMulti = function(c) {
+ContentController.prototype.destroyAll = function(c) {
     var Content = c.Content;
     var group = c.req.group;
     var selectedContent = c.body.selectedContent || [];
