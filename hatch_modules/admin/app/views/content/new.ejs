@@ -2,15 +2,15 @@
 
     <% include ../content/_sidebar %>
 
-    <%- formTagBegin({
-        action: pathTo.editGroupContent(group, post),
+    <% var form = formFor(post, {
+        action: pathTo.groupContent(group, {format: 'json'}),
         remote: true,
         id: 'content-form',
         class: 'content-form'
     }) %>
 
+    <%- form.begin() %>
     <% include _form %>
-
-    <%- formTagEnd() %>
+    <%- form.end() %>
 
 </div>
