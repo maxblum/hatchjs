@@ -126,35 +126,15 @@ ContentController.prototype.create = function create(c) {
     });
 };
 
-// Saves a content record
-// TODO: move validation and date parse logic to model
-ContentController.prototype.update = function save(c) {
+ContentController.prototype.update = function update(c) {
     var Content = c.Content;
-    var id = c.req.body.id;
+    var id = c.params.id;
     var group = c.req.group;
     var post = null;
-    var data = c.body;
+    var data = c.body.Content
 
     data.createdAt = data.createdAt;
     data.updatedAt = new Date();
-
-    // validate dates
-    if (!data.createdAt) {
-        return c.send({
-            message: 'Please enter a valid publish date',
-            status: 'error',
-            icon: 'warning-sign'
-        });
-    }
-
-    // validate title and text
-    if (!data.title || !data.text) {
-        return c.send({
-            message: 'Please enter a title and some text',
-            status: 'error',
-            icon: 'warning-sign'
-        });
-    }
 
     // build the tags json
     var tags = data.tags || [];
@@ -192,20 +172,28 @@ ContentController.prototype.update = function save(c) {
         });
 
         content.save(function (err, content) {
-            done();
+            if (err) {
+                var HelperSet = c.compound.helpers.HelperSet;
+                var helpers = new HelperSet(c);
+                c.send({
+                    code: 500,
+                    errors: content.errors || err,
+                    html: helpers.errorMessagesFor(content)
+                });
+            } else {
+                group.recalculateTagContentCounts(c);
+                console.log('dadsada');
+
+                c.send({
+                    code: 200,
+                    html: c.t('post.saved')
+                });
+            }
         });
     });
 
     function done() {
         // finally, update the group tag counts
-        group.recalculateTagContentCounts(c);
-
-        c.send({
-            post: post,
-            message: 'Post saved successfully',
-            status: 'success',
-            icon: 'ok'
-        });
     }
 };
 

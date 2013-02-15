@@ -107,13 +107,13 @@
             var type, icon;
             if (res.code === 200) {
                 type = 'success';
-                icon = '<%- icon('ok') %>';
+                icon = '<%- icon("ok") %>';
                 setTimeout(function() {
                     window.location = '<%- pathTo.groupContent(group) %>';
                 }, 1000);
-            } else if (res.code) {
+            } else {
                 type = 'error';
-                icon = '<%- icon('warning-sign') %>';
+                icon = '<%- icon("warning-sign") %>';
             }
 
             $.noty({

@@ -34,6 +34,7 @@ en:
     instructions:
       tags: 'Determines which pages and widgets this post will show up on'
       excerpt: "Shows on the timeline or as a summary with a 'read more' link"
+    saved: Post saved successfully
   tag:
     new: New tag
     add: Add new tag

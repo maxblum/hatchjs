@@ -3,14 +3,14 @@
     <% include ../content/_sidebar %>
 
     <% var form = formFor(post, {
-        action: pathTo.editGroupContentEntry(group, post),
+        action: pathTo.groupContentEntry(group, post),
         remote: true,
         id: 'content-form',
         class: 'content-form'
     }) %>
 
+    <%- form.begin() %>
     <% include _form %>
-
     <%- form.end() %>
 
 </div>
