@@ -278,128 +278,73 @@ ContentController.prototype.destroyAll = function(c) {
     }
 };
 
+// Load content based on the current filter/critera
+function loadContent(c, cb) {
 
-// TODO: move streams to another resource controller
+    return makeQuery(makeCond(c), cb);
 
-// Show the import streams
-// TODO: rename to index
-ContentController.prototype.streams = function(c) {
-    var ImportStream = c.ImportStream;
-
-    ImportStream.all({ where: { groupId: c.req.group.id }}, function(err, streams) {
-        this.streams = streams;
-        this.importers = c.compound.hatch.importStream.getImporters();
-        c.render();
-    }.bind(this));
-};
-
-// Edit an import stream
-// TODO: rename to edit
-ContentController.prototype.editStream = function(c) {
-    var importStream = c.compound.hatch.importStream;
-
-    if (c.params.id) {
-        c.ImportStream.find(c.params.id, function(err, stream) {
-            c.locals.stream = stream;
-            c.locals.importers = importStream.getImporters();
-            c.render();
-        });
-    } else {
-        c.locals.stream = {};
-        c.locals.importers = importStream.getImporters();
-        c.render();
-    }
-};
-
-// Save a stream
-// TODO: refactor controller method (too big)
-// TODO: rename to update
-ContentController.prototype.saveStream = function(c) {
-    var ImportStream = c.ImportStream;
-
-    // validate
-    if (!c.body.title || !c.body.query) {
-        return c.send({
-            message: 'Please enter a title and a query',
-            status: 'error',
-            icon: 'warning-sign'
-        });
-    }
-
-    // create stream data
-    var stream = {};
-
-    // TODO: WTF? next if looks unnecessary (never works)
-    if (!stream) {
-        if (!group.importStreams) {
-            group.importStreams = [];
-        }
-        stream = {
-            id: group.importStreams.length,
-            contentCount: 0,
-            enabled: true
+    function makeCond(c) {
+        var cond = {
+            groupId: c.req.group.id
         };
-        group.importStreams.push(stream);
+
+        var filter = c.req.query.filter || c.req.body.filter;
+
+        if (filter === 'imported') {
+            cond.imported = true;
+        } else if (typeof filter === 'string' && filter.indexOf("[native code]") === -1) {
+            // filter by tag
+            if (!isNaN(filter)) {
+                cond['tags:tagId'] = filter;
+            }
+            // filter by content type
+            else {
+                cond.type = filter;
+            }
+        }
+        return cond;
     }
 
-    // update stream
-    stream.id = c.body.id;
-    stream.groupId = c.req.group.id;
-    stream.type = c.body.type;
-    stream.title = c.body.title;
-    stream.query = c.body.query;
-    stream.interval = c.body.interval;
-    stream.tags = [];
+    function makeQuery(cond, cb) {
+        var query = c.req.query;
+        var limit = parseInt(query.iDisplayLength || 0, 10);
+        var offset = parseInt(query.iDisplayStart || 0, 10);
+        var colNames = ['', 'title', 'tagString', 'createdAt', 'score', ''];
+        var orderBy = query.iSortCol_0 > 0 ?
+            (colNames[query.iSortCol_0] + ' ' + query.sSortDir_0.toUpperCase()) :
+            'createdAt DESC';
+        var search = query.sSearch || c.req.body.search;
 
-    // new streams should be enabled by default
-    if (!stream.id) {
-        stream.enabled = true;
+        c.Content.count(cond, function(err, count) {
+            if (err) {
+                return c.next(err);
+            }
+            // redis fulltext search
+            if (search) {
+                c.Content.all({
+                    where: cond,
+                    fulltext: search,
+                    order: orderBy,
+                    offset: offset,
+                    limit: limit
+                }, function(err, posts) {
+                    posts.count = count;
+                    cb(posts);
+                });
+            }
+            // no filter, standard query
+            else {
+                c.Content.all({
+                    where: cond,
+                    order: orderBy,
+                    offset: offset,
+                    limit: limit
+                }, function(err, posts) {
+                    posts.count = count;
+                    cb(posts);
+                });
+            }
+        });
+
     }
-
-    (c.body.tags || []).forEach(function(tag) {
-        stream.tags.push({
-            tagId: c.req.group.getTag(tag).id,
-            name: tag,
-            createdAt: new Date(),
-            score: 0
-        });
-    });
-
-    //save the stream
-    if (stream.id) {
-        ImportStream.find(stream.id, function(err, existing) {
-            existing.updateAttributes(stream, done);
-        });
-    } else {
-        ImportStream.create(stream, done);
-    }
-    
-    function done() {
-        c.send({
-            message: 'Import stream saved successfully',
-            status: 'success',
-            icon: 'ok'
-        });
-    }
-};
-
-// Delete a stream from the group
-// TODO: rename to destroy
-ContentController.prototype.deleteStream = function(c) {
-    c.ImportStream.find(c.params.id, function(err, stream) {
-        stream.destroy(function() {
-            c.send({ redirect: c.pathTo.groupContentStreams(c.req.group) });
-        });
-    });
-};
-
-// Pause or unpauses a stream
-// TODO: rename to toggle
-ContentController.prototype.toggleStream = function(c) {
-    c.ImportStream.find(c.params.id, function(err, stream) {
-        stream.enabled = !stream.enabled;
-        stream.save(function() {
-            c.send({ redirect: c.pathTo.groupContentStreams(c.req.group) });
-        });
-    });
-};
+}

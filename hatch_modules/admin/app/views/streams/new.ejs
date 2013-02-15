@@ -1,0 +1,20 @@
+<div class="row">
+    <%- include ../content/_sidebar %>
+
+    <div class="span10">
+        <div class="module">
+            <div class="content">
+                <h3><%= t('stream.add') %></h3>
+                <hr/>
+
+                <%- formTagBegin({
+                    action: pathTo.groupStreams(group),
+                    remote: true,
+                    id: 'stream-form'
+                }) %>
+                    <% include _form %>
+                <%- formTagEnd() %>
+            </div>
+        </div>
+    </div>
+</div>

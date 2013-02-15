@@ -7,16 +7,16 @@ exports.routes = function (map) {
         group.resources('modules');
         group.resources('content', {as: 'content', suffix: 'entry'}, function (item) {
             item.collection(function (items) {
-                items.get('streams', {as: 'groupContentStreams'});
                 items.get('filter/:filter', '#index', {as: 'filteredGroupContent' });
                 items.del('destroyAll', {as: 'destroySelectedGroupContent'});
-                items.get('load');
             });
         });
         group.resources('tags', function (tag) {
             tag.get('count');
         });
-        group.resources('streams');
+        group.resources('streams', function (stream) {
+            stream.get('toggle');
+        });
         group.resources('users', {as: 'community', suffix: 'member'});
         group.resources('pages', function (page) {
             page.collection(function (pages) {
