@@ -3,7 +3,7 @@
 
 <%- li('manage-tags') %>
     <%- linkTo(icon('tags') + t('content.manageTags'),
-        pathTo.groupTags(req.group)) %>
+        pathTo.groupTags(group)) %>
 <%- liEnd %>
 
 <% tags.forEach(function(tag) { %>
@@ -19,5 +19,5 @@
 
 <%- li('new-tag') %>
     <%- linkTo(icon('plus') + t('tag.new'),
-        pathTo.newGroupTag(req.group)) %>
+        pathTo.newGroupTag(group)) %>
 <%- liEnd %>

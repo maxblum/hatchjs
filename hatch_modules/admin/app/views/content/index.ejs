@@ -10,15 +10,15 @@
                     <div class="btn-group pull-left" style="margin-right : 3px;">
                         <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><%= __('Content actions') %> <span class="caret"></span></button>
                         <ul class="dropdown-menu">
-                            <li><a href="<%- pathTo.destroySelectedGroupContent(req.group) %>" rel="multiAjaxLink"><i class="icon-remove"></i> <%= __('Delete content') %></a></li>
+                            <li><a href="<%- pathTo.destroySelectedGroupContent(group) %>" rel="multiAjaxLink"><i class="icon-remove"></i> <%= __('Delete content') %></a></li>
                         </ul>
                     </div>
 
-                    <% if((req.group.tags || []).length > 0) { %>
+                    <% if((group.tags || []).length > 0) { %>
                         <div class="btn-group pull-left">
                             <button class="btn dropdown-toggle" data-toggle="dropdown"><%= __('Add tag') %> <span class="caret"></span></button>
                             <ul class="dropdown-menu">
-                                <% (req.group.tags || []).forEach(function(tag) { %>
+                                <% (group.tags || []).forEach(function(tag) { %>
                                     <% if(!tag) return; %>
                                     <li><a href="<%- pathTo.addTag(tag.id.toString()) %>" rel="multiAjaxLink"><i class="icon-tag"></i> <%- tag.name %></a></li>
                                 <% }) %>
@@ -28,7 +28,7 @@
                         <div class="btn-group pull-left">
                             <button class="btn dropdown-toggle" data-toggle="dropdown"><%= __('Remove tag') %> <span class="caret"></span></button>
                             <ul class="dropdown-menu">
-                                <% (req.group.tags || []).forEach(function(tag) { %>
+                                <% (group.tags || []).forEach(function(tag) { %>
                                     <% if(!tag) return; %>
                                     <li><a href="<%- pathTo.removeTag(tag.id.toString()) %>" rel="multiAjaxLink"><i class="icon-tag"></i> <%- tag.name %></a></li>
                                 <% }) %>
@@ -136,7 +136,7 @@
         window.table = $('#content-table').dataTable( {
             "bProcessing": true,
             "bServerSide": true,
-            "sAjaxSource": "<%- pathTo.loadGroupContent(req.group) %>?filter=<%- filter %>",
+            "sAjaxSource": "<%- pathTo.groupContent(group, {format: 'json'}) %>?filter=<%- filter %>",
             "fnDrawCallback": function() {
                 //setup tooltips
                 $('#content-table *[rel=tooltip]').tooltip();
@@ -190,7 +190,7 @@
                         var html = '<ul class="tags">';
 
                         $(val).each(function(i, tag) {
-                            html += '<li><a href="<%- pathTo.groupContent(req.group) %>' + tag.tagId + '">' + tag.name + '</a></li>';
+                            html += '<li><a href="<%- pathTo.groupContent(group) %>' + tag.tagId + '">' + tag.name + '</a></li>';
                         });
 
                         html += '</ul>';
@@ -215,8 +215,8 @@
                         var content = obj.aData;
                         var html = '<div class="pull-right">';
 
-                        if(content.type == 'blogpost') html += '<a href="<%- pathTo.groupContent(req.group) %>/' + content.id + '/edit"><%= __('Edit') %></a>';
-                        html += ' &nbsp; <a href="<%- pathTo.groupContent(req.group) %>/' + content.id + '/delete" data-remote="true" data-confirm="<%= __('Are you sure you wish to delete this post?') %>" rel="tooltip" title="delete" data-success="<%= __('deleted post') %>"><i class="icon-remove"></i></a>';
+                        if(content.type == 'blogpost') html += '<a href="<%- pathTo.groupContent(group) %>/' + content.id + '/edit"><%= __('Edit') %></a>';
+                        html += ' &nbsp; <a href="<%- pathTo.groupContent(group) %>/' + content.id + '/delete" data-remote="true" data-confirm="<%= __('Are you sure you wish to delete this post?') %>" rel="tooltip" title="delete" data-success="<%= __('deleted post') %>"><i class="icon-remove"></i></a>';
 
                         html += '</div>';
 

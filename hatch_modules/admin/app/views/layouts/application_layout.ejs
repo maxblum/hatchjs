@@ -2,17 +2,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title><%- t(['admin.title', req.group.name]) %></title>
+    <title><%- t(['admin.title', group.name]) %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <%- csrfMetaTag() %>
 
     <link type="text/css" rel="stylesheet" href="/stylesheets/theme-admin.css" id="main-stylesheet" />
 
     <style id="preview-stylesheet" type="text/css"></style>
-    <meta name="groupId" content="<%- req.group && req.group.id %>" />
+    <meta name="groupId" content="<%- group && group.id %>" />
 
-    <% if (req.group.favicon) { %>
-    <link rel="icon" type="image/png" href="<%- req.group.favicon %>" />
+    <% if (group.favicon) { %>
+    <link rel="icon" type="image/png" href="<%- group.favicon %>" />
     <% } %>
 
     <!-- TODO: implement contentFor('footer') helper and put following line to footer -->
@@ -33,7 +33,7 @@
     <div id="all">
     <% } else { %>
     <!-- pjax title -->
-        <title><%- t(['admin.title', req.group.name]) %></title>
+        <title><%- t(['admin.title', group.name]) %></title>
     <% } %>
 
     <div class="navbar navbar-fixed-top">
@@ -47,7 +47,7 @@
                     </a>
                     <% linkTo(
                         icon('cog') +
-                        t(['admin.title', '<span class="group-name">' + req.group.name + '</span>']), req.group.url, {class: 'brand'}) %>
+                        t(['admin.title', '<span class="group-name">' + group.name + '</span>']), group.url, {class: 'brand'}) %>
                     </a>
                     <div class="pull-right">
                         <%- hook('layout.topBar.left') %>
@@ -84,7 +84,7 @@
                 <div class="subnav">
                     <ul class="nav nav-pills">
                         <% tabs.forEach(function(tab) {
-                           var tabUrl = pathFor(tab.module || 'admin')[tab.url](req.group.id);
+                           var tabUrl = pathFor(tab.module || 'admin')[tab.url](group.id);
                            if (!tab.module || moduleEnabled(tab.module)) { %>
                             <li<%- tab.name === sectionName ? ' class="active"' : '' %>>
                                 <%- linkTo(t('tabs.' + tab.name), tabUrl) %>
@@ -93,7 +93,7 @@
                         }) %>
 
                         <li class="pull-right">
-                            <%- linkTo(icon('chevron-left') + t('back'), '//' + req.group.url, {rel: "nopjax"}) %>
+                            <%- linkTo(icon('chevron-left') + t('back'), '//' + group.url, {rel: "nopjax"}) %>
                         </li>
                     </ul>
                 </div>
@@ -122,12 +122,12 @@
     </div>
 </div>
 
-<% if(req.group.googleAnalyticsId) { %>
+<% if(group.googleAnalyticsId) { %>
 
 <script type="text/javascript">
 
     var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', '<%- req.group.googleAnalyticsId %>']);
+    _gaq.push(['_setAccount', '<%- group.googleAnalyticsId %>']);
     _gaq.push(['_setDomainName', '<%- req.headers.host %>']);
     _gaq.push(['_trackPageview']);
 
