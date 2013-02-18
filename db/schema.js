@@ -45,7 +45,7 @@ var Group = define('Group', function () {
     property('googleAnalyticsId', String);
     property('customProfileFields', JSON);
     property('memberLists', JSON);
-    property('tags', JSON);
+    property('tags', []);
     property('importStreams', JSON);
 });
 
@@ -97,7 +97,7 @@ var Content = define('Content', function () {
     property('score', Number, {index: true, sort: true });
     property('groupId', Number, {index: true });
     property('replyToId', Number, {index: true });
-    property('tags', JSON);
+    property('tags', []);
     property('tagString', String, {index: true });
     property('authorId', Number, {index: true });
     property('privacy', String, {index: true });

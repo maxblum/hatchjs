@@ -262,10 +262,12 @@ module.exports = function (compound, Group) {
     };
 
     /**
-     * recalculates all tag content counts for this group
+     * Recalculate all tag content counts for this group
      */
     Group.prototype.recalculateTagContentCounts = function() {
         var group = this;
+
+        return; // TODO: rewrite tags logic without nested indexes
 
         async.forEach(group.tags || [], function(tag, next) {
             if(!tag) next();
@@ -280,10 +282,12 @@ module.exports = function (compound, Group) {
                 next();
             });
         }, function() {
-            //sort tags in descending order
-            group.tags = _.sortBy(group.tags, function(tag) { return -tag.contentCount; });
+            // sort tags in descending order
+            group.tags = _.sortBy(group.tags, function(tag) {
+                return -tag.contentCount;
+            });
 
-            //save and forget
+            // save and forget
             group.save();
         });
     };

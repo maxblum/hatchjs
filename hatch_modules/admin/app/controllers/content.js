@@ -35,7 +35,7 @@ require('util').inherits(ContentController, Application);
  */
 ContentController.prototype.index = function index(c) {
     c.req.session.adminSection = 'content';
-    this.filter = c.req.query.filter;
+    this.filter = c.req.query.filter || c.req.params.filter;
     var suffix = 'string' === typeof this.filter ? '-' + this.filter : '';
     this.pageName = 'content' + suffix;
 
@@ -157,7 +157,7 @@ ContentController.prototype.update = function update(c) {
 
         // merge tag scores/createdAt from the existing post
         tags.forEach(function(tag) {
-            var existing = _.find(content.tags, function(existingTag) {
+            var existing = content.tags.find(function(existingTag) {
                 return existingTag.name == tag.name
             });
             if (existing) {
@@ -274,8 +274,9 @@ function loadContent(c, cb) {
             cond.imported = true;
         } else if (typeof filter === 'string' && filter.indexOf("[native code]") === -1) {
             // filter by tag
-            if (!isNaN(filter)) {
-                cond['tags:tagId'] = filter;
+            if (!isNaN(parseInt(filter, 10))) {
+                // TODO: rewrite without using nested indexes
+                // cond['tags:tagId'] = filter;
             }
             // filter by content type
             else {
