@@ -1,33 +1,36 @@
-{ "name": "hatch-compound"
-, "version": "0.0.1"
-, "engines": ["node >= 0.8.0"]
-, "main": "server.js"
-, "dependencies":
-  { "ejs":              "*"
-  , "ejs-ext":          "latest"
-  , "express":          "~3.x"
-  , "compound":       ">= 1.1.0"
-  , "jugglingdb":       ">= 0.1.0"
-  , "coffee-script":    ">= 1.1.1"
-  , "stylus":           "latest"
-  , "seedjs": "latest"
-  , "underscore": "latest"
-  , "request": "latest"
-  , "nodemailer": "latest"
-  , "moment": "latest"
-  , "less": "latest"
-  , "findit": "latest"
-  , "csso": "latest"
-  , "async": "latest"
-  , "jugglingdb-redis-hq": "latest"
-  , "chrono-node": "latest"
+{
+  "name": "hatch-compound",
+  "version": "0.0.2",
+  "engines": [
+    "node >= 0.8.0"
+  ],
+  "main": "server.js",
+  "dependencies": {
+    "ejs": "*",
+    "ejs-ext": "latest",
+    "express": "~3.x",
+    "compound": ">= 1.1.0",
+    "jugglingdb": ">= 0.1.0",
+    "coffee-script": ">= 1.1.1",
+    "stylus": "latest",
+    "seedjs": "latest",
+    "underscore": "latest",
+    "request": "latest",
+    "nodemailer": "latest",
+    "moment": "latest",
+    "less": "latest",
+    "findit": "latest",
+    "csso": "latest",
+    "async": "latest",
+    "jugglingdb-redis-hq": "latest",
+    "chrono-node": "latest"
   },
-  "devDependencies":
-  { "nodeunit":         "*"
-  , "sinon":            "*"
-  , "semicov":          "*"
-  }
-, "scripts":
-  { "test": "nodeunit test/*/*"
+  "devDependencies": {
+    "nodeunit": "*",
+    "sinon": "*",
+    "semicov": "*"
+  },
+  "scripts": {
+    "test": "nodeunit test/*/*"
   }
 }
