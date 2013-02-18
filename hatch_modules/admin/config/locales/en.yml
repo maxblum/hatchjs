@@ -13,10 +13,27 @@ en:
     group: Group
     modules: Modules
   content:
+    actions:
+      common: Actions
+      delete: Delete
+      addTag: Add tag
+      removeTag: Remove tag
+      edit: Edit
+      destroy: Delete
+      destroyConfirm: Are you sure you wish to delete this post?
+      destroyed: post deleted
+
     header:
       actions: Actions
       filter: Filter
       tags: Tags
+    tableHead:
+      title: Content
+      tags: Tags
+      createdAt: Publish date
+      popularity: Popularity
+      actions: Actions
+    loading: Loading content
     all: All content
     blogpost: Blog posts
     discussion: Discussions

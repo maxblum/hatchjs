@@ -17,6 +17,7 @@ var Application = module.exports = function Application(init) {
         ];
 
         if (c.controllerName.match(/content|tags|streams/)) {
+            console.log(typeof this.group.tags, this.group.tags.constructor.name);
             var tags = (c.req.group.tags || []).slice(0, 5);
             var filter = c.req.query.filter || c.req.params.filter;
             tags = _.filter(tags, function(tag) {
