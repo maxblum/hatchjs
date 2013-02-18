@@ -9,6 +9,12 @@ module.exports = function (compound) {
         app.set('cssDirectory', '/stylesheets/');
         app.set('cssEngine', 'stylus');
 
+        // TODO move render speed hook to proper place
+        app.stack.unshift({route: '', handle: function (req, res, next) {
+            req.startedAt = Date.now();
+            next();
+        }});
+
         app.use(compound.assetsCompiler.init());
         app.use(express.static(app.root + '/public', { maxAge: 86400000 }));
         app.use(express.bodyParser());
