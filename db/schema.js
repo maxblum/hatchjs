@@ -29,9 +29,9 @@ var Group = define('Group', function () {
     property('path', String);
     property('name', String,  {fulltext: true, sort: true});
     property('subgroups', JSON);
-    property('pagesCache', JSON);
+    property('pagesCache', []);
     property('homepage', JSON);
-    property('modules', JSON);
+    property('modules', []);
     property('joinPermissions', String);
     property('favicon', String);
     property('metaKeywords', String);
