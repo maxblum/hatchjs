@@ -1,6 +1,27 @@
 en:
   common:
     cancel: Cancel
+    itemsPerPage: items per page
+    bragHatch: 'Built on the Hatch Platform'
+  layout:
+    manageGroup: Manage group
+    signIn: Sign in
+    joinGroup: Join group
+    register: Register
+    groupAccessRequestedTitle: Join request awaiting confirmation
+    groupAccessRequestedDescription: Your request to join this group is pending approval from a group administrator.
+    invitedToGroup: You have been invited to join this group
+    acceptInvitation: Accept invitation
+    ignoreInvitation: ignore
+    registration:
+      inProgress: Registration in progress
+      suggestProceed: It looks like you are halfway through your registration. Please % to complete it.
+      go: go here
+    renderSpeed: rendered in %ss
+    joinGroup: Join this group
+    viewProfile: View my profile
+    editProfile: Edit my account
+    signOut: Sign out
   models:
     Content:
       messages:

@@ -55,7 +55,7 @@
         <div class="navbar-inner">
             <div class="container">
                 <div class="navbar-container">
-                    
+
                     <a class="brand" href="//<%- req.group.homepage.url -%>">
                         <span class="group-name"><%- req.group.name %></span>
                     </a>
@@ -63,14 +63,21 @@
                         <%- hook('layout.topBar.left') %>
                         <% if (req.user && !request.member && !req.pending && req.group.joinPermissions != 'closed') { %>
                             <ul class="nav pull-left">    
-                                <li><a href="<%- pathFor('user').join() %>"><i class="icon-star"></i> <%- __('Join this group') %></a></li>
+                                <li><a href="<%- pathFor('user').join() %>"><i class="icon-star"></i> <%- t('layout.joinGroup') %></a></li>
                             </ul>
                         <% } %>
                         <% if (request.member && request.user.canEdit) { %>
                             <!-- TODO: we need a way of disabling edit console for the entire admin module -->
                             <ul class="nav pull-left visible-desktop">
-                                <li><a href="<%- pathFor('admin').root %>" id="manage-group-link"><i class="icon-cog"></i> <%- __('Manage group') %></a></li>
-                                <li><a href="#edit" id="edit-page-link" accesskey="e"><i class="icon-eye-close"></i><i class="icon-eye-open" style="display : none;"></i> <%- __('Edit console') %></a></li>
+                                <li><% linkTo(icon('cog') + t('layout.manageGroup'), pathFor('admin').groupPages(req.group), {id: 'manage-group-link'}) %></li>
+                                <li><% linkTo(
+                                    icon('eye-close') +
+                                    icon('eye-open') + t('layout.toggleEditConsole'),
+                                    '#edit', {
+                                        style: 'display:none',
+                                        id: 'edit-page-link',
+                                        accesskey: 'e'
+                                    }) %>
                             </ul>
                         <% } %>
                     </div>
@@ -84,20 +91,20 @@
                                         <b class="caret"></b>
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li><%- linkTo('<i class="icon-user"></i> ' + __('View my profile'), specialPagePath('profile', { username: req.user.username })) %></li>
-                                        <li><a href="<%- specialPagePath('account') %>"><i class="icon-cogs"></i> <%- __('Edit my account') %></a></li>
+                                        <li><%- linkTo('<i class="icon-user"></i> ' + t('layout.viewProfile'), specialPagePath('profile', { username: req.user.username })) %></li>
+                                        <li><a href="<%- specialPagePath('account') %>"><i class="icon-cogs"></i> <%- t('layout.editProfile') %></a></li>
                                         <li class="divider"></li>
-                                        <li> <%- linkTo('<i class="icon-off"></i> ' + __('Sign out'), pathFor('user').logout) %> </li>
+                                        <li> <%- linkTo('<i class="icon-off"></i> ' + t('layout.signOut'), pathFor('user').logout) %> </li>
                                     </ul>
                                 </li>
                             </ul>
                         <% } else { %>
                             <ul class="nav">
-                                <li><%- linkTo(__('Sign in'), '#login', {'data-toggle': "modal"}) %></li>
+                                <li><%- linkTo(t('layout.signIn'), '#login', {'data-toggle': "modal"}) %></li>
                                 <% if(req.group.joinPermissions !== 'closed') { %>
-                                    <li><%- linkTo(__('Join group'), '#register', {'data-toggle': "modal"}) %></li>
+                                    <li><%- linkTo(t('layout.joinGroup'), '#register', {'data-toggle': "modal"}) %></li>
                                 <% } else { %>
-                                    <li><%- linkTo(__('Register'), '#register', {'data-toggle': "modal"}) %></li>
+                                    <li><%- linkTo(t('layout.register'), '#register', {'data-toggle': "modal"}) %></li>
                                 <% } %>
                             </ul>
                         <% } %>
@@ -108,35 +115,35 @@
         </div>
     </div>
 
-    <% if(req.pending) { %>
+    <% if (req.pending) { %>
         <div class="container alert-container">
             <div class="alert alert-block alert-success">
-                <% if(req.pending.requested) { %>
+                <% if (req.pending.requested) { %>
                 <p>
-                    <strong><%- __('Join request awaiting confirmation') %></strong>
+                    <strong><%- t('layout.groupAccessRequestedTitle') %></strong>
                     <br/>
-                    <i class="icon-time"></i> <%- __('Your request to join this group is pending approval from a group administrator.') %>'
+                    <%- icon('time') + t('layout.groupAccessRequestedDescription') %>
                 </p>
                 <% } else { %>
                 <p>
 
-                    <i class="icon-info-sign"></i> <%- __('You have been invited to join this group') %>
+                    <%- icon('info-sign') + t('layout.invitedToGroup') %>
                 </p>
                 <p class="lead">
-                    <a href="<%- pathFor('user').join() %>" class="text-success"><i class="icon-ok"></i> <%- __('Accept invitation') %></a>
+                    <%- linkTo(icon('ok') + t('layout.acceptInvitation'),pathFor('user').join(), {class: 'text-success'}) %>
                     /
-                    <a href="<%- pathFor('user').rejectInvitation() %>" class="text-success"><%- __('ignore') %></a>
+                    <%- linkTo(t('layout.ignoreInvitation'), pathFor('user').rejectInvitation(), {class: 'text-success'}) %>
                 </p>
                 <% } %>
             </div>
         </div>
-    <% } else if(req.user && req.user.type === 'temporary' && req.url.indexOf(specialPagePath('register')) == -1) { %>
+    <% } else if (req.user && req.user.type === 'temporary' && req.url.indexOf(specialPagePath('register')) == -1) { %>
         <div class="container alert-container">
             <div class="alert alert-block alert-information">
                 <p>
-                    <strong><%- __('Registration in progress') %></strong>
+                    <strong><%- t('layout.registration.inProgress') %></strong>
                     <br/>
-                    <%- __('It looks like you are halfway through your registration. Please') %> <a href="<%- specialPagePath('register') %>?redirect=<%- pathFor('user').join() %>"><%- __('go here') %></a> <%- __('to complete it.') %>
+                    <%- t(['layout.registration.suggestProceed', linkTo(t('layout.registration.go'), specialPagePath('register') + '?redirect=' + pathFor('user').join())]) %>
                 </p>
             </div>
         </div>
@@ -154,10 +161,12 @@
             <footer>
                 <div class="pull-right">
                     <i class="icon-bolt"></i>
-                    <%- __('rendered in') %> <span id="pagetimer"><%- (new Date() - req.startedAt)/1000 %></span>s
+                    <span id="pagetimer">
+                        <%- t(['layout.renderSpeed', (new Date() - req.startedAt) / 1000]) %>
+                    </span>
                 </div>
 
-                <%- req.group.footerHtml || __('Built on the Hatch Platform') %>
+                <%- req.group.footerHtml || t('common.bragHatch') %>
             </footer>
         </div>
 
