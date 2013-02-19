@@ -5,6 +5,7 @@ en:
     bragHatch: 'Built on the Hatch Platform'
   layout:
     manageGroup: Manage group
+    toggleEditConsole: Edit console
     signIn: Sign in
     joinGroup: Join group
     register: Register

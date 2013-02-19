@@ -1,54 +1,45 @@
-<% if(!req.query._pjax) { %>
+<% if (!req.query._pjax) { %>
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/html">
     <head>
-        <title><%= req.title || req.page.metaTitle || req.page.title + " - " + req.group.name %></title>
-        <meta name="keywords" content="<%- req.page.metaKeywords || req.group.metaKeywords %>" />
-        <meta name="description" content="<%- req.page.metaDescription || req.group.metaDescription %>" />
+        <title><%= pageTitle() %></title>
+        <%- metaTag('keywords', req.page.metaKeywords || req.group.metaKeywords) %>
+        <%- metaTag('description', req.page.metaDescription || req.group.metaDescription) %>
 
-        <!-- opengraph tags -->
-        <meta property="og:title" content="<%= (req.content && req.content.title) || req.page.metaTitle || req.page.title + ' - ' + req.group.name %>" />
-        <meta property="og:description" content="<%= req.content && (req.content.excerpt || stripHtml(req.content.text, 280)) || req.page.metaDescription || req.group.metaDescription %>" />
-        <meta property="og:url" content="<%- req.protocol %>://<%- req.content && req.content.url || req.page.url %>" />
-        <% if(req.content && req.content.previewImage) { %><meta property="og:thumbnail" content="<%- req.content && req.content.previewImage %>" /><% } %>
-        <meta property="og:type" content="<%- req.content && 'article' || 'website' %>" />
-        <meta property="og:site_name" content="<%- req.group.name %>" />
-
-        <%- javascriptIncludeTag('jquery', 'bootstrap', 'bootstrap-typeahead', 'jquery-easyticker', 'jquery-hoverintent', 'jquery-blink', 'jquery-valadd', 'jquery-textarea-autogrow', 'jquery-noty', 'jquery-cookie', 'jquery-pjax', 'jquery-hovercard', 'jquery-highlight', 'uploader', 'rails', 'hatch-search', 'hatch', 'hatch-io', 'jquery-zoom', 'application')
-        %>
-
-        <% if((req.headers['user-agent'] || '').indexOf('iPad') == -1) { %>
-            <meta name="viewport" content="width=480, user-scalable=no" />
+        <% if ((req.headers['user-agent'] || '').indexOf('iPad') == -1) { %>
+        <%- metaTag('viewport', 'width=480, user-scalable=no') %>
         <% } %>
 
-        <meta name="userid" content="<%- req.user && req.user.id %>" />
+        <%- openGraphTags() %>
         <%- csrfMetaTag() %>
-        <meta name="pageId" content="<%- req.page && req.page.id %>" />
-        <meta name="groupId" content="<%- req.group && req.group.id %>" />
 
-        <script type="text/javascript">
-            canEdit = <%- (request.member && request.user.canEdit) ? "true":"false" %>;
-        </script>
+        <%- metaTag('userid', req.user && req.user.id) %>
+        <%- metaTag('pageId', req.page.id) %>
+        <%- metaTag('groupId', req.group.id) %>
 
         <link type="text/css" rel="stylesheet" href="<%- pathFor('stylesheet').css(req.group.cssVersion || 0) %>" id="main-stylesheet" />
+        <% if (isPrivileged()) { %>
+        <link rel="stylesheet" href="/javascripts/redactor/redactor.css" />
+        <% } %>
 
         <style id="preview-stylesheet" type="text/css"></style>
 
         <% if (req.group.favicon) { %>
-            <link rel="shortcut icon" href="<%- req.group.favicon %>" />
+        <link rel="shortcut icon" href="<%- req.group.favicon %>" />
         <% } %>
 
-        <% if (request.member && request.user.canEdit) { %>
-            <%- javascriptIncludeTag('jquery-ui.min', 'chosen.jquery', 'jquery-rule', 'jquery-datatables', 'jquery-selectrange', 'jquery-blockui', 'jquery-spectrum', 'jquery-colorscheme', 'hatch-dragdrop', 'hatch-css-properties', 'hatch-styleeditor', 'hatch-inline-edit', 'hatch-management', 'redactor/redactor') %>
-            <link rel="stylesheet" href="/javascripts/redactor/redactor.css" />
-        <% } %>
+        <script type="text/javascript">
+            canEdit = <%- isPrivileged() %>;
+        </script>
+        <%- javascriptIncludeTag(javascripts()) %>
+
     </head>
-    <body class="<%- req.group.navBarType === 'fixed' ? 'navbar-fixed':'' %>">
+    <body class="<%- req.group.navBarType === 'fixed' ? 'navbar-fixed' : '' %>">
 
     <div id="all">
     <% } else { %>
-        <!-- pjax title -->
-        <title><%= req.page.metaTitle || req.page.title + " - " + req.group.name %></title>
+    <!-- pjax title -->
+    <title><%= pageTitle() %></title>
     <% } %>
 
     <div class="navbar navbar-top <%- req.group.navBarType && req.group.navBarType !== 'default' ? 'navbar-fixed-top':'' %> navbar-type-<%- req.group.navBarType %> navbar-<%- req.group.navBarStyle %>">
@@ -56,94 +47,119 @@
             <div class="container">
                 <div class="navbar-container">
 
-                    <a class="brand" href="//<%- req.group.homepage.url -%>">
-                        <span class="group-name"><%- req.group.name %></span>
-                    </a>
+                    <%- linkTo('<span class="group-name">' + req.group.name + '</span>',
+                        '//' + req.group.homepage.url, {class: 'brand'})  %>
                     <div>
                         <%- hook('layout.topBar.left') %>
+
                         <% if (req.user && !request.member && !req.pending && req.group.joinPermissions != 'closed') { %>
-                            <ul class="nav pull-left">    
-                                <li><a href="<%- pathFor('user').join() %>"><i class="icon-star"></i> <%- t('layout.joinGroup') %></a></li>
-                            </ul>
+                        <ul class="nav pull-left">
+                            <li><%- linkTo(icon('star') + t('layout.joinGroup'),
+                                pathFor('user').join()) %>
+                            </li>
+                        </ul>
                         <% } %>
-                        <% if (request.member && request.user.canEdit) { %>
-                            <!-- TODO: we need a way of disabling edit console for the entire admin module -->
-                            <ul class="nav pull-left visible-desktop">
-                                <li><% linkTo(icon('cog') + t('layout.manageGroup'), pathFor('admin').groupPages(req.group), {id: 'manage-group-link'}) %></li>
-                                <li><% linkTo(
-                                    icon('eye-close') +
-                                    icon('eye-open') + t('layout.toggleEditConsole'),
-                                    '#edit', {
-                                        style: 'display:none',
-                                        id: 'edit-page-link',
-                                        accesskey: 'e'
-                                    }) %>
-                            </ul>
+
+                        <% if (isPrivileged()) { %>
+                        <!-- TODO: we need a way of disabling edit console for the entire admin module -->
+                        <ul class="nav pull-left visible-desktop">
+                            <li><%- linkTo(icon('cog') + t('layout.manageGroup'),
+                                pathFor('admin').groupPages(req.group),
+                                {id: 'manage-group-link'}) %>
+                            </li>
+                            <li><%- linkTo(
+                                icon('eye-close') +
+                                icon('eye-open', { style: 'display:none' }) + t('layout.toggleEditConsole'),
+                                '#edit', {
+                                id: 'edit-page-link',
+                                accesskey: 'e'
+                                }) %>
+                            </li>
+                        </ul>
                         <% } %>
+
                     </div>
                     <div class="pull-right">
+
                         <%- hook('layout.topBar.middle') %>
+
                         <% if (request.user) { var user = request.user; %>
-                            <ul class="nav">
-                                <li class="dropdown" id="menu1">
-                                    <a class="dropdown-toggle" data-toggle="dropdown" href="/">
-                                        <%= user.displayName || user.username || user.email %>
-                                        <b class="caret"></b>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li><%- linkTo('<i class="icon-user"></i> ' + t('layout.viewProfile'), specialPagePath('profile', { username: req.user.username })) %></li>
-                                        <li><a href="<%- specialPagePath('account') %>"><i class="icon-cogs"></i> <%- t('layout.editProfile') %></a></li>
-                                        <li class="divider"></li>
-                                        <li> <%- linkTo('<i class="icon-off"></i> ' + t('layout.signOut'), pathFor('user').logout) %> </li>
-                                    </ul>
-                                </li>
-                            </ul>
+                        <ul class="nav">
+                            <li class="dropdown" id="menu1">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="/">
+                                    <%= user.displayName || user.username || user.email %>
+                                    <b class="caret"></b>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><%- linkTo(icon('user') + t('layout.viewProfile'),
+                                        specialPagePath('profile', { username: req.user.username })) %></li>
+                                    <li><%- linkTo(icon('cogs') + t('layout.editProfile'),
+                                        specialPagePath('account')) %>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li> <%- linkTo('<i class="icon-off"></i> ' + t('layout.signOut'), pathFor('user').logout) %> </li>
+                                </ul>
+                            </li>
+                        </ul>
                         <% } else { %>
-                            <ul class="nav">
-                                <li><%- linkTo(t('layout.signIn'), '#login', {'data-toggle': "modal"}) %></li>
-                                <% if(req.group.joinPermissions !== 'closed') { %>
-                                    <li><%- linkTo(t('layout.joinGroup'), '#register', {'data-toggle': "modal"}) %></li>
-                                <% } else { %>
-                                    <li><%- linkTo(t('layout.register'), '#register', {'data-toggle': "modal"}) %></li>
-                                <% } %>
-                            </ul>
+                        <ul class="nav">
+                            <li><%- linkTo(t('layout.signIn'), '#login',
+                                {'data-toggle': "modal"}) %></li>
+                            <% if(req.group.joinPermissions !== 'closed') { %>
+                            <li><%- linkTo(t('layout.joinGroup'), '#register',
+                                {'data-toggle': "modal"}) %></li>
+                            <% } else { %>
+                            <li><%- linkTo(t('layout.register'), '#register',
+                                {'data-toggle': "modal"}) %></li>
+                            <% } %>
+                        </ul>
                         <% } %>
+
                         <%- hook('layout.topBar.right') %>
+
                     </div>
-                </div><!--/.nav-collapse -->
+                </div>
             </div>
         </div>
     </div>
 
     <% if (req.pending) { %>
-        <div class="container alert-container">
-            <div class="alert alert-block alert-success">
-                <% if (req.pending.requested) { %>
-                <p>
-                    <strong><%- t('layout.groupAccessRequestedTitle') %></strong>
-                    <br/>
-                    <%- icon('time') + t('layout.groupAccessRequestedDescription') %>
-                </p>
-                <% } else { %>
-                <p>
+    <div class="container alert-container">
+        <div class="alert alert-block alert-success">
+            <% if (req.pending.requested) { %>
+            <p>
+                <strong><%- t('layout.groupAccessRequestedTitle') %></strong>
+                <br/>
+                <%- icon('time') + t('layout.groupAccessRequestedDescription') %>
+            </p>
+            <% } else { %>
+            <p>
 
-                    <%- icon('info-sign') + t('layout.invitedToGroup') %>
-                </p>
-                <p class="lead">
-                    <%- linkTo(icon('ok') + t('layout.acceptInvitation'),pathFor('user').join(), {class: 'text-success'}) %>
-                    /
-                    <%- linkTo(t('layout.ignoreInvitation'), pathFor('user').rejectInvitation(), {class: 'text-success'}) %>
-                </p>
-                <% } %>
-            </div>
+                <%- icon('info-sign') + t('layout.invitedToGroup') %>
+            </p>
+            <p class="lead">
+                <%- linkTo(icon('ok') + t('layout.acceptInvitation'),
+                    pathFor('user').join(), {class: 'text-success'}) %>
+                /
+                <%- linkTo(t('layout.ignoreInvitation'),
+                    pathFor('user').rejectInvitation(), {class: 'text-success'}) %>
+            </p>
+            <% } %>
         </div>
+    </div>
     <% } else if (req.user && req.user.type === 'temporary' && req.url.indexOf(specialPagePath('register')) == -1) { %>
         <div class="container alert-container">
             <div class="alert alert-block alert-information">
                 <p>
                     <strong><%- t('layout.registration.inProgress') %></strong>
                     <br/>
-                    <%- t(['layout.registration.suggestProceed', linkTo(t('layout.registration.go'), specialPagePath('register') + '?redirect=' + pathFor('user').join())]) %>
+                    <%- t([
+                        'layout.registration.suggestProceed',
+                        linkTo(
+                            t('layout.registration.go'),
+                            specialPagePath('register') + '?redirect=' + pathFor('user').join()
+                        )
+                    ]) %>
                 </p>
             </div>
         </div>
@@ -172,7 +188,7 @@
 
         <%- hook('layout.body.end') %>
 
-<% if(!req.query._pjax) { %>
+<% if (!req.query._pjax) { %>
     </div>
     </div>
 
@@ -183,11 +199,11 @@
         <% include _reset-password %>
         <% include _login %>
     <% } else if (user.canEdit) { %>
-        <% include Webfonts %>
+        <% include _webfonts %>
         <div id="editConsoleHolder"></div>
     <% }%>
 
-    <% if(req.group.googleAnalyticsId) { %>
+    <% if (req.group.googleAnalyticsId) { %>
 
         <script type="text/javascript">
 
