@@ -8,7 +8,7 @@ pathTo = function (action) {
     } else {
         delim = '?';
     }
-    return '/on/' + action + delim + 'pageId=' + $('meta[name=pageId]').attr('content');
+    return '/do/' + action + delim + 'pageId=' + $('meta[name=pageId]').attr('content');
 }
 
 //init everything on page load

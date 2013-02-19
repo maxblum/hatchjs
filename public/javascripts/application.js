@@ -66,7 +66,7 @@ function widgetAction(handle, data) {
     var action = h.shift();
     var id = h.shift();
 
-    var path = ['/on/admin/widget', pageId, id, action].join('/');
+    var path = ['/do/admin/widget', pageId, id, action].join('/');
 
     if (data) {
         path += '?' + data;
@@ -87,7 +87,7 @@ function send(action, data, response, done) {
     }
     data[csrfParam] = csrfToken;
 
-    var path = '/on/admin/' + action + (pageId ? '?pageId=' + pageId : '');
+    var path = '/do/admin/' + action + (pageId ? '?pageId=' + pageId : '');
 
     $.post(path, data, function (data) {
         if (typeof done === 'function') {
