@@ -313,27 +313,17 @@ module.exports = function (compound, Page) {
     };
 
     Page.prototype.renderWidget = function (widget, req, cb) {
-        var url = 'http://' + this.url.match(/^[^\/]+/)[0] + '/do/' +
-            widget.type.replace('/', '/widgets/') + '/show';
-        var page = this.toObject();
-        request.post(
-            url,
-            {form: {
-                token: 'test',
-                data: JSON.stringify({
-                    page: page,
-                    user: req.user,
-                    widgetId: widget.id
-                })
-            }}, function (err, res) {
-            cb(err, res.body);
-        });
+        this.widgetAction(widget.id, 'show', null, req, cb);
     };
 
     Page.prototype.performWidgetAction = function(widgetId, req, cb) {
+        this.widgetAction(widgetId, req.body.perform, req.body['with'], req, cb);
+    };
+
+    Page.prototype.widgetAction = function(widgetId, action, params, req, cb) {
         var widget = this.widgets[widgetId];
         var url = 'http://' + this.url.match(/^[^\/]+/)[0] + '/do/' +
-            widget.type.replace('/', '/widgets/') + '/' + req.body.perform;
+            widget.type.replace('/', '/widgets/') + '/' + action;
         var page = this.toObject();
         request.post(
             url,
@@ -342,7 +332,7 @@ module.exports = function (compound, Page) {
                 data: JSON.stringify({
                     page: page,
                     user: req.user,
-                    data: req.body['with'],
+                    data: params,
                     widgetId: widgetId
                 })
             }},

@@ -3,6 +3,7 @@ en:
     cancel: Cancel
     itemsPerPage: items per page
     bragHatch: 'Built on the Hatch Platform'
+    imageUploaded: image uploaded
   layout:
     manageGroup: Manage group
     toggleEditConsole: Edit console
@@ -44,3 +45,6 @@ en:
         priority:
           label: Priority
           description: "Priority combined with publish date determines the position on the page that this post will show"
+  widget:
+    settings:
+      title: Edit widget settings

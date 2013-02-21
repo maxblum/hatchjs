@@ -18,7 +18,7 @@ function WidgetController(init) {
 }
 
 WidgetController.prototype.create = function create(c) {
-    var page = c.req.page;
+    var page = this.page;
     var type = c.body.addWidget;
     var widget = {type: type, settings: {}};
     var w = page.widgets.push(widget);
@@ -43,7 +43,7 @@ WidgetController.prototype.render = function render(c) {
 
 WidgetController.prototype.update = function update(c) {
     var widgetId = parseInt(c.req.params.id, 10);
-    c.req.page.performWidgetAction(widgetId, c.req, function (err, res) {
+    this.page.performWidgetAction(widgetId, c.req, function (err, res) {
         c.send({
             code: err ? 500 : 200,
             res: res,
@@ -53,7 +53,7 @@ WidgetController.prototype.update = function update(c) {
 };
 
 WidgetController.prototype.destroy = function destroy(c) {
-    var page = c.req.page;
+    var page = this.page;
     page.widgets.remove(parseInt(c.req.param('id'), 10));
     page.save(function() {
         // TODO: normalize widget response [API]
@@ -63,8 +63,15 @@ WidgetController.prototype.destroy = function destroy(c) {
 
 WidgetController.prototype.settings = function settings(c) {
     this.widgetCore = c.compound.hatch.widget.getWidget(this.widget.type);
-    this.inlineEditAllowed = this.widget.inlineEditAllowed;
-    c.render();
+    var s = this.widgetCore.info.settings;
+    if (s && s.custom) {
+        this.page.widgetAction(this.widget.id, 'settings', null, c.req, function (e, s) {
+            c.send(s);
+        });
+    } else {
+        this.inlineEditAllowed = this.widget.inlineEditAllowed;
+        c.render();
+    }
 };
 
 WidgetController.prototype.configure = function configure(c) {

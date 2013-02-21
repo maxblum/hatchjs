@@ -1,5 +1,6 @@
 static:
   title: 'Static content'
+  description:
   icon: 'icon-edit'
   inlineEditAllowed: on
   settings:
@@ -7,3 +8,61 @@ static:
       anchor:
         type: 'checkbox'
         title: 'Create anchor link'
+
+carousel:
+  title: Carousel
+  description:
+  icon: icon-picture
+  settings:
+    custom: true
+
+group-header:
+  title: Group header
+  description:
+  icon: icon-globe
+
+html:
+  title: HTML content
+  description:
+  icon: icon-edit
+
+mainmenu:
+  title: Primary navigation
+  description: default menu
+  icon: icon-sitemap
+  settings:
+    fields:
+      fixedTop:
+        type: select
+        title: 'Fix to top'
+        options:
+          - 'no:No'
+          - 'yes:Yes'
+        default: 'no'
+
+navigation:
+  title: Sub navigation menu
+  description:
+  icon: icon-list
+  settings:
+    fields:
+      display:
+        type: select
+        title: 'Display'
+        options:
+          - 'all:Entire sitemap'
+          - 'current:This level'
+          - 'current+below:This level and below'
+          - 'below:Below this level'
+        default: 'all'
+
+new-group:
+  title: New group
+  description: Allows to create group
+  icon: icon-plus-sign
+
+newsticker:
+  title: News ticker
+  description:
+  icon: icon-refresh
+
