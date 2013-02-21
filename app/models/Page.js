@@ -325,6 +325,8 @@ module.exports = function (compound, Page) {
         var url = 'http://' + this.url.match(/^[^\/]+/)[0] + '/do/' +
             widget.type.replace('/', '/widgets/') + '/' + action;
         var page = this.toObject();
+        page.widgets = [];
+        page.widgets[widgetId] = widget;
         request.post(
             url,
             {form: {

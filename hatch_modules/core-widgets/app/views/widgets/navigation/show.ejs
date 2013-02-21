@@ -1,0 +1,14 @@
+<% if (widget.settings.title) { %>
+    <h2><%- widget.settings.title %></h2>
+<% } %>
+
+<div>
+    <ul class="nav nav-list">
+        <% pages.forEach(function (p) { %>
+            <% if(/true/.test(p.hideFromNavigation)) return; %>
+            <li class="<%= p.id == page.id ? 'active' : '' %> level<%- page.level %>">
+                <%- linkTo(page.title, '//' + page.url) %>
+            </li>
+        <% }); %>
+    </ul>
+</div>

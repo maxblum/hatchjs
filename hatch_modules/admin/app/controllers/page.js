@@ -48,7 +48,6 @@ PageController.prototype.editconsole = function editConsole(c) {
     });
 
     c.compound.hatch.widget.getWidgets().forEach(function (w) {
-        console.log(w);
         if (groupModulesIndex[w.module]) {
             c.req.widgets.push({
                 name: w.name,
