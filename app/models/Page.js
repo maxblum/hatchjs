@@ -322,17 +322,21 @@ module.exports = function (compound, Page) {
 
     Page.prototype.widgetAction = function(widgetId, action, params, req, cb) {
         var widget = this.widgets[widgetId];
+        if (!widget) {
+            return cb(new Error('Widget id=' + widgetId + ' not found'));
+        }
+        if (!widget.type) {
+            return cb(new Error('Widget has no type specified'));
+        }
         var url = 'http://' + this.url.match(/^[^\/]+/)[0] + '/do/' +
             widget.type.replace('/', '/widgets/') + '/' + action;
-        var page = this.toObject();
-        page.widgets = [];
-        page.widgets[widgetId] = widget;
+
         request.post(
             url,
             {form: {
                 token: 'test',
                 data: JSON.stringify({
-                    page: page,
+                    pageId: this.id,
                     user: req.user,
                     data: params,
                     widgetId: widgetId
