@@ -12,23 +12,27 @@
 // 
 // See the GNU General Public License for more details. You should have received a copy of the GNU
 // General Public License along with Hatch.js. If not, see <http://www.gnu.org/licenses/>.
-// 
+//
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 
-exports.init = function (c, params, callback) {
+load('widgets/common');
+
+before(function () {
     //show inline editing tools
+    var locals = this;
     this.inlineEditAllowed = true;
+    Group.find(this.page.groupId, function (err, g) {
+        locals.group = g;
+        next();
+    });
+});
 
-    callback();
-};
-
-exports.update = function (c, params, callback) {
+action(function update() {
     var ctx = this;
     var w = this.widget;
-    ctx.req.group.headerHtml = params.content;
-    ctx.req.group.save(function (err) {
-        callback(err, w.render());
+    this.group.headerHtml = this.data.content;
+    this.group.save(function (err) {
+        render('show');
     });
-};
-
+});

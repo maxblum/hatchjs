@@ -16,19 +16,19 @@
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 
-exports.init = function (c, params, callback) {
-    //show inline editing tools
-    this.inlineEditAllowed = true;
-    
-    callback();
-};
+load('widgets/common');
 
-exports.update = function (c, params, callback) {
-    var ctx = this;
+before(function init() {
+    // show inline editing tools
+    this.inlineEditAllowed = true;
+    next();
+});
+
+action(function update() {
     var w = this.widget;
     w.settings = w.settings || {};
     w.settings.content = params.content;
     w.save(function (err) {
-        callback(err, w.render());
+        render('show');
     });
-};
+});

@@ -1,0 +1,33 @@
+<% if (widget.settings.title && widget.settings.anchor) { %>
+    <%- anchor(titleToAnchor(widget.settings.title)) %>
+<% } %>
+    <%- widgetTitle('News ticker') %></h2>
+<% } %>
+
+<% if (!widget.settings.numberOfPages) { %>
+    <p>
+        <%- t('newsticker.helpMessage') %>
+    </p>
+<% } else { %>
+
+    <% if (widget.settings.caption) { %>
+        <div class="news-ticker-caption">
+            <%- widget.settings.caption %>
+        </div>
+    <% } %>
+
+    <div class="news-ticker" id="ticker-<%- widget.id %>">
+        <ul style="unstyled">
+            <% for(var i = 1; i <= widget.settings.numberOfPages; i++) { %>
+                <li><%- widget.settings['text-' + i] %></li>
+            <% } %>
+        </ul>
+    </div>
+
+    <script type="text/javascript">
+        $('#ticker-<%- widget.id %>').easyTicker({
+            visible: 1,
+            interval: <%- widget.settings.interval || 5000 %>
+        });
+    </script>
+<% } %>
