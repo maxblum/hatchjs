@@ -16,26 +16,35 @@
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 
-exports.createGroup = function (c) {
-    c.req.group.clone(c.req.body, function (err, newGroup) {
+action(function show() {
+    render();
+});
+
+action(function create() {
+    req.group.clone(body, function (err, newGroup) {
         if (err) {
-            //send the error message
-            c.error({
+            // send the error message
+            send({
+                code: 500,
                 status: 'error',
                 icon: 'warning-sign',
-                message: err.message
+                error: err
             });
         } else {
+            // TODO: this should be replaced with user.join(group)
             // add user to members of new group to be able to edit it
-            c.req.user.membership.push({
+            this.user.membership.push({
                 groupId: newGroup.id,
                 role: 'owner',
                 joinedAt: new Date,
                 state: 'approved'
             });
 
-            c.req.user.save(function () {
-                c.send({ redirect: '//' + newGroup.homepage.url });
+            this.user.save(function () {
+                send({
+                    code: 200,
+                    redirect: '//' + newGroup.homepage.url
+                });
             });
         }
     });

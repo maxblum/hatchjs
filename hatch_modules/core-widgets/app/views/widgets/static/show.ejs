@@ -1,9 +1,7 @@
-<% if (widget.settings.title) { %>
-    <% if (widget.settings.anchor) { %>
-        <%- linkTo('', '', {name: titleToAnchor(widget.settings.title)}) %>
-    <% } %>
-    <h2><%- widget.settings && widget.settings.title || 'Static content' %></h2>
+<% if (widget.settings.title && widget.settings.anchor) { %>
+    <%- anchor(titleToAnchor(widget.settings.title)) %>
 <% } %>
+<%- widgetTitle('Static content') %>
 
 <div class="inline-edit" data-html="<%- canEdit ? escape(widget.settings.content || '') : '' %>">
     <%- widget.settings && widget.settings.content || t('content.empty') %>
