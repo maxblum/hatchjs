@@ -1,23 +1,5 @@
 Page.seed ->
-    title: 'Extranet'
-    url: 'localhost:3000/extranet'
-    customUrl: null
-    grid: null
-    columns: null
-    widgets: []
-    metaTitle: null
-    metaDescription: null
-    metaKeywords: null
-    type: null
-    tags: null
-    hideFromNavigation: null
-    order: null
-    templateId: null
-    parentId: null
-    groupId: 6
-    id: 5
-
-Page.seed ->
+    id: 1
     title: 'Home'
     url: 'localhost:3000'
     customUrl: null
@@ -33,6 +15,24 @@ Page.seed ->
     order: null
     templateId: null
     parentId: null
-    groupId: 5
-    id: '4'
+    groupId: 1
+
+Page.seed ->
+    id: 2
+    title: 'Extranet'
+    url: 'localhost:3000/extranet'
+    customUrl: null
+    grid: null
+    columns: null
+    widgets: []
+    metaTitle: null
+    metaDescription: null
+    metaKeywords: null
+    type: null
+    tags: null
+    hideFromNavigation: null
+    order: null
+    templateId: null
+    parentId: null
+    groupId: 2
 
