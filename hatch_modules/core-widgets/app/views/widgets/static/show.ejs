@@ -3,6 +3,6 @@
 <% } %>
 <%- widgetTitle('Static content') %>
 
-<div class="inline-edit" data-html="<%- canEdit ? escape(widget.settings.content || '') : '' %>">
+<div class="inline-edit" data-html=<%- canEdit ? escape(widget.settings.content || '') : '' %>>
     <%- widget.settings && widget.settings.content || t('content.empty') %>
 </div>

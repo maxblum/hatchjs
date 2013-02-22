@@ -17,3 +17,6 @@ before('init env', function () {
     }.bind(this));
 });
 
+action(function show() {
+    render();
+});

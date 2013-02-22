@@ -94,3 +94,13 @@ WidgetController.prototype.contrast = function contrast(c) {
         c.send('ok');
     });
 };
+
+WidgetController.prototype.__missingAction = function __missingAction(c) {
+    this.page.widgetAction(this.widget.id, c.requestedActionName, c.req.body, c.req, function (err, res) {
+        c.send({
+            code: err ? 500 : 200,
+            res: res,
+            error: err
+        });
+    });
+};

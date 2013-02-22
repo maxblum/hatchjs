@@ -16,31 +16,29 @@
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 
-action(function show() {
-    render();
-});
+load('widgets/common');
 
-action(function create() {
-    req.group.clone(body, function (err, newGroup) {
+action(function createGroup() {
+    var user = this.user;
+
+    req.group.clone(this.data, function (err, newGroup) {
         if (err) {
             // send the error message
             send({
                 code: 500,
-                status: 'error',
-                icon: 'warning-sign',
-                error: err
+                error: err && (newGroup && newGroup.errors || err.stack)
             });
         } else {
             // TODO: this should be replaced with user.join(group)
             // add user to members of new group to be able to edit it
-            this.user.membership.push({
+            user.membership.push({
                 groupId: newGroup.id,
                 role: 'owner',
                 joinedAt: new Date,
                 state: 'approved'
             });
 
-            this.user.save(function () {
+            user.save(function () {
                 send({
                     code: 200,
                     redirect: '//' + newGroup.homepage.url
@@ -48,5 +46,5 @@ action(function create() {
             });
         }
     });
-};
+});
 
