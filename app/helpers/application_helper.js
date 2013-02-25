@@ -1,6 +1,3 @@
-exports.hook = function () {
-};
-
 exports.__ = function (s) {
     return s;
 };

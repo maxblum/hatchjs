@@ -50,7 +50,7 @@
                     <%- linkTo('<span class="group-name">' + req.group.name + '</span>',
                         '//' + req.group.homepage.url, {class: 'brand'})  %>
                     <div>
-                        <%- hook('layout.topBar.left') %>
+                        <%- contentFor('layout.topBar.left') %>
 
                         <% if (req.user && !request.member && !req.pending && req.group.joinPermissions != 'closed') { %>
                         <ul class="nav pull-left">
@@ -81,7 +81,7 @@
                     </div>
                     <div class="pull-right">
 
-                        <%- hook('layout.topBar.middle') %>
+                        <%- contentFor('layout.topBar.middle') %>
 
                         <% if (request.user) { var user = request.user; %>
                         <ul class="nav">
@@ -115,7 +115,7 @@
                         </ul>
                         <% } %>
 
-                        <%- hook('layout.topBar.right') %>
+                        <%- contentFor('layout.topBar.right') %>
 
                     </div>
                 </div>
@@ -186,7 +186,7 @@
             </footer>
         </div>
 
-        <%- hook('layout.body.end') %>
+        <%- contentFor('layout.body.end') %>
 
 <% if (!req.query._pjax) { %>
     </div>
