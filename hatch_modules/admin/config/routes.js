@@ -22,8 +22,8 @@ exports.routes = function (map) {
             page.collection(function (pages) {
                 pages.get('new-special', '#newSpecial', {as: 'newSpecial'});
                 pages.get('new-special/:type', '#newSpecial', {as: 'newSpecialType'});
-                pages.get('specials', {as: 'groupSpecialPages'});
-                pages.get('renderTree', {as: 'renderTree'});
+                pages.get('specials', '#specials', {as: 'groupSpecialPages'});
+                pages.get('renderTree', '#tree', {as: 'renderTree'});
             });
             page.put('reorder.:format?', 'pages#updateOrder');
         });
