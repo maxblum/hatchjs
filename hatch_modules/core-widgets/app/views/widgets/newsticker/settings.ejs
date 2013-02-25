@@ -1,4 +1,11 @@
-<% include ../settings-foot.ejs %>
+<% var form = formFor(widget.settings, {
+    action: widgetCoreAction('configure'),
+    remote: true,
+    'data-widget-action': 'render:' + widget.id,
+    class: 'form-horizontal widget-settings-form'
+}) %>
+
+<% include ../settings-head.ejs %>
 
 <div class="control-group">
     <%- form.label('caption', {class: 'control-label'}) %>
@@ -10,7 +17,7 @@
 <div class="control-group">
     <%- form.label('inverval', 'Ticker interval (ms)', {class: 'control-label'}) %>
     <div class="controls">
-        <%- form.input('caption') %>
+        <%- form.input('inverval') %>
     </div>
 </div>
 
@@ -30,9 +37,10 @@
 </ul>
 
 <div class="tab-content" id="pagesContent">
-    <% for(var i=1; i<=10; i++) { %> 
+    <% for(var i = 1; i <= 10; i++) { %> 
     <div class="tab-pane <%- i == 1 ? 'active':'' %>" id="page-<%- i %>">
-        <%- formInput({ title: 'Text', name: 'text-' + i, type: 'text' }, widget.settings['text-' + i]) %>
+        <%- form.label('text-' + i, 'Text', {class: 'control-label'}) %>
+        <%- form.input('text-' + i) %>
     </div>
     <% } %>
 </div>
@@ -49,4 +57,5 @@
         $('#pagesContent div:first').addClass('active');
     });
 </script>
+
 <% include ../settings-foot.ejs %>

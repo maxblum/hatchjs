@@ -1,8 +1,7 @@
 <% if (widget.settings.title && widget.settings.anchor) { %>
     <%- anchor(titleToAnchor(widget.settings.title)) %>
 <% } %>
-    <%- widgetTitle('News ticker') %></h2>
-<% } %>
+<h2><%- widgetTitle('News ticker') %></h2>
 
 <% if (!widget.settings.numberOfPages) { %>
     <p>
@@ -18,7 +17,7 @@
 
     <div class="news-ticker" id="ticker-<%- widget.id %>">
         <ul style="unstyled">
-            <% for(var i = 1; i <= widget.settings.numberOfPages; i++) { %>
+            <% for (var i = 1; i <= widget.settings.numberOfPages; i++) { %>
                 <li><%- widget.settings['text-' + i] %></li>
             <% } %>
         </ul>

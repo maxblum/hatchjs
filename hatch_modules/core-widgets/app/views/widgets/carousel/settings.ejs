@@ -1,8 +1,17 @@
+<% var form = formFor(widget.settings, {
+    action: widgetCoreAction('configure'),
+    remote: true,
+    'data-widget-action': 'render:' + widget.id,
+    class: 'form-horizontal widget-settings-form'
+}) %>
+
 <% include ../settings-head.ejs %>
 
-<%- form.label('numberOfPages', 'Number of pages', {class: 'control-label'}) %>
-<div class="controls">
-    <%- form.select('numberOfPages', [1,2,3,4,5,6,7,8,9,10]) %>
+<div class="control-group">
+    <%- form.label('numberOfPages', 'Number of pages', {class: 'control-label'}) %>
+    <div class="controls">
+        <%- form.select('numberOfPages', [1,2,3,4,5,6,7,8,9,10]) %>
+    </div>
 </div>
 
 <ul class="nav nav-tabs" id="pagesTabs">
@@ -29,12 +38,27 @@
             </div>
         </div>
 
-        <%- form.label('title', {for: 'title-' + i}) %>
-        <%- form.input('title-' + i) %>
-        <%- form.label('text', {for: 'text-' + i}) %>
-        <%- form.input('text-' + i) %>
-        <%- form.label('link', {for: 'link-' + i}) %>
-        <%- form.input('link-' + i) %>
+        <div class="control-group">
+            <%- form.label('title', {for: 'title-' + i, class: 'control-label'}) %>
+            <div class="controls">
+                <%- form.input('title-' + i) %>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <%- form.label('text', {for: 'text-' + i, class: 'control-label'}) %>
+            <div class="controls">
+                <%- form.input('text-' + i) %>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <%- form.label('link', {for: 'link-' + i, class: 'control-label'}) %>
+            <div class="controls">
+                <%- form.input('link-' + i) %>
+            </div>
+        </div>
+
     </div>
     <% } %>
 </div>

@@ -24,6 +24,6 @@ before(function init() {
     next()
 });
 
-action(function settings(c, params, done) {
-    done(c.widget.view('settings'));
+action(function settings() {
+    render();
 });

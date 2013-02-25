@@ -1,15 +1,8 @@
-<% var form = formFor(widget.settings, {
-    action: widgetCoreAction('configure'),
-    remote: true,
-    'data-widget-action': 'render:' + widget.id,
-    class: 'form-horizontal widget-settings-form'
-}) %>
-
 <%- form.begin() %>
   <div class="modal wide" id="modal-settings">
     <div class="modal-header">
       <a class="close" data-dismiss="modal">×</a>
-      <h3><%= t('widget.settings.title') %></h3>
+      <h3><%- t('widget.settings.title') %></h3>
     </div>
     <div class="modal-body">
 
@@ -18,13 +11,13 @@
           <div class="control-group">
             <%- form.label('title', {class: 'control-label'}) %>
             <div class="controls">
-              <%- form.input('title', {class: 'xx-smal'}) %>
+              <%- form.input('title', {class: 'xx-small'}) %>
             </div>
           </div>
         </div>
         <div class="span2 widget-visibility">
           <div class="control-group">
-            <%- form.label('visibility', icon('eye-open')) %>
+              <%- form.label('visibility', icon('eye-open'), {class: 'control-label'}) %>
             <div class="controls">
 
               <% var visibility = 
