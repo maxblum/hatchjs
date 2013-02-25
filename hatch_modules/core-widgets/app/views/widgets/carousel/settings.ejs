@@ -1,206 +1,76 @@
-<% var form = formFor(widget.settings, {
-    action: widgetCoreAction('configure'),
-    remote: true,
-    'data-widget-action': 'render:' + widget.id,
-    class: 'form-horizontal widget-settings-form'
-}) %>
+<% include ../settings-head.ejs %>
 
-<%- form.begin() %>
-  <div class="modal wide" id="modal-settings">
-    <div class="modal-header">
-      <a class="close" data-dismiss="modal">×</a>
-      <h3><%= t('widget.settings.title') %></h3>
+<%- form.label('numberOfPages', 'Number of pages', {class: 'control-label'}) %>
+<div class="controls">
+    <%- form.select('numberOfPages', [1,2,3,4,5,6,7,8,9,10]) %>
+</div>
+
+<ul class="nav nav-tabs" id="pagesTabs">
+    <% for(var i = 1; i <= 10; i++) { %>
+    <li class="<%- i == 1 ? 'active':'' %> <%- i > (widget.settings.numberOfPages || 3) ? 'hidden':'' %>">
+        <a href="#page-<%- i %>" data-toggle="tab"><%- i %></a>
+    </li>
+    <% } %>
+</ul>
+
+<div class="tab-content" id="pagesContent">
+    <% for(var i = 1; i <= 10; i++) { %> 
+    <div class="tab-pane <%- i == 1 ? 'active':'' %>" id="page-<%- i %>">
+        <div class="control-group">
+            <input type="hidden" name="image-<%- i %>" id="image-<%- i %>" value="<%- widget.settings['image-' + i] %>" />
+            <label class="control-label" for="favicon">Image</label>
+            <div class="controls">
+                <a class="btn" href="#" id="image-<%- i %>-button"><i class="icon-picture"></i> Click to upload an image</a>
+
+                <p>
+                    <br/>
+                    <img src="<%- widget.settings['image-' + i] %>" id="image-preview-<%- i %>" height="64" width="80" style="<%- widget.settings['image-' + i] ? '':'display: none;' %>" class="thumbnail" />
+                </p>
+            </div>
+        </div>
+
+        <%- form.label('title', {for: 'title-' + i}) %>
+        <%- form.input('title-' + i) %>
+        <%- form.label('text', {for: 'text-' + i}) %>
+        <%- form.input('text-' + i) %>
+        <%- form.label('link', {for: 'link-' + i}) %>
+        <%- form.input('link-' + i) %>
     </div>
-    <div class="modal-body">
+    <% } %>
+</div>
 
-      <div class="row main-widget-settings">
-        <div class="span3 widget-title">
-          <div class="control-group">
-            <%- form.label('title', {class: 'control-label'}) %>
-            <div class="controls">
-              <%- form.input('title', {class: 'xx-smal'}) %>
-            </div>
-          </div>
-        </div>
-        <div class="span2 widget-visibility">
-          <div class="control-group">
-            <%- form.label('visibility', icon('eye-open')) %>
-            <div class="controls">
+<script type="text/javascript">
+    $('#numberOfPages').on('change', function() {
+        var i = this.value - 1;
 
-              <% var visibility = 
-                [
-                  { icon: 'mobile-phone', class: 'success', name: 'All devices', value: 'visible-all', description: 'This widget can be viewed on all devices'},
-                  { icon: 'tablet', class: 'warning', name: 'Tablets', value: 'hidden-phone', description: 'This widget can be viewed on tablets and computers'},
-                  { icon: 'desktop', class: 'danger', name: 'Computers', value: 'visible-desktop', description: 'This widget can only be viewed on computers'}
-                ]; 
+        $('#pagesTabs li').removeClass('hidden active');
+        $('#pagesTabs li:gt(' + i + ')').addClass('hidden');
+        $('#pagesContent div').removeClass('hidden active');
 
-                var visibilityValue = _.find(visibility, function(v) { return v.value == (widget.settings.visibility || 'visible-all') });
-              %>
+        $('#pagesTabs li:first').addClass('active');
+        $('#pagesContent div:first').addClass('active');
+    });
 
-              <input type="hidden" id="visibility" name="visibility" value="<%- visibilityValue.value %>" />
+    <% for (var i = 1; i <= 10; i++) { %>
+        (function () {
+             var uploader = new qq.FileUploader({
+                params: { _csrf: $('meta[name=csrf-token]').attr('content') },
+                element: $('#image-<%-i%>-button').get(0),
+                action: '<%- pathFor('upload').add -%>',
+                uploadButtonText: $('#image-<%-i%>-button').html(),
+                encoding: 'multipart',
+                onComplete: function(id, filename, data) {
+                    $('#image-<%-i%>').val(data.url);
+                    $('#image-preview-<%-i%>').show().attr('src', data.url);
 
-              <div class="btn-group" id="widget-visibility">
-                <button class="btn btn-<%- visibilityValue.class %>" data-toggle="dropdown" tabindex="-1"><%- visibilityValue.name %></button>
-                <button class="btn dropdown-toggle btn-<%- visibilityValue.class %>" data-toggle="dropdown" tabindex="-1">
-                  <span class="caret"></span>
-                </button>
-
-                <ul class="dropdown-menu pull-right">
-                  <% visibility.forEach(function (v) { %>
-                    <li>
-                      <a href="#<%- v.value %>" data-value="<%- escape(JSON.stringify(v)) %>" rel="widget-visibility">
-                        <i class="icon-<%- v.icon %>"></i>
-                        <%- v.name %>
-                        <br/>
-                        <small><%- v.description %></small>
-                      </a>
-                    </li>
-                  <% }); %>
-                </ul>
-              </div>
-
-              <!--
-              <select class="" name="visibility" id="widget-visibility">
-                <% 'visible-all:All,visible-desktop:Desktop,hidden-phone:Tablet'.split(',').forEach(function (v) { %>
-                <option value="<%- v.split(':')[0] %>" <%- widget.settings.visibility === v.split(':')[0] ? 'selected' : '' %>><%- v.split(':')[1] %></option>
-                <% }); %>
-              </select>
-              -->
-
-            </div>
-          </div>
-        </div>
-        <div class="span2 widget-privacy">
-          <div class="control-group">
-            <label class="control-label" for="privacy"><i class="icon-lock"></i></label>
-            <div class="controls">
-
-              <% var privacy = 
-                [
-                  { icon: 'globe', class: 'success', name: 'Public', value: 'public', description: 'All users can see this widget'},
-                  { icon: 'user', class: 'warning', name: 'Members', value: 'members-only', description: 'Only members of this group can see this widget'},
-                  { icon: 'unlock', class: 'danger', name: 'Private', value: 'private', description: 'Only the group owner and editors can see this widget'},
-                  { icon: 'lock', class: '', name: 'Signed out', value: 'non-registered', description: 'Only signed out users will see this widget'}
-                ];
-
-                var privacyValue = _.find(privacy, function(p) { return p.value == (widget.settings.privacy || 'public') });
-              %>
-
-              <input type="hidden" id="privacy" name="privacy" value="<%- privacyValue.value %>" />
-
-              <div class="btn-group" id="widget-privacy">
-                <button class="btn btn-<%- privacyValue.class %>" data-toggle="dropdown" tabindex="-1"><%- privacyValue.name %></button>
-                <button class="btn dropdown-toggle btn-<%- privacyValue.class %>" data-toggle="dropdown" tabindex="-1">
-                  <span class="caret"></span>
-                </button>
-
-                <ul class="dropdown-menu pull-right">
-                  <% privacy.forEach(function (p) { %>
-                    <li>
-                      <a href="#<%- p.value %>" data-value="<%- escape(JSON.stringify(p)) %>" rel="widget-privacy">
-                        <i class="icon-<%- p.icon %>"></i>
-                        <%- p.name %>
-                        <br/>
-                        <small><%- p.description %></small>
-                      </a>
-                    </li>
-                  <% }); %>
-                </ul>
-              </div>
-
-              <!--
-              <select class="" name="privacy" id="privacy">
-                <% 'public:Public,members-only:Members,private:Private'.split(',').forEach(function (v) { %>
-                <option value="<%- v.split(':')[0] %>" <%- widget.settings.privacy === v.split(':')[0] ? 'selected' : '' %>><%- v.split(':')[1] %></option>
-                <% }); %>
-              </select>
-              -->
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <%- form.label('numberOfPages', 'Number of pages', {class: 'control-label'}) %>
-      <div class="controls">
-          <%- form.select('numberOfPages', [1,2,3,4,5,6,7,8,9,10]) %>
-      </div>
-
-        <ul class="nav nav-tabs" id="pagesTabs">
-            <% for(var i = 1; i <= 10; i++) { %>
-                <li class="<%- i == 1 ? 'active':'' %> <%- i > (widget.settings.numberOfPages || 3) ? 'hidden':'' %>">
-                    <a href="#page-<%- i %>" data-toggle="tab"><%- i %></a>
-                </li>
-            <% } %>
-        </ul>
-
-        <div class="tab-content" id="pagesContent">
-            <% for(var i = 1; i <= 10; i++) { %> 
-                <div class="tab-pane <%- i == 1 ? 'active':'' %>" id="page-<%- i %>">
-                    <div class="control-group">
-                        <input type="hidden" name="image-<%- i %>" id="image-<%- i %>" value="<%- widget.settings['image-' + i] %>" />
-                        <label class="control-label" for="favicon">Image</label>
-                        <div class="controls">
-                            <a class="btn" href="#" id="image-<%- i %>-button"><i class="icon-picture"></i> Click to upload an image</a>
-
-                            <p>
-                              <br/>
-                              <img src="<%- widget.settings['image-' + i] %>" id="image-preview-<%- i %>" height="64" width="80" style="<%- widget.settings['image-' + i] ? '':'display: none;' %>" class="thumbnail" />
-                            </p>
-                        </div>
-                    </div>
-
-                    <%- form.label('title', {for: 'title-' + i}) %>
-                    <%- form.input('title-' + i) %>
-                    <%- form.label('text', {for: 'text-' + i}) %>
-                    <%- form.input('text-' + i) %>
-                    <%- form.label('link', {for: 'link-' + i}) %>
-                    <%- form.input('link-' + i) %>
-                </div>
-            <% } %>
-        </div>
-
-        <script type="text/javascript">
-            $('#numberOfPages').on('change', function() {
-                var i = this.value - 1;
-
-                $('#pagesTabs li').removeClass('hidden active');
-                $('#pagesTabs li:gt(' + i + ')').addClass('hidden');
-                $('#pagesContent div').removeClass('hidden active');
-
-                $('#pagesTabs li:first').addClass('active');
-                $('#pagesContent div:first').addClass('active');
+                    $.noty({
+                        text: '<%- icon('ok') + t('common.imageUploaded') %>',
+                        type: 'success'
+                    });
+                }
             });
+        })();
+    <% } %>
+</script>
 
-            <% for (var i = 1; i <= 10; i++) { %>
-            (function () {
-                var uploader = new qq.FileUploader({
-                    params: { _csrf: $('meta[name=csrf-token]').attr('content') },
-                    element: $('#image-<%-i%>-button').get(0),
-                    action: '<%- pathFor('upload').add -%>',
-                    uploadButtonText: $('#image-<%-i%>-button').html(),
-                    encoding: 'multipart',
-                    onComplete: function(id, filename, data) {
-                        $('#image-<%-i%>').val(data.url);
-                        $('#image-preview-<%-i%>').show().attr('src', data.url);
-
-                        $.noty({ text: '<%- icon('ok') + t('common.imageUploaded') %>', type: 'success' });
-                    }
-                });
-            })();
-            <% } %>
-        </script>
-
-      <div id="modal-image-tabs"></div>
-    </div>
-    <div class="modal-footer">
-      <div class="btn-toolbar" style="margin : 0;">
-        <div class="btn-group">
-          <button class="btn btn-primary" type="submit">Save settings</button>
-        </div>
-        <div class="btn-group">
-          <a class="btn" data-dismiss="modal">Cancel</a>
-        </div>
-      </div>
-    </div>
-  </div>
-<%- form.end() %>
+<% include ../settings-foot.ejs %>

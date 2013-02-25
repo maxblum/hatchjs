@@ -16,10 +16,14 @@
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 
-exports.init = function(c, params, done) {
-    done();
-};
+load('widgets/common');
 
-exports.settings = function(c, params, done) {
+before(function init() {
+    var s = this.widget.settings;
+    s.numberOfPages = s.numberOfPages || 3;
+    next()
+});
+
+action(function settings(c, params, done) {
     done(c.widget.view('settings'));
-};
+});
