@@ -17,14 +17,32 @@ PageController.prototype.show = function (c) {
     }
 
     var page = c.req.group.matchPage(c.req.url);
+
+    // special page
+    if (page && page.type !== 'page') {
+        if (!page.id) {
+            page = new Page(page);
+        }
+    }
+
     if (!page) {
         return c.next();
     }
 
-    Page.find(page.id, function (err, page) {
+    if (page.id) {
 
-        c.req.page = page;
+        Page.find(page.id, function (err, page) {
+            c.req.page = page;
+            render(page);
+        });
 
+    } else {
+
+        render(page);
+
+    }
+
+    function render(page) {
         page.renderHtml(c.req, function (err, html) {
             if (err) {
                 return c.next(err);
@@ -35,6 +53,5 @@ PageController.prototype.show = function (c) {
                 req: c.req
             });
         });
-
-    });
+    }
 };

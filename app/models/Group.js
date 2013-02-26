@@ -43,14 +43,38 @@ module.exports = function (compound, Group) {
     };
 
     Group.prototype.matchPage = function (path) {
+        var group = this;
         var fullPagePath = this.url.match(/^[^\/]+/)[0] + path;
         fullPagePath = fullPagePath.replace(/\/$/, '');
         var found = null;
         this.pagesCache.forEach(function (page) {
-            if (page.url === fullPagePath) {
-                found = page;
+            // match regular page
+            if (page.type === 'page' || !page.type) {
+                if (page.url === fullPagePath) {
+                    found = page;
+                }
+            }
+            // match special page
+            else {
+                var sp = compound.hatch.page.get(page.type);
+                if (sp && sp.matchRoute) {
+                    var p = sp.matchRoute(group, path);
+                    if (p) {
+                        req.specialPageParams = p;
+                        req.page = sp;
+                    }
+                }
             }
         });
+
+        var special = compound.hatch.page.match(path);
+        if (special && special.defaultPage) {
+            found = group.pages.build(special.defaultPage);
+            found.url = req.page.url || special.path(group, { defaultPage: true });
+            found.type = special.type;
+            found.grid = found.grid || '02-two-columns';
+        }
+
         return found;
     };
 
