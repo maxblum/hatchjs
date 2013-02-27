@@ -16,6 +16,8 @@
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 
+var path = require('path');
+
 module.exports = function (compound, Group) {
 
     var Page = compound.models.Page;
@@ -48,6 +50,7 @@ module.exports = function (compound, Group) {
         fullPagePath = fullPagePath.replace(/\/$/, '');
         var found = null;
         this.pagesCache.forEach(function (page) {
+            console.log(page.type);
             // match regular page
             if (page.type === 'page' || !page.type) {
                 if (page.url === fullPagePath) {
@@ -60,23 +63,47 @@ module.exports = function (compound, Group) {
                 if (sp && sp.matchRoute) {
                     var p = sp.matchRoute(group, path);
                     if (p) {
-                        req.specialPageParams = p;
-                        req.page = sp;
+                        found = sp;
                     }
                 }
             }
         });
 
-        var special = compound.hatch.page.match(path);
-        if (special && special.defaultPage) {
-            found = group.pages.build(special.defaultPage);
-            found.url = req.page.url || special.path(group, { defaultPage: true });
-            found.type = special.type;
-            found.grid = found.grid || '02-two-columns';
+        if (!found) {
+            var special = compound.hatch.page.match(path);
+            if (special && special.defaultPage) {
+                found = group.pages.build(special.defaultPage);
+                found.url = req.page.url || special.path(group, { defaultPage: true });
+                found.type = special.type;
+                found.grid = found.grid || '02-two-columns';
+            }
         }
 
         return found;
     };
+
+    Group.prototype.definePage = function definePage(url, cb) {
+        var page = this.matchPage(url);
+
+        // special page out of this group (sp.defaultPage)
+        if (page && page.type !== 'page' && !page.id) {
+            page = new Page(page.defaultPage);
+            page.groupId = this.id;
+            page.url = page.url || path.join(
+                this.homepage.url,
+                url
+            );
+        }
+
+        if (!page) {
+            cb(null, null);
+        } else if (page.id) {
+            Page.find(page.id, cb);
+        } else {
+            cb(null, page);
+        }
+
+    }
 
     /**
      * clones a group and saves the new one to the database

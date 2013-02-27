@@ -28,7 +28,7 @@ module.exports = function (compound) {
             if (err.message == '404') {
                 res.render(compound.structure.views['common/404']);
             } else {
-                console.log(err);
+                console.log(err.stack);
                 res.render(compound.structure.views['common/500']);
             }
         });

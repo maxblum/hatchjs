@@ -7,7 +7,6 @@ var Application = module.exports = function Application(init) {
         this.sectionName = c.controllerName;
         this._ = _;
         this.req = c.req;
-        this.group = c.req.group;
         this.tabs = [
             { name: 'community', url: 'groupCommunity', rank: 10 },
             { name: 'content',   url: 'groupContent',   rank: 20 },
@@ -16,24 +15,25 @@ var Application = module.exports = function Application(init) {
             { name: 'modules',   url: 'groupModules',   rank: 50 }
         ];
 
-        if (c.controllerName.match(/content|tags|streams/)) {
-            console.log(typeof this.group.tags, this.group.tags.constructor.name);
-            var tags = (c.req.group.tags || []).slice(0, 5);
-            var filter = c.req.query.filter || c.req.params.filter;
-            tags = _.filter(tags, function(tag) {
-                return tag && tag.contentCount > 0;
-            });
-            if (typeof filter != 'undefined' && filter && !_.find(tags, function(t) {
-                return t && t.id == filter;
-            })) {
-                tags.push(_.find(c.req.group.tags || [], function(t) {
+        function loadGroupTags() {
+            if (c.controllerName.match(/content|tags|streams/)) {
+                var tags = (c.req.group.tags || []).slice(0, 5);
+                var filter = c.req.query.filter || c.req.params.filter;
+                tags = _.filter(tags, function(tag) {
+                    return tag && tag.contentCount > 0;
+                });
+                if (typeof filter != 'undefined' && filter && !_.find(tags, function(t) {
                     return t && t.id == filter;
-                }));
+                })) {
+                    tags.push(_.find(c.req.group.tags || [], function(t) {
+                        return t && t.id == filter;
+                    }));
+                }
+                locals.tags = tags;
             }
-            this.tags = tags;
         }
 
-        var id = c.params.group_id || c.params.groupId || c.controllerName === 'groups' && c.params.id;
+        var id = c.params.group_id || c.params.groupId || c.controllerName === 'groups' && c.params.id || c.req.query.groupId;
         if (id != c.req.group.id) {
             c.Group.find(id, function (err, group) {
                 if (!err) {
@@ -42,10 +42,26 @@ var Application = module.exports = function Application(init) {
                 group.parent = c.req.group;
                 c.req.group = group;
                 locals.group = group;
-                c.next();
+                initGroup();
             });
         } else {
-            c.next();
+            initGroup();
+        }
+
+        function initGroup() {
+            loadGroupTags();
+            if (isNaN(parseInt(c.req.query.pageId, 10))) {
+                var url = c.req.query.pageId.replace(/^.*?\//, '/');
+                c.req.group.definePage(url, function(err, page) {
+                    c.req.page = page;
+                    c.next();
+                });
+            } else {
+                c.Page.find(c.req.query.pageId, function (err, page) {
+                    c.req.page = page;
+                    c.next();
+                });
+            }
         }
     });
 };

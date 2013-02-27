@@ -2,14 +2,19 @@
 var search = new SearchController();
 
 //pathTo is the client side routing function
-pathTo = function (action) {
-    if (action.match(/\?/)) {
-        delim = '&';
-    } else {
-        delim = '?';
-    }
-    return '/do/' + action + delim + 'pageId=' + $('meta[name=pageId]').attr('content');
-}
+window.pathTo = function pathTo(action) {
+    var pageId = $('meta[name=pageId]').attr('content');
+    var groupId = $('meta[name=groupId]').attr('content');
+    var pageUrl = location.href.replace(/^https?:\/\//, '');
+    var url =  [
+        '/do/' + action, [
+            'pageId=' + encodeURIComponent(pageId),
+            'groupId=' + groupId
+        ].join('&')
+    ].join(action.match(/\?/) ? '&' : '?');
+    console.log(url);
+    return url;
+};
 
 //init everything on page load
 $(document).ready(function() {

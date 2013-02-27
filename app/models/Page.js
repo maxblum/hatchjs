@@ -331,16 +331,21 @@ module.exports = function (compound, Page) {
         var url = 'http://' + this.url.match(/^[^\/]+/)[0] + '/do/' +
             widget.type.replace('/', '/widgets/') + '/' + action;
 
+        var data = {
+            pageId: this.id,
+            user: req.user,
+            data: params,
+            widgetId: widgetId
+        };
+        if (!this.id) {
+            data.pageUrl = this.url;
+            data.groupId = this.groupId;
+        }
         request.post(
             url,
             {form: {
                 token: 'test',
-                data: JSON.stringify({
-                    pageId: this.id,
-                    user: req.user,
-                    data: params,
-                    widgetId: widgetId
-                })
+                data: JSON.stringify(data)
             }},
             function (err, res) {
                 cb(err, res.body);

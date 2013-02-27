@@ -28,7 +28,7 @@
           </thead>
           <tbody>
             <% if (pages.length > 0) { %>
-                <%- partial('pages/specialsTable', {locals: {pages: pages}}) %>
+            <%- include _specialsTable %>
             <% } else { %>
                 <tr>
                     <td colspan="5"><%- __('No special pages have been defined for this group yet') %></td>

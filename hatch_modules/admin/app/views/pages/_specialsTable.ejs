@@ -8,9 +8,9 @@
   <td> <%- __('Public') %> </td>
   <td> <%- __('Visible') %> </td>
   <td>
-    <%- linkTo(__('Edit'), pathTo.editPage(page), {class: '' }) %>
+    <%- linkTo(__('Edit'), pathTo.editGroupPage(group, page), {class: '' }) %>
     &nbsp;
-    <%- linkToRemote('<i class="icon-remove"></i>', pathTo.destroyPage(page.id), {rel: 'tooltip', 'data-original-title': __('Delete this page'), rel: 'delete-page'}) %>
+    <%- linkTo('<i class="icon-remove"></i>', pathTo.groupPage(group, page), {remote: true, rel: 'tooltip', method: 'delete', 'data-original-title': __('Delete this page'), rel: 'delete-page'}) %>
   </td>
 </tr>
 <% }); %>

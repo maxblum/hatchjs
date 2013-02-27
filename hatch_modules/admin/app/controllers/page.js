@@ -27,6 +27,7 @@ function PageController(init) {
 
     init.before(function loadPage(c) {
         var Page = c.Page;
+        if (c.req.page) return c.next();
         Page.find(c.req.query.pageId, function (err, page) {
             c.req.page = page;
             page.grid = page.grid || '02-two-columns';

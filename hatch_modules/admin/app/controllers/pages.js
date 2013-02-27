@@ -111,9 +111,9 @@ PagesController.prototype.create = function create(c) {
             }
             else {
                 if (page.type && page.type !== 'page') {
-                    c.send({ redirect : c.pathTo.specials() });
+                    c.send({ redirect : c.pathTo.groupSpecialPages(c.req.group) });
                 } else {
-                    c.send({ redirect : c.pathTo.group_pages(c.req.group) });
+                    c.send({ redirect : c.pathTo.groupPages(c.req.group) });
                 }
             }
         }
@@ -156,9 +156,9 @@ PagesController.prototype.update = function update(c) {
         }
 
         if ([null, '', 'page', 'homepage'].indexOf(c.locals.page.type) != -1) {
-            c.send({ redirect: c.pathTo.group_pages(c.req.group) });
+            c.send({ redirect: c.pathTo.groupPages(c.req.group) });
         } else {
-            c.send({ redirect: c.pathTo.specialPages(c.req.group) });
+            c.send({ redirect: c.pathTo.groupSpecialPages(c.req.group) });
         }
     });
 };
@@ -214,18 +214,21 @@ PagesController.prototype.updateOrder = function updateOrder(c) {
 }
 
 function findPage(c) {
+    var locals = this;
     c.Page.find(c.params.id, function (err, page) {
         if (!page) {
             return c.next(new Error('404'));
         }
-        c.page = page;
+        locals.page = page;
         c.next();
     });
 }
 
 function prepareTree(c) {
     var locals = this;
-    this.specials = []; // c.api.module.getSpecials();
+    this.specials = Object.keys(c.compound.hatch.page.pages).map(function(sp) {
+        return c.compound.hatch.page.pages[sp];
+    });
     this.templates = [];
     c.req.group.pages(function (err, pages) {
         if (!err) {
