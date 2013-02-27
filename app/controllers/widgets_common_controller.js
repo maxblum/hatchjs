@@ -5,11 +5,11 @@ before('init env', function (c) {
         return next(403, 'Unauthorized');
     }
     var locals = this;
-    this.inlineEditAllowed = true;
+    locals.inlineEditAllowed = true;
     var data = JSON.parse(body.data);
-    this.user = req.user || new User(data.user);
-    this.data = data.data;
-    this.canEdit = true;
+    locals.user = req.user || new User(data.user);
+    locals.data = data.data;
+    locals.canEdit = true;
 
     if (data.pageId) {
         Page.find(data.pageId, gotPage);

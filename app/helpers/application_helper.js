@@ -61,7 +61,7 @@ exports.javascripts = function () {
 }
 
 exports.isPrivileged = function () {
-    return !!(this.request.member && this.request.user.canEdit);
+    return !!(this.req.member && this.req.user.canEdit);
 };
 
 exports.pageTitle = function () {
