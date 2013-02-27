@@ -26,6 +26,22 @@ module.exports = function (compound) {
         app.use(app.router);
         app.use(function (err, req, res, next) {
             if (err.message == '404') {
+                if (req.group) {
+                    var found;
+                    req.group.pagesCache.forEach(function (p) {
+                        if (p.type === '404') found = p;
+                    });
+                    if (found) {
+                        app.compound.models.Page.find(found.id, function (e, p) {
+                            req.page = p;
+                            compound.controllerBridge.callControllerAction(
+                                'page',
+                                'render', req, res, next
+                            );
+                        });
+                        return;
+                    }
+                }
                 res.render(compound.structure.views['common/404']);
             } else {
                 console.log(err.stack);

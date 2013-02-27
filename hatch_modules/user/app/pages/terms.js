@@ -28,7 +28,3 @@ exports.defaultPage = {
         {id: 3, type: 'core-widgets/static', settings: { title: 'Terms and conditions', content: 'Any information you enter on this website will only be used by this website, unless otherwise specifically specified on the site or unless you have provided specific permission for us to share your information with other third parties or we can’t withhold it without breaking the law. We may use Google Analytics to monitor our site traffic. This does not allow us to identify individuals. You can read their <a href="http://www.google.com/privacy.html">privacy policy here</a>. We keep our data about you secure, but if anything goes wrong we’ll let you know.' }}
     ]
 };
-
-exports.interface = {
-    'selectedUser': 'User'
-};

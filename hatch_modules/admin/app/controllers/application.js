@@ -41,7 +41,6 @@ var Application = module.exports = function Application(init) {
                 }
                 group.parent = c.req.group;
                 c.req.group = group;
-                locals.group = group;
                 initGroup();
             });
         } else {
@@ -49,8 +48,9 @@ var Application = module.exports = function Application(init) {
         }
 
         function initGroup() {
+            locals.group = c.req.group;
             loadGroupTags();
-            if (isNaN(parseInt(c.req.query.pageId, 10))) {
+            if (c.req.query.pageId && isNaN(parseInt(c.req.query.pageId, 10))) {
                 var url = c.req.query.pageId.replace(/^.*?\//, '/');
                 c.req.group.definePage(url, c, function(err, page) {
                     c.req.page = page;

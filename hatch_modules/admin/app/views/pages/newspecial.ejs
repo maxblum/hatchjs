@@ -12,7 +12,7 @@
 
         <%- errorMessagesFor(page) %>
 
-        <%- formTagBegin({action: pathTo.groupPages(req.group), method: 'POST', id: 'page_form', class: 'form-vertical'}) %>
+        <%- formTagBegin({action: pathTo.groupPages(req.group), remote: true, method: 'POST', id: 'page_form', class: 'form-vertical'}) %>
             <input type="hidden" name="parentId" value="<%- req.pagesTree[0].id %>" />
 
             <% if (!page.id) { %>
