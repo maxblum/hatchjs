@@ -2,10 +2,6 @@ exports.__ = function (s) {
     return s;
 };
 
-exports.specialPagePath = function () {
-    return '';
-};
-
 exports.openGraphTags = function () {
     var req = this.req,
         page = req.page,

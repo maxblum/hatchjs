@@ -70,10 +70,9 @@ module.exports = function (compound, Group) {
         });
 
         if (!found) {
-            var special = compound.hatch.page.match(path);
+            var special = compound.hatch.page.match(this, path);
             if (special && special.defaultPage) {
                 found = group.pages.build(special.defaultPage);
-                found.url = req.page.url || special.path(group, { defaultPage: true });
                 found.type = special.type;
                 found.grid = found.grid || '02-two-columns';
             }
@@ -87,12 +86,7 @@ module.exports = function (compound, Group) {
 
         // special page out of this group (sp.defaultPage)
         if (page && page.type !== 'page' && !page.id) {
-            page = new Page(page.defaultPage);
-            page.groupId = this.id;
-            page.url = page.url || path.join(
-                this.homepage.url,
-                url
-            );
+            page.url = path.join(this.homepage.url, url);
         }
 
         if (!page) {
