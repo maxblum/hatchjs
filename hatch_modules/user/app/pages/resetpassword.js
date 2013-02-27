@@ -30,25 +30,28 @@ exports.defaultPage = {
 };
 
 exports.handler = function (env, done) {
-    //get the reset password
+    // get the reset password
     var token = env.req.specialPageParams && env.req.specialPageParams.token || env.req.query && env.req.query.token;
 
-    if(token) {
-        env.api.db.models.ResetPassword.findOne({ where: { token: token }}, function(err, rp) {
-            //get the user
+    if (token) {
+        env.ResetPassword.findOne({ where: { token: token }}, function(err, rp) {
+            // get the user
             if(rp) {
-                env.api.db.models.User.findOne({ where: { id: rp.userId }}, function(err, user) {
+                env.User.findOne({ where: { id: rp.userId }}, function(err, user) {
                     env.req.selectedUser = user;
                     env.req.token = token;
 
                     done();
                 })
             }
-            //do nothing - invalid password reset token
-            else done();
+            // do nothing - invalid password reset token
+            else {
+                done();
+            }
         });
+    } else {
+        done();
     }
-    else done();
 };
 
 exports.interface = {
