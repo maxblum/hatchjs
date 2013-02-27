@@ -47,10 +47,9 @@ module.exports = function (compound, Group) {
     Group.prototype.matchPage = function (path) {
         var group = this;
         var fullPagePath = this.url.match(/^[^\/]+/)[0] + path;
-        fullPagePath = fullPagePath.replace(/\/$/, '');
+        fullPagePath = fullPagePath.replace(/\/$/, '').split('?')[0];
         var found = null;
         this.pagesCache.forEach(function (page) {
-            console.log(page.type);
             // match regular page
             if (page.type === 'page' || !page.type) {
                 if (page.url === fullPagePath) {
@@ -63,7 +62,7 @@ module.exports = function (compound, Group) {
                 if (sp && sp.matchRoute) {
                     var p = sp.matchRoute(group, path);
                     if (p) {
-                        found = sp;
+                        found = page;
                     }
                 }
             }
@@ -75,18 +74,23 @@ module.exports = function (compound, Group) {
                 found = group.pages.build(special.defaultPage);
                 found.type = special.type;
                 found.grid = found.grid || '02-two-columns';
+                found.handler = special.handler;
             }
         }
 
         return found;
     };
 
-    Group.prototype.definePage = function definePage(url, cb) {
+    Group.prototype.definePage = function definePage(url, c, cb) {
+        url = url.split('?')[0];
         var page = this.matchPage(url);
 
         // special page out of this group (sp.defaultPage)
         if (page && page.type !== 'page' && !page.id) {
             page.url = path.join(this.homepage.url, url);
+            if (page.hanlder) {
+                return page.hanlder(c, cb.bind(this, null, page));
+            }
         }
 
         if (!page) {

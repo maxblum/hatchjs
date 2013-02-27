@@ -1,6 +1,6 @@
 layout('widgets');
 
-before('init env', function () {
+before('init env', function (c) {
     if (params.action !== 'settings' && !body.token && body.token !== 'test') {
         return next(403, 'Unauthorized');
     }
@@ -18,8 +18,7 @@ before('init env', function () {
             if (err || !group) {
                 return gotPage(err || Error('404'));
             }
-            console.log('definePage');
-            group.definePage(data.pageUrl.replace(/^.*?\//, ''), gotPage);
+            group.definePage(data.pageUrl.replace(/^.*?\//, ''), c, gotPage);
         });
     }
     function gotPage(err, page) {

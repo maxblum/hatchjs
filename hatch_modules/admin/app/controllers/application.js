@@ -52,7 +52,7 @@ var Application = module.exports = function Application(init) {
             loadGroupTags();
             if (isNaN(parseInt(c.req.query.pageId, 10))) {
                 var url = c.req.query.pageId.replace(/^.*?\//, '/');
-                c.req.group.definePage(url, function(err, page) {
+                c.req.group.definePage(url, c, function(err, page) {
                     c.req.page = page;
                     c.next();
                 });
