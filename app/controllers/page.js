@@ -20,12 +20,24 @@ PageController.prototype.show = function (c) {
             if (err) {
                 return c.next(err);
             }
-            console.log(page.handler);
             c.render({
                 page: html,
                 title: page.title,
                 req: c.req
             });
+        });
+    });
+};
+
+PageController.prototype.render = function (c) {
+    c.req.page.renderHtml(c.req, function (err, html) {
+        if (err) {
+            return c.next(err);
+        }
+        c.render('show', {
+            page: html,
+            title: c.req.page.title,
+            req: c.req
         });
     });
 };
