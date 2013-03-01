@@ -8,7 +8,7 @@ var _ = require('underscore');
  */
 exports.breadcrumb = function(current) {
     var pages = [];
-    var allPages = this.group.pagesCache.filter(function (p) {
+    var allPages = this.locals.group.pagesCache.filter(function (p) {
         return p && p.id && p.url;
     });
     var prev = null;
