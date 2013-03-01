@@ -11,23 +11,23 @@ before('init env', function (c) {
     locals.data = data.data;
     locals.canEdit = true;
 
-    if (data.pageId) {
-        Page.find(data.pageId, gotPage);
-    } else {
-        Group.find(data.groupId, function (err, group) {
-            if (err || !group) {
-                return gotPage(err || Error('404'));
-            }
-            group.definePage(data.pageUrl.replace(/^.*?\//, ''), c, gotPage);
-        });
-    }
+    Group.find(data.groupId, function (err, group) {
+        if (err || !group) {
+            return gotPage(err || Error('404'));
+        }
+        group.definePage(data.pageUrl.replace(/^.*?\//, ''), c, gotPage);
+    });
     function gotPage(err, page) {
         if (err || !page) {
             return next(err || new Error('404'));
         }
         locals.page = page;
-        locals.widget = locals.page.widgets[data.widgetId];
-        locals.widget.settings = locals.widget.settings || {};
+        var wc = data.templateWidget ? 'templateWidgets' : 'widgets';
+        locals.widget = page[wc][data.widgetId];
+        console.log(data.widgetId, locals.widget);
+        if (locals.widget) {
+            locals.widget.settings = locals.widget.settings || {};
+        }
         next();
     }
 });
