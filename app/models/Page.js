@@ -233,7 +233,7 @@ module.exports = function (compound, Page) {
     }
 
     /**
-     * deletes a page
+     * Delete a page
      * 
      * @param  {Function} done [continuation function]
      */
@@ -372,119 +372,6 @@ module.exports = function (compound, Page) {
 
     Page.prototype.pathname = function (req) {
         return this.url.replace(req.group.homepage.url, '').replace(/^\/|\/$/g, '');
-    };
-
-    /**
-     * renders a page and it's widgets to the response stream
-     * 
-     * @param  {[String]}    gridHtml [the HTML being used for the page layout grid]
-     * @param  {[Context]}   context  [http context]
-     * @param  {Function}    done     [continuation function]
-     */
-    Page.prototype.render = function render(gridHtml, context, done) {
-        var page = this;
-        var index = {};
-        var widgets = this.widgets;
-
-        // build index
-        var wait = widgets.length;
-        if (page.templateWidgets) {
-            wait += page.templateWidgets.length;
-        }
-        if (wait === 0) return doRender();
-
-        var date = new Date();
-
-        if (page.templateWidgets && widgets.items) {
-            widgets = widgets.items.concat(page.templateWidgets);
-        }
-
-        if (page.templateWidgets) {
-            page.templateWidgets.forEach(function (widget) {
-                WidgetInstance.apply(widget);
-                widget.__proto__ = WidgetInstance.prototype;
-                widget.notEditable = true;
-                index[widget.id] = widget;
-            });
-        }
-
-        var date = new Date();
-
-        //init each widget asynchronously
-        async.forEach(widgets, function(w, done) {
-            w.init(context);
-            if (w.widgetCore.controller && w.widgetCore.controller.init) {
-                w.perform('init', null, done);
-            } else {
-                done();
-            }
-        }, function(err) {
-            if(err) throw err;
-            doRender();
-        });
-
-        function doRender() {
-
-            var cols = [];
-            var sizes = [];
-            if (typeof page.columns === 'string') {
-                page.columns = JSON.parse(page.columns);
-            }
-
-            if (page.columns) {
-                page.columns.forEach(function (col) {
-                    var html = '';
-                    col.widgets.forEach(function (id) {
-                        var date = new Date();
-
-                        var w;
-                        if (col.fromTemplate) {
-                            w = index[id];
-                        } else {
-                            w = widgets[id];
-                        }
-                        if (w) {
-                            if (w.settings) {
-                                if (w.settings.privacy === 'members-only' &&
-                                    !context.req.member) return;
-                                if (w.settings.privacy === 'private' &&
-                                    (!context.req.user || !context.req.user.canEdit)) return;
-                                if (w.settings.privacy === 'non-registered' 
-                                    && context.req.user 
-                                    && !context.req.user.canEdit) return;
-                            }
-                            try {
-                                var widgetHTML = w.render();
-                            } catch (e) {
-                                console.log(e);
-                                widgetHTML = '<pre>' + e.stack.toString() + '</pre>';
-                            }
-                            html += widgetHTML;
-                        }
-                    });
-                    // html.notEditable = !!col.fromTemplate;
-                    cols.push(html);
-                    sizes.push(col.size);
-                });
-            }
-
-            // if we are using a template, wrap the html in a template div
-            if (page.templateId) {
-                gridHtml = '<div class="using-template" data-template-id="' + page.templateId + '">' + gridHtml + '</div>';
-            }
-
-            var date = new Date();
-
-            done(ejs.render(gridHtml, {
-                column: cols,
-                size: sizes,
-                filename: context.layout + page.grid + (page.templateId || ''),
-                cache: true
-            }));
-
-            console.log("render = " + (new Date() - date) + "ms" + " : " + (new Date() - context.req.startedAt) + "ms");
-        }
-
     };
 
     /**
