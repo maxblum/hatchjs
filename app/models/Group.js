@@ -44,6 +44,14 @@ module.exports = function (compound, Group) {
         return this;
     };
 
+    /**
+     * Find page by it's relative path
+     *
+     * @param {String} pathname - relative page path with no domain or group
+     * path, it could not start with '/'. for root page it just blank string.
+     *
+     * @returns Object or Page
+     */
     Group.prototype.matchPage = function (pathname) {
         var group = this;
         var fullPagePath = path.join(this.url.match(/^[^\/]+/)[0], pathname);
@@ -72,6 +80,7 @@ module.exports = function (compound, Group) {
             var special = compound.hatch.page.match(this, pathname);
             if (special && special.defaultPage) {
                 found = group.pages.build(special.defaultPage);
+                found.url = fullPagePath;
                 found.type = special.type;
                 found.grid = found.grid || '02-two-columns';
                 found.handler = special.handler;
@@ -86,9 +95,10 @@ module.exports = function (compound, Group) {
         url = url.split('?')[0];
         var page = this.matchPage(url);
 
+        console.log('define page by', url);
+
         // special page out of this group (sp.defaultPage)
         if (page && page.type !== 'page' && !page.id) {
-            page.url = path.join(this.homepage.url, url);
             if (page.handler) {
                 return page.hanlder(c, gotPage(this, null, page));
             }

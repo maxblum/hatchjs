@@ -19,13 +19,9 @@
 load('widgets/common');
 
 before(function () {
-    //show inline editing tools
-    var locals = this;
+    // show inline editing tools
     this.inlineEditAllowed = true;
-    Group.find(this.page.groupId, function (err, g) {
-        locals.group = g;
-        next();
-    });
+    next();
 });
 
 action(function update() {

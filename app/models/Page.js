@@ -345,14 +345,16 @@ module.exports = function (compound, Page) {
         if (!widget.type) {
             return cb(new Error('Widget has no type specified'));
         }
-        var url = 'http://' + this.url.match(/^[^\/]+/)[0] + '/do/' +
+        var apiDomain = this.url.match(/^[^\/]+/)[0];
+        apiDomain = 'localhost:3003';
+        var url = 'http://' + apiDomain + '/do/' +
             widget.type.replace('/', '/widgets/') + '/' + action;
 
         var data = {
-            user: req.user,
+            userId: 1,
             data: params,
             widgetId: widgetId,
-            pageUrl: this.url,
+            pageUrl: this.pathname(req),
             groupId: this.groupId,
             templateWidget: !!widget.templateWidget
         };
@@ -366,6 +368,10 @@ module.exports = function (compound, Page) {
                 cb(err, res.body);
             }
         );
+    };
+
+    Page.prototype.pathname = function (req) {
+        return this.url.replace(req.group.homepage.url, '').replace(/^\/|\/$/g, '');
     };
 
     /**

@@ -18,31 +18,30 @@
 
 var _ = require('underscore');
 
-load('widgets/common');
-
 before(function init() {
     var pages;
+    var locals = this;
     var current = this.page;
 
     switch (this.widget.settings.display) {
         case 'current':
-        pages = _.filter(req.group.pagesCache, function(page) {
+        pages = _.filter(locals.group.pagesCache, function(page) {
             return page.parentId == current.parentId;
         });
         break;
         case 'current+below':
-        pages = _.filter(req.group.pagesCache, function(page) {
+        pages = _.filter(locals.group.pagesCache, function(page) {
             return page.parentId == current.id || page.parentId == current.parentId;
         });
         break;
         case 'below':
-        pages = _.filter(req.group.pagesCache, function(page) {
+        pages = _.filter(locals.group.pagesCache, function(page) {
             return page.parentId == current.id;
         });
         break;
         case 'all':
         default:
-        pages = req.group.pagesCache;
+        pages = locals.group.pagesCache;
         break;
     }
 
@@ -67,8 +66,4 @@ before(function init() {
     this.pages = pages;
 
     next();
-});
-
-action(function show() {
-    render();
 });
