@@ -271,18 +271,28 @@ module.exports = function (compound, Page) {
 
     Page.prototype.renderHtml = function (req, cb) {
         var index = {}, result = {}, self = this;
-        this.widgets.forEach(function (widget) {
-            index[widget.id] = widget;
-        });
+        if (this.templateWidgets) {
+            this.templateWidgets.forEach(function (widget) {
+                index[widget.id] = widget;
+            });
+        }
         var wait = 0;
         this.columns.forEach(function (col) {
             col.widgets.forEach(function (widgetId) {
                 wait += 1;
-                self.renderWidget(index[widgetId], req, function (err, html) {
+                var w, suf;
+                if (col.fromTemplate) {
+                    suf = 't';
+                    w = index[widgetId];
+                } else {
+                    w = self.widgets[widgetId];
+                    suf = 'p';
+                }
+                self.renderWidget(w, req, function (err, html) {
                     if (err) {
-                        result[widgetId] = err;
+                        result[widgetId + suf] = err;
                     } else {
-                        result[widgetId] = html;
+                        result[widgetId + suf] = html;
                     }
                     done();
                 });
@@ -296,8 +306,9 @@ module.exports = function (compound, Page) {
             }
             self.columns.forEach(function (col) {
                 var html = '';
+                var suf = col.fromTemplate ? 't' : 'p';
                 col.widgets.forEach(function (widgetId) {
-                    html += result[widgetId];
+                    html += result[widgetId + suf];
                 });
                 cols.push(html);
                 sizes.push(col.size);
@@ -313,7 +324,7 @@ module.exports = function (compound, Page) {
     };
 
     Page.prototype.renderWidget = function (widget, req, cb) {
-        this.widgetAction(widget.id, 'show', null, req, cb);
+        this.widgetAction(widget, 'show', null, req, cb);
     };
 
     Page.prototype.performWidgetAction = function(widgetId, req, cb) {
@@ -321,7 +332,13 @@ module.exports = function (compound, Page) {
     };
 
     Page.prototype.widgetAction = function(widgetId, action, params, req, cb) {
-        var widget = this.widgets[widgetId];
+        var widget;
+        if (typeof widgetId === 'object' && widgetId.id) {
+            widget = widgetId;
+            widgetId = widget.id;
+        } else {
+            widget = this.widgets[widgetId];
+        }
         if (!widget) {
             return cb(new Error('Widget id=' + widgetId + ' not found'));
         }
@@ -332,15 +349,13 @@ module.exports = function (compound, Page) {
             widget.type.replace('/', '/widgets/') + '/' + action;
 
         var data = {
-            pageId: this.id,
             user: req.user,
             data: params,
-            widgetId: widgetId
+            widgetId: widgetId,
+            pageUrl: this.url,
+            groupId: this.groupId,
+            templateWidget: !!widget.templateWidget
         };
-        if (!this.id) {
-            data.pageUrl = this.url;
-            data.groupId = this.groupId;
-        }
         request.post(
             url,
             {form: {
@@ -505,6 +520,8 @@ module.exports = function (compound, Page) {
 
         template.widgets.forEach(function (w) {
             w.notEditable = true;
+            w.templateWidget = true;
+            console.log(w.id);
         });
 
         template.columns.forEach(function (col, i) {

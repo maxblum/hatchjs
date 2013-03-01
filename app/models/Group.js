@@ -44,9 +44,9 @@ module.exports = function (compound, Group) {
         return this;
     };
 
-    Group.prototype.matchPage = function (path) {
+    Group.prototype.matchPage = function (pathname) {
         var group = this;
-        var fullPagePath = this.url.match(/^[^\/]+/)[0] + path;
+        var fullPagePath = path.join(this.url.match(/^[^\/]+/)[0], pathname);
         fullPagePath = fullPagePath.replace(/\/$/, '').split('?')[0];
         var found = null;
         this.pagesCache.forEach(function (page) {
@@ -60,7 +60,7 @@ module.exports = function (compound, Group) {
             else {
                 var sp = compound.hatch.page.get(page.type);
                 if (sp && sp.matchRoute) {
-                    var p = sp.matchRoute(group, path);
+                    var p = sp.matchRoute(group, pathname);
                     if (p) {
                         found = page;
                     }
@@ -69,7 +69,7 @@ module.exports = function (compound, Group) {
         });
 
         if (!found) {
-            var special = compound.hatch.page.match(this, path);
+            var special = compound.hatch.page.match(this, pathname);
             if (special && special.defaultPage) {
                 found = group.pages.build(special.defaultPage);
                 found.type = special.type;
@@ -82,26 +82,51 @@ module.exports = function (compound, Group) {
     };
 
     Group.prototype.definePage = function definePage(url, c, cb) {
+        var group = this;
         url = url.split('?')[0];
         var page = this.matchPage(url);
 
         // special page out of this group (sp.defaultPage)
         if (page && page.type !== 'page' && !page.id) {
             page.url = path.join(this.homepage.url, url);
-            if (page.hanlder) {
-                return page.hanlder(c, cb.bind(this, null, page));
+            if (page.handler) {
+                return page.hanlder(c, gotPage(this, null, page));
             }
         }
 
         if (!page) {
             cb(null, null);
         } else if (page.id) {
-            Page.find(page.id, cb);
+            Page.find(page.id, gotPage);
         } else {
-            cb(null, page);
+            gotPage(null, page);
+        }
+
+        function gotPage(err, page) {
+
+            if (page && page.templateId) {
+                var found = group.getCachedPage(page.templateId);
+
+                if (found) {
+                    page.mergeTemplate(new Page(found));
+                    return cb(err, page);
+                }
+            }
+
+            cb(err, page);
         }
 
     }
+
+    Group.prototype.getCachedPage = function getCachedPage(id) {
+        var found;
+        this.pagesCache.forEach(function (p) {
+            if (p.id == id) {
+                found = p;
+            }
+        });
+        return found;
+    };
 
     /**
      * clones a group and saves the new one to the database
@@ -119,7 +144,6 @@ module.exports = function (compound, Group) {
         }
 
         var g = oldGroup.toObject();
-        console.log(g);
         var oldUrl = g.homepage.url;
         delete g.id;
         // quick fix homepage
@@ -154,12 +178,10 @@ module.exports = function (compound, Group) {
                     }
                     pages = Page.tree(ps).map(function (page) {
                         var p = page.toObject();
-                        console.log(p.url, newUrl, oldUrl);
                         p.url = p.url.replace(oldUrl, newUrl + '/');
                         p.groupId = group.id;
                         return p;
                     });
-                    console.log(pages);
                     createHomepage(
                         createTemplates.bind(null, createPages)
                     );
