@@ -88,7 +88,7 @@ PagesController.prototype.create = function create(c) {
     // TODO: this should come from some kind of JSON/YML template
     var Page = c.Page;
     c.body.groupId = c.req.group.id;
-    c.body.grid = 'two-columns';
+    c.body.grid = '02-two-columns';
     c.body.columns = [{widgets: [1, 2]}];
 
     // add the group header and navigation by default
