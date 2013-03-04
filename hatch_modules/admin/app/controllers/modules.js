@@ -5,10 +5,67 @@ module.exports = ModulesController;
 
 function ModulesController(init) {
     Application.call(this, init);
+    init.before(findModule, {only: ['configure', 'update', 'disable']});
 }
 
 require('util').inherits(ModulesController, Application);
 
 ModulesController.prototype.index = function (c) {
+    loadModules(this, c.compound.hatch);
     c.render();
 };
+
+function findModule(c) {
+    var locals = this;
+    this.group.modules.forEach(function (m, i) {
+        if (m &&  (
+            m.name === c.req.params.module_id ||
+            m.name === c.req.params.id
+        )) {
+            locals.groupModule = m;
+            locals.groupModuleIndex = m.id;
+            locals.module = m;
+        }
+    });
+    c.next();
+}
+
+ModulesController.prototype.marketplace = function() {
+    this.render('marketplace');
+};
+
+function loadModules(locals, hatch) {
+    locals.modulesAvailable = Object.keys(hatch.modules).map(function (m) {
+        return hatch.modules[m];
+    });
+    locals.modulesEnabled = Object.keys(locals.group.modules).map(function (m) {
+        return locals.group.modules[m];
+    });
+}
+
+ModulesController.prototype.enable = function enable(c) {
+    var locals = this;
+    var group = this.group;
+    var groupModule = {
+        name: c.params.module_id,
+        contract: {}
+    };
+
+    group.modules.push(groupModule);
+    group.save(function () {
+        // c.api.module.initializeModule(group, groupModule);
+        // loadModules(locals, c.compound.hatch);
+        c.redirect(c.pathTo.groupModules(group));
+    });
+};
+
+ModulesController.prototype.disable = function (c) {
+    console.log(this.groupModuleIndex);
+    this.group.modules.remove(this.groupModuleIndex);
+    this.group.save(function (err, group) {
+        if (!err) {
+            c.redirect(c.pathTo.groupModules(group));
+        }
+    });
+};
+

@@ -56,11 +56,13 @@ var Application = module.exports = function Application(init) {
                     c.req.page = page;
                     c.next();
                 });
-            } else {
+            } else if (c.req.query.pageId) {
                 c.Page.find(c.req.query.pageId, function (err, page) {
                     c.req.page = page;
                     c.next();
                 });
+            } else {
+                c.next();
             }
         }
     });

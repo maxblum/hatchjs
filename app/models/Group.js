@@ -95,8 +95,6 @@ module.exports = function (compound, Group) {
         url = url.split('?')[0];
         var page = this.matchPage(url);
 
-        console.log('define page by', url);
-
         // special page out of this group (sp.defaultPage)
         if (page && page.type !== 'page' && !page.id) {
             if (page.handler) {
@@ -264,6 +262,7 @@ module.exports = function (compound, Group) {
         }
     };
 
+    // TODO: deprecate
     Group.prototype.handle = function groupEventHandler(name, env, done) {
         // group can handle some events
         // depending on special pages added to group

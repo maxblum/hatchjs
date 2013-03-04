@@ -12,7 +12,6 @@ PageController.prototype.show = function (c) {
     var Page = c.Page;
 
     this.group.definePage(c.req.url, c, function render(err, page) {
-        console.log(arguments);
         if (err || !page) {
             return c.next(err);
         }

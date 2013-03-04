@@ -4,7 +4,13 @@ exports.routes = function (map) {
     map.root('pages#index');
 
     map.resources('groups', function (group) {
-        group.resources('modules');
+        group.resources('modules', function (module) {
+            module.collection(function (modules) {
+                modules.get('marketplace', {as: 'groupModulesMarketplace'});
+            });
+            module.get('disable');
+            module.get('enable');
+        });
         group.resources('content', {as: 'content', suffix: 'entry'}, function (item) {
             item.collection(function (items) {
                 items.get('filter/:filter', '#index', {as: 'filteredGroupContent' });
