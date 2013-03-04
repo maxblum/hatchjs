@@ -1,0 +1,56 @@
+<div data-id="modules" class="content table-content" data-remote-id="modules-table">
+    <table class="table table-striped modules-table" id="modules-table">
+        <thead>
+        <tr>
+            <th width="25%" colspan="2">
+                <%- __('Modules') %>
+            </th>
+            <th width="">
+                <%- __('Description') %>
+            </th>
+            <th width="10%">
+                <%- __('Enabled') %>
+            </th>
+            <th width="">
+                <%- __('Actions') %>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+          <% modulesAvailable.forEach(function (module) { if (module && !module.info.system) { %>
+            <tr>
+                <td width="2%">
+                    <i class="<%= module.info.icon || "icon-cog" %>"></i>
+                </td>
+                <td>
+                    <%= __(module.info.name || module.name) %>
+                </td>
+                <td>
+                    <%= __(module.info.description) || __('No description') %>
+                </td>
+                <td>
+                    <%- module.info.name %>
+                    <%- moduleEnabled(module.info.name) ? __('Yes') : __('No') %>
+                </td>
+                <td nowrap="nowrap" align="right">
+                    <% if (moduleEnabled(module.info.name)) { %>
+                        <% if(module.info.settings) { %>
+                            <%- linkTo(
+                                __('Edit'),
+                                pathTo.moduleSettings(module.info.name)
+                            ) %>
+                        <% } %>
+                        <a rel="tooltip" data-original-title="<%- __('Disable this module') %>" href="<%- pathTo.disableGroupModule(group, module.info.name) %>">
+                            <i class="icon-remove"></i></a>
+                    <% } else { %>
+                        <%- linkTo(
+                            __('Enable'),
+                            pathTo.enableGroupModule(group, module.info.name)
+                        ) %>
+                    <% } %>
+                </td>
+            </tr>
+            <% }}); %>
+        </tbody>
+    </table>
+</div>

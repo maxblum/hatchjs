@@ -1,0 +1,18 @@
+<%- formTagRemote(pathTo.module(module.name), {method: 'POST', update: 'modules-table', 'data-target-id': 'modules-table'}) %>
+
+<div class="modal wide">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>Configure <%= module.name %> module</h3>
+    </div>
+    <div class="modal-body">
+        <input type="hidden" name="_method" value="PUT" />
+        <%- partial('modules/moduleInstanceForm', {locals: {module: module}}) %>
+    </div>
+    <div class="form-actions" style="margin-bottom: 0">
+        <button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i> Save settings</button>
+        <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    </div>
+</div>
+
+<%- end() %>
