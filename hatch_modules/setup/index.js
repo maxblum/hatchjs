@@ -19,7 +19,6 @@
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 
-module.exports = function () {
-    return false;
-    // this.middlewareAfter = require('./middleware/after')(this.api, this.container);
+module.exports = function (parent) {
+    parent.injectMiddlewareAfter('router', require('./lib/middleware'));
 };
