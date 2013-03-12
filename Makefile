@@ -1,5 +1,5 @@
 test:
-	@./node_modules/.bin/mocha --require ./test/init.js test/*.test.js
+	@./node_modules/.bin/mocha --ignore-leaks --require ./test/init.js test/*.test.js
 test-verbose:
 	@./node_modules/.bin/mocha --reporter spec --require ./test/init.js  test/*.test.js
 testing:

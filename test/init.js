@@ -7,7 +7,7 @@ if (!process.env.TRAVIS) {
         });
     }
 
-    require('semicov').init('index.js');
+    require('semicov').init('lib');
 }
 
 global.getApp = function() {

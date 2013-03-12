@@ -20,5 +20,6 @@
 //
 
 module.exports = function () {
-    this.middlewareAfter = require('./middleware/after')(this.api, this.container);
+    return require('express')();
+    // this.middlewareAfter = require('./middleware/after')(this.api, this.container);
 };
