@@ -20,6 +20,6 @@
 //
 
 module.exports = function () {
-    return require('express')();
+    return false;
     // this.middlewareAfter = require('./middleware/after')(this.api, this.container);
 };

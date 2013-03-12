@@ -2,7 +2,7 @@ var Compound = require('compound').Compound;
 var db = require('jugglingdb');
 var express = require('express');
 
-module.exports = function instantiateModule() {
+module.exports = function instantiateModule(parent) {
     var server = express();
     server.configure(function() {
     });
