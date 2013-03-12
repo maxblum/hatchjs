@@ -24,7 +24,9 @@
     "async": "latest",
     "jugglingdb-redis-hq": "latest",
     "chrono-node": "latest",
-    "co-assets-compiler": "0.0.1"
+    "co-assets-compiler": "0.0.1",
+    "unzip": "~0.1.5",
+    "stream-buffers": "~0.2.4"
   },
   "devDependencies": {
     "mocha": "1.8.1",

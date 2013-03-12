@@ -23,16 +23,16 @@ var unzip = require('unzip');
 var async = require('async');
 var streamBuffers = require('stream-buffers');
 
-//runs a restore from the specified data
+// runs a restore from the specified data
 exports.run = function(c, path, domain, done) {
-    //disable hooks
-    c.api.hooks.enabled = false;
+    // disable hooks
+    // c.compound.hooks.enabled = false;
 
-    //trim the domain to remove all slashes
+    // trim the domain to remove all slashes
     domain = domain.replace('http://', '').replace('https://', '').split('/')[0];
 
-    //if we have a zip, unzip and import the data within
-    if(path.split('.').pop() === 'zip') {
+    // if we have a zip, unzip and import the data within
+    if (path.split('.').pop() === 'zip') {
         fs.createReadStream(path)
             .pipe(unzip.Parse())
             .on('entry', function (entry) {
@@ -40,7 +40,7 @@ exports.run = function(c, path, domain, done) {
                 writableStream.on('close', function () {
                     runImport(writableStream.getContentsAsString('utf8'));
                 });
-                entry.pipe(writableStream);             
+                entry.pipe(writableStream);
         });
     } 
     else {
@@ -58,14 +58,14 @@ exports.run = function(c, path, domain, done) {
 
         //import each model, one by one
         async.forEachSeries(data, function(modelData, next) {
-            var model = c.api.db.models[modelData.model];
+            var model = c.compound.models[modelData.model];
             var i = 1;
             var j = 1;
 
             console.log('start: ' + modelData.model);
 
             //set the database index for this model
-            c.api.db.client.set('id:' + (c.api.app.config.database.prefix ? (c.api.app.config.database.prefix + '/') : '') + modelData.model, modelData.id);
+            model.schema.adapter.client.set('id:' + (c.api.app.config.database.prefix ? (c.api.app.config.database.prefix + '/') : '') + modelData.model, modelData.id);
 
 
             if(!modelData.data || modelData.data.length == 0) {

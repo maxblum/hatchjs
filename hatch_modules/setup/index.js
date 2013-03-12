@@ -20,5 +20,5 @@
 //
 
 module.exports = function (parent) {
-    parent.injectMiddlewareAfter('router', require('./lib/middleware'));
+    parent.injectMiddlewareAfter('router', require('./lib/middleware')(parent));
 };

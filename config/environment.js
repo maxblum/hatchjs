@@ -8,6 +8,7 @@ module.exports = function (compound) {
         app.set('jsDirectory', '/javascripts/');
         app.set('cssDirectory', '/stylesheets/');
         app.set('cssEngine', 'stylus');
+        app.set('upload path', app.root + '/public/upload');
 
         // TODO move render speed hook to proper place
         app.stack.unshift({route: '', handle: function timeLogger(req, res, next) {
