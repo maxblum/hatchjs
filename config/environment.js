@@ -15,7 +15,6 @@ module.exports = function (compound) {
             next();
         }});
 
-        app.use(compound.assetsCompiler.init());
         app.use(express.static(app.root + '/public', { maxAge: 86400000 }));
         app.use(express.bodyParser());
         app.use(express.cookieParser('secret'));

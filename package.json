@@ -23,7 +23,8 @@
     "csso": "latest",
     "async": "latest",
     "jugglingdb-redis-hq": "latest",
-    "chrono-node": "latest"
+    "chrono-node": "latest",
+    "co-assets-compiler": "0.0.1"
   },
   "devDependencies": {
     "nodeunit": "*",
