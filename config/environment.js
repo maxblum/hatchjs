@@ -10,7 +10,7 @@ module.exports = function (compound) {
         app.set('cssEngine', 'stylus');
 
         // TODO move render speed hook to proper place
-        app.stack.unshift({route: '', handle: function (req, res, next) {
+        app.stack.unshift({route: '', handle: function timeLogger(req, res, next) {
             req.startedAt = Date.now();
             next();
         }});
