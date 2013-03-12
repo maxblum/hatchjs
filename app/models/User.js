@@ -68,7 +68,7 @@ module.exports = function (compound, User) {
         }
 
         var user = this;
-        var Group = api.db.models.Group;
+        var Group = compound.models.Group;
 
         async.forEach(user.membership || [], function(membership, next) {
             // get the group and check all tag filters

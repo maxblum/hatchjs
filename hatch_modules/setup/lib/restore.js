@@ -49,7 +49,7 @@ exports.run = function(c, path, domain, done) {
 
     //imports json data
     function runImport(data) {
-        if(data.indexOf('{') == -1) data = fs.readFileSync(path);
+        if (data.indexOf('{') == -1) data = fs.readFileSync(path);
         data = JSON.parse(data);
 
         //sort the model data
@@ -64,17 +64,20 @@ exports.run = function(c, path, domain, done) {
 
             console.log('start: ' + modelData.model);
 
-            //set the database index for this model
-            model.schema.adapter.client.set('id:' + (c.api.app.config.database.prefix ? (c.api.app.config.database.prefix + '/') : '') + modelData.model, modelData.id);
+            if (!model) return next();
 
+            // restore autoincrement point
+            var prefix = c.compound.app.get('db prefix') || '';
+            if (prefix) prefix += '/';
+            model.schema.adapter.client.set('id:' + prefix + modelData.model, modelData.id);
 
-            if(!modelData.data || modelData.data.length == 0) {
+            if (!modelData.data || modelData.data.length == 0) {
                 console.log('done ' + modelData.model + ' with no data');
 
                 return next();
             }
 
-            //import all of the data
+            // import all of the data
             async.forEachSeries(modelData.data, function(entity, next) {
                 fixDomain(entity);
                 
@@ -82,6 +85,15 @@ exports.run = function(c, path, domain, done) {
                 var timeout = setTimeout(function() { abandon(entity); }, 1000);
 
                 console.log('import: ' + entity.id + ' = ' + (i++) + '/' + modelData.count);
+
+                // fix group
+                if (modelData.model === 'Group') {
+                    entity.url = entity.homepage.url.replace(/\/$/, '');
+                }
+                // fix page
+                if (modelData.model === 'Page') {
+                    entity.url = entity.url.replace(/\/$/, '');
+                }
 
                 //create the data in the database
                 model.create(entity, function(err, entity) {
@@ -109,19 +121,19 @@ exports.run = function(c, path, domain, done) {
         }, function(results) {
             console.log('ALL DONE');
 
-            //update the group cached urls
-            var Group = c.api.db.models.Group;
-            var Page = c.api.db.models.Page;
+            // update the group cached urls
+            var Group = c.compound.models.Group;
+            var Page = c.compound.models.Page;
 
             Group.all({}, function(err, groups) {
                 groups.forEach(function(group) {
                     Page.updateGroup(group.id);
                 });
 
-                //re-enable hooks
-                c.api.hooks.enabled = true;
+                // re-enable hooks
+                // c.api.hooks.enabled = true;
 
-                //we're all done here - callback
+                // we're all done here - callback
                 done();
             });
         });

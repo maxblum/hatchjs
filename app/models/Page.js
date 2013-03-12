@@ -346,7 +346,7 @@ module.exports = function (compound, Page) {
             return cb(new Error('Widget has no type specified'));
         }
         var apiDomain = this.url.match(/^[^\/]+/)[0];
-        apiDomain = 'localhost:3003';
+        apiDomain = 'localhost:3000';
         var url = 'http://' + apiDomain + '/do/' +
             widget.type.replace('/', '/widgets/') + '/' + action;
 

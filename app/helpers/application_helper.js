@@ -56,7 +56,7 @@ exports.javascripts = function () {
     if (exports.isPrivileged.call(this)) {
         return javascripts.all;
     } else {
-        return javascripts.public;
+        return javascripts.common;
     }
 }
 
