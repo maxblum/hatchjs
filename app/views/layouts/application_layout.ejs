@@ -17,6 +17,8 @@
         <%- metaTag('pageId', req.page.id || req.page.url) %>
         <%- metaTag('groupId', req.group.id) %>
 
+        <%- contentFor('head') %>
+
         <link type="text/css" rel="stylesheet" href="<%- pathFor('stylesheet').css(req.group.cssVersion || 0) %>" id="main-stylesheet" />
         <% if (isPrivileged()) { %>
         <link rel="stylesheet" href="/javascripts/redactor/redactor.css" />
@@ -224,5 +226,7 @@
 
 </body>
 </html>
+
+<%- contentFor('javascripts') %>
 
 <% } %>
