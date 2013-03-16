@@ -169,9 +169,9 @@
 
     <div id="main">
 
-        <div id="row-content">
+        <section id="ct">
             <%- body %>
-        </div>
+        </section>
 
         <hr />
 
@@ -205,6 +205,8 @@
         <div id="editConsoleHolder"></div>
     <% }%>
 
+    <%- contentFor('javascripts') %>
+
     <% if (req.group.googleAnalyticsId) { %>
 
         <script type="text/javascript">
@@ -227,6 +229,5 @@
 </body>
 </html>
 
-<%- contentFor('javascripts') %>
 
 <% } %>
