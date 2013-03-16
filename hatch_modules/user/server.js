@@ -7,7 +7,7 @@
  * @param {Compound} parent - railway/express parent webserver.
  * @returns CompoundJS powered express webserver
  */
-var app = module.exports = function getServerInstance(params) {
+var app = module.exports = function getServerInstance(parent) {
     return require('compound').createServer({root: __dirname});
 };
 

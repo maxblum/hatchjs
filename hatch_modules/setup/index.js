@@ -19,6 +19,7 @@
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 var SetupController = require('./lib/controller.js');
+var middleware = require('./lib/middleware');
 var path = require('path');
 
 module.exports = function (parent) {
@@ -26,5 +27,5 @@ module.exports = function (parent) {
         s.controllers.setup = SetupController;
         s.views['setup/show'] = path.join(__dirname, 'views/setup.ejs');
     });
-    parent.injectMiddlewareAfter('router', require('./lib/middleware')(parent));
+    parent.injectMiddlewareAfter('router', middleware(parent));
 };
