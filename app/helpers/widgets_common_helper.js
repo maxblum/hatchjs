@@ -10,5 +10,5 @@ exports.widgetAction = function (s, type) {
 };
 
 exports.widgetCoreAction = function (s) {
-    return ['/do/admin/widget', this.locals.page.id, this.locals.widget.id, s].join('/');
+    return ['/do/admin/widget', this.locals.page.id || 'NOPID', this.locals.widget.id || 'NOWID', s].join('/');
 };
