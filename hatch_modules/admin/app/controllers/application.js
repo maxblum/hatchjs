@@ -7,13 +7,7 @@ var Application = module.exports = function Application(init) {
         this.sectionName = c.controllerName;
         this._ = _;
         this.req = c.req;
-        this.tabs = [
-            { name: 'community', url: 'groupCommunity', rank: 10 },
-            { name: 'content',   url: 'groupContent',   rank: 20 },
-            { name: 'pages',     url: 'groupPages',     rank: 30 },
-            { name: 'group',     url: 'group',          rank: 40 },
-            { name: 'modules',   url: 'groupModules',   rank: 50 }
-        ];
+        this.tabs = c.compound.tabs;
 
         function loadGroupTags() {
             if (c.controllerName.match(/content|tags|streams/)) {

@@ -20,10 +20,3 @@
  });
 
 */
-
-var Posts = describe('Posts', function () {
-    property('title', String);
-    property('content', String);
-    set('restPath', pathTo.posts);
-});
-

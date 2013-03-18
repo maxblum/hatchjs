@@ -8,7 +8,15 @@
  * @returns CompoundJS powered express webserver
  */
 var app = module.exports = function getServerInstance(parent) {
-    return require('compound').createServer({root: __dirname});
+    app = require('compound').createServer({root: __dirname});
+    app.compound.tabs = [
+        { name: 'community', url: 'groupCommunity', rank: 10 },
+        { name: 'content',   url: 'groupContent',   rank: 20 },
+        { name: 'pages',     url: 'groupPages',     rank: 30 },
+        { name: 'group',     url: 'group',          rank: 40 },
+        { name: 'modules',   url: 'groupModules',   rank: 50 }
+    ];
+    return app;
 };
 
 if (!module.parent) {

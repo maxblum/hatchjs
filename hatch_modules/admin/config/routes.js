@@ -13,7 +13,7 @@ exports.routes = function (map) {
         });
         group.resources('content', {as: 'content', suffix: 'entry'}, function (item) {
             item.collection(function (items) {
-                items.get('filter/:filter', '#index', {as: 'filteredGroupContent' });
+                items.get('filter/:filter.:format?', '#index', {as: 'filteredGroupContent' });
                 items.del('destroyAll', {as: 'destroySelectedGroupContent'});
             });
         });

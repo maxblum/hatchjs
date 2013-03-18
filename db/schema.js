@@ -97,7 +97,7 @@ var Content = define('Content', function () {
     property('score', Number, {index: true, sort: true });
     property('groupId', Number, {index: true });
     property('replyToId', Number, {index: true });
-    property('tags', []);
+    property('tags', [], {index: true});
     property('tagString', String, {index: true });
     property('authorId', Number, {index: true });
     property('privacy', String, {index: true });
@@ -109,6 +109,8 @@ var Content = define('Content', function () {
     property('fulltext', String);
     property('importData', JSON);
 });
+
+console.log(Content.schema.definitions.Content.properties);
 
 Content.schema.adapter.defineFulltextIndex('Content', 'fulltext');
 

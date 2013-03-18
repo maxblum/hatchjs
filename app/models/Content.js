@@ -440,5 +440,20 @@ module.exports = function (compound, Content) {
             callback();
         });
     };
+
+    Content.prototype.createdAtNice = function() {
+        var post = this;
+        var diff = new Date() - post.createdAt;
+        var oneHour = 1000 * 60 * 60;
+
+        if (diff < oneHour / 2) {
+            return moment(post.createdAt).fromNow();
+        } else if (diff < oneHour * 12) {
+            return moment(post.createdAt).format('ddd [' + c.__('at') + '] HH:mm');
+        } else {
+            return moment(post.createdAt).format('ddd DD MMM YYYY');
+        }
+
+    };
 };
 
