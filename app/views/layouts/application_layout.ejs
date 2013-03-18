@@ -17,7 +17,6 @@
         <%- metaTag('pageId', req.page.id || req.page.url) %>
         <%- metaTag('groupId', req.group.id) %>
 
-        <%- contentFor('head') %>
 
         <link type="text/css" rel="stylesheet" href="<%- pathFor('stylesheet').css(req.group.cssVersion || 0) %>" id="main-stylesheet" />
         <% if (isPrivileged()) { %>
@@ -34,9 +33,10 @@
             canEdit = <%- isPrivileged() %>;
         </script>
         <%- javascriptIncludeTag(javascripts()) %>
+        <%- contentFor('head') %>
 
     </head>
-    <body class="unselectable <%- req.group.navBarType === 'fixed' ? 'navbar-fixed' : '' %>">
+    <body class="<%- req.group.navBarType === 'fixed' ? 'navbar-fixed' : '' %>">
 
     <div id="all">
     <% } else { %>
@@ -169,9 +169,9 @@
 
     <div id="main">
 
-        <section id="ct">
+        <div id="row-content">
             <%- body %>
-        </section>
+        </div>
 
         <hr />
 
