@@ -19,7 +19,7 @@ en:
       inProgress: Registration in progress
       suggestProceed: It looks like you are halfway through your registration. Please % to complete it.
       go: go here
-    renderSpeed: rendered in %ss
+    renderSpeed: rendered in %s
     joinGroup: Join this group
     viewProfile: View my profile
     editProfile: Edit my account

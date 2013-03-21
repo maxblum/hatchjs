@@ -45,7 +45,7 @@ PagesController.prototype.index = function index(c) {
     });
 };
 
-PagesController.prototype.renderTree = function tree(c) {
+PagesController.prototype.renderPageTree = function tree(c) {
     renderPageTree.call(this, c);
 };
 
@@ -101,7 +101,9 @@ PagesController.prototype.create = function create(c) {
         if (err) {
             c.next(err);
         } else {
-            if (c.params.format === 'json') {
+            console.log(c.req.params)
+
+            if (c.req.params.format === 'json' || c.req.body.inline) {
                 //bump all the other pages up one in the hierarchy order
                 if (c.body.order) {
                     reorderPages(function() { renderPageTree(c); })

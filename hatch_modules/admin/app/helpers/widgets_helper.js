@@ -1,5 +1,6 @@
 exports.buildForm = function buildForm(form, data) {
     var c = this;
+    c.__ = function(str) { return str; };
 
     var fieldBuilders = {
         select: function (name, params) {
