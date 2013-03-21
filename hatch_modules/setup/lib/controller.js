@@ -65,14 +65,14 @@ SetupController.prototype.setup = function(c) {
     }
 
     // load the seed data and modify
-    var seeds = require('../seed.yml');
+    var seeds = require('../seed.yml')[0];
 
     seeds[0].Group.name = req.body.name;
     seeds[0].Group.url = req.body.url;
-    seeds[0].Group.homepage.url = req.body.url + '/';
-    seeds[0].Group.pagesCache[0].url = req.body.url + '/';
+    seeds[0].Group.homepage.url = req.body.url;
+    seeds[0].Group.pagesCache[0].url = req.body.url;
 
-    seeds[1].Page.url = req.body.url + '/';
+    seeds[1].Page.url = req.body.url;
 
     seeds[2].User.username = req.body.username;
     seeds[2].User.email = req.body.email;
