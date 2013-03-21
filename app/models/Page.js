@@ -299,6 +299,11 @@ module.exports = function (compound, Page) {
             });
         });
 
+        if (!wait) {
+            wait = 1;
+            done();
+        }
+
         function done() {
             var cols = [], sizes = [];
             if (0 !== --wait) {
