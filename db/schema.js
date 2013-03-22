@@ -19,7 +19,7 @@ var User = define('User', function () {
     property('mailSettings', JSON);
     property('fulltext', String);
     property('tags', [], {index: true});
-    
+
     set('safe', true);
 });
 
@@ -99,7 +99,6 @@ var Content = define('Content', function () {
     property('score', Number, {index: true, sort: true });
     property('groupId', Number, {index: true });
     property('replyToId', Number, {index: true });
-    property('tags', [], {index: true});
     property('tagString', String, {index: true });
     property('authorId', Number, {index: true });
     property('privacy', String, {index: true });
@@ -110,6 +109,7 @@ var Content = define('Content', function () {
     property('url', String, {index: true });
     property('fulltext', String);
     property('importData', JSON);
+    property('tags', [], {index: true});
 });
 
 console.log(Content.schema.definitions.Content.properties);

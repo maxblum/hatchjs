@@ -25,7 +25,7 @@ module.exports = function (compound, Tag) {
     Tag.validatesUniquenessOf('name', {message: 'This tag name is taken'});
 
     /**
-     * updates the compound model for this tag to make sure the custom sort 
+     * updates the compound model for the specified tag to make sure the custom sort 
      * order is defined for the specified tag
      * 
      * @param  {[Tag]} tag [tag to check for]
@@ -33,9 +33,20 @@ module.exports = function (compound, Tag) {
     Tag.updateModel = function (tag) {
         if(!tag.sortOrder) return;
 
-        if(!compound.models[tag.type].customSort['tags.' + tag.name]) {
-            compound.models[tag.type].customSort['tags.' + tag.name] = tag.sortOrder;
+        var settings = compound.models[tag.type].schema.settings;
+        if(!settings.customSort) settings.customSort = {};
+
+        if(!settings.customSort['tags.' + tag.name]) {
+            settings.customSort['tags.' + tag.name] = tag.sortOrder;
         }
+    };
+
+    /**
+     * updates the compound model for this tag to make sure the custom sort 
+     * order is defined
+     */
+    Tag.prototype.updateModel = function () {
+        Tag.updateModel(this);
     };
 
     /**

@@ -107,7 +107,7 @@ module.exports = function (compound, Content) {
 
         //get the group and check all tag filters
         Group.find(content.groupId, function(err, group) {
-            if(!group) return;
+            if(!group) return done();
             
             var tags = group.getTagsForContent(content);
             if(!content.tags) content.tags = [];
