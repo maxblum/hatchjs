@@ -31,8 +31,8 @@ module.exports = function (compound, Tag) {
     Tag.updateModel = function (tag) {
         if(!tag.sortOrder) return;
 
-        if(!compound.models[tag.type].customSort[tag.name]) {
-            compound.models[tag.type].customSort[tag.name] = tag.sortOrder;
+        if(!compound.models[tag.type].customSort['tags.' + tag.name]) {
+            compound.models[tag.type].customSort['tags.' + tag.name] = tag.sortOrder;
         }
     };
 
@@ -57,6 +57,68 @@ module.exports = function (compound, Tag) {
             data.forEach(function (data) {
                 data.save();
             });
+        });
+    };
+
+    /**
+     * gets the filter function for this tag
+     * 
+     * @return {[Function]} [the filter function (if any)]
+     */
+    Tag.getter.filterFn = function () {
+        if(this.filter) return eval(this.filter);
+        else return null;
+    };
+
+    /**
+     * gets whether an object matches this tag's filter
+     * 
+     * @param  {[object]}   obj  [object to test]
+     * @return {[Boolean]}       [true or false]
+     */
+    Tag.prototype.matchFilter = function (obj) {
+        if(this.filterFn) {
+            return this.filterFn(obj);
+        }
+        else {
+            return false;
+        }
+    };
+
+    /**
+     * gets all of the matching tags for the specified object
+     * 
+     * @param  {[object]}   obj      [object to get matching tags for]
+     * @param  {Function}   callback [callback function]
+     */
+    Tag.getMatchingTags = function (obj, callback) {
+        Tag.all({ where: { type: typeof obj }}, function (err, tags) {
+            var matchingTags = [];
+
+            tags.forEach(function (tag) {
+                //skip group specific tags for other groups
+                if(tag.groupId && tag.groupId != obj.groupId) return;
+
+                if(tag.matchFilter(obj)) matchingTags.push(tag);
+            });
+
+            callback(err, matchingTags);
+        });
+    };
+
+    /**
+     * applies matching tags to this object
+     * 
+     * @param  {[object]}   obj      [object to apply matching tags for]
+     * @param  {Function}   callback [callback function]
+     */
+    Tag.applyMatchingTags = function (obj, callback) {
+        Tag.getMatchingTags(obj, function(err, tags) {
+            tags.forEach(function (tag) {
+                if(!obj.tags[tag.name]) obj.tags.push(tag.name);
+            });
+
+            callback(err, obj);
         });
     };
 };
