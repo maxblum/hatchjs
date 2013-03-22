@@ -16,6 +16,8 @@
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 
+var async = require('async');
+
 module.exports = function (compound, Tag) {
     var api = compound.hatch.api;
 
@@ -66,7 +68,7 @@ module.exports = function (compound, Tag) {
      * @return {[Function]} [the filter function (if any)]
      */
     Tag.getter.filterFn = function () {
-        if(this.filter) return eval(this.filter);
+        if(this.filter) return new Function(this.filter);
         else return null;
     };
 
@@ -83,6 +85,42 @@ module.exports = function (compound, Tag) {
         else {
             return false;
         }
+    };
+
+    /**
+     * updates the count for this tag
+     * 
+     * @param  {Function} callback [callback function]
+     */
+    Tag.prototype.updateCount = function (callback) {
+        compound.models[this.type].count({ tags: this.name }, function (err, count) {
+            this.count = count;
+            this.save(callback);
+        });
+    };
+
+    /**
+     * updates the counts for all tags (within a specific group/type - optional)
+     *
+     * @params {[String]}   type     [type of tag to update]
+     * @param  {[Number]}   groupId  [id of group - optional]
+     * @param  {Function}   callback [callback function]
+     */
+    Tag.updateCounts = function (type, groupId, callback) {
+        var cond = {};
+        if(type) cond.type = type;
+        if(groupId) cond.groupId = groupId;
+
+        var query = {};
+        if(Object.keys(cond).length > 0) query.where = cond;
+
+        Tag.all(query, function (err, tags) {
+            async.forEach(tags, function(tag, next) {
+                tag.updateCount(next);
+            }, function (err, results) {
+                if(callback) callback();
+            });
+        });
     };
 
     /**
