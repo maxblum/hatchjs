@@ -79,8 +79,8 @@ module.exports = function (compound, Tag) {
      * @return {[Function]} [the filter function (if any)]
      */
     Tag.prototype.filterFn = function () {
-        if (this.filter) return new Function('obj', this.filter);
-        else return null;
+        if (!this.filter) throw new Error('No filter defined');
+        return new Function('obj', this.filter);
     };
 
     /**
@@ -90,12 +90,10 @@ module.exports = function (compound, Tag) {
      * @return {[Boolean]}       [true or false]
      */
     Tag.prototype.matchFilter = function (obj) {
-        if (this.filterFn) {
-            return this.filterFn()(obj);
-        }
-        else {
+        if (!this.filter) {
             return false;
         }
+        return this.filterFn()(obj);
     };
 
     /**
