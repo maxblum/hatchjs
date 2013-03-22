@@ -78,8 +78,8 @@ module.exports = function (compound, Tag) {
      * 
      * @return {[Function]} [the filter function (if any)]
      */
-    Tag.getter.filterFn = function () {
-        if(this.filter) return new Function(this.filter);
+    Tag.prototype.filterFn = function () {
+        if (this.filter) return new Function('obj', this.filter);
         else return null;
     };
 
@@ -90,8 +90,8 @@ module.exports = function (compound, Tag) {
      * @return {[Boolean]}       [true or false]
      */
     Tag.prototype.matchFilter = function (obj) {
-        if(this.filterFn) {
-            return this.filterFn(obj);
+        if (this.filterFn) {
+            return this.filterFn()(obj);
         }
         else {
             return false;
@@ -141,14 +141,16 @@ module.exports = function (compound, Tag) {
      * @param  {Function}   callback [callback function]
      */
     Tag.getMatchingTags = function (obj, callback) {
-        Tag.all({ where: { type: typeof obj }}, function (err, tags) {
+        Tag.all({ where: { type: obj.constructor.modelName }}, function (err, tags) {
             var matchingTags = [];
 
-            tags.forEach(function (tag) {
-                //skip group specific tags for other groups
-                if(tag.groupId && tag.groupId != obj.groupId) return;
+            console.log(tags);
 
-                if(tag.matchFilter(obj)) matchingTags.push(tag);
+            tags.forEach(function (tag) {
+                // skip group specific tags for other groups
+                if (tag.groupId && tag.groupId != obj.groupId) return;
+
+                if (tag.matchFilter(obj)) matchingTags.push(tag);
             });
 
             callback(err, matchingTags);
@@ -164,7 +166,7 @@ module.exports = function (compound, Tag) {
     Tag.applyMatchingTags = function (obj, callback) {
         Tag.getMatchingTags(obj, function(err, tags) {
             tags.forEach(function (tag) {
-                if(!obj.tags[tag.name]) obj.tags.push(tag.name);
+                if (!obj.tags[tag.name]) obj.tags.push(tag.name);
             });
 
             callback(err, obj);
