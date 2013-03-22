@@ -42,7 +42,7 @@ module.exports = function (compound, Content) {
 
     Content.setter.createdAt = function(value) {
         value = value || '';
-        if (value && value.match(/now|immediately/i)) {
+        if (value && value.toString().match(/now|immediately/i)) {
             this._createdAt = new Date();
         } else {
             this._createdAt = new Date(value);
