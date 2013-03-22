@@ -18,6 +18,7 @@ var User = define('User', function () {
     property('otherFields', JSON);
     property('mailSettings', JSON);
     property('fulltext', String);
+    property('tags', [], {index: true});
 
     set('safe', true);
 });
@@ -45,7 +46,7 @@ var Group = define('Group', function () {
     property('googleAnalyticsId', String);
     property('customProfileFields', JSON);
     property('memberLists', JSON);
-    property('tags', []);
+    property('tags', [], {index: true});
     property('importStreams', JSON);
 });
 
@@ -76,6 +77,7 @@ var Page = define('Page', function () {
     property('templateId', Number);
     property('parentId', Number, {index: true});
     property('groupId', Number, {index: true});
+    property('tags', [], {index: true});
 });
 
 var Content = define('Content', function () {
@@ -97,7 +99,6 @@ var Content = define('Content', function () {
     property('score', Number, {index: true, sort: true });
     property('groupId', Number, {index: true });
     property('replyToId', Number, {index: true });
-    property('tags', [], {index: true});
     property('tagString', String, {index: true });
     property('authorId', Number, {index: true });
     property('privacy', String, {index: true });
@@ -108,6 +109,7 @@ var Content = define('Content', function () {
     property('url', String, {index: true });
     property('fulltext', String);
     property('importData', JSON);
+    property('tags', [], {index: true});
 });
 
 console.log(Content.schema.definitions.Content.properties);
@@ -142,9 +144,20 @@ var ImportStream = define('ImportStream', function () {
     property('title', String);
     property('query', String);
     property('source', String);
-    property('tags', []);
+    property('tags', [], {index: true});
     property('interval', Number);
     property('enabled', Boolean, {index: true});
     property('lastRun', Date);
 });
 
+var Tag = define('Tag', function () {
+    property('groupId', Number, {index: true});
+    property('userId', Number, {index: true});
+    property('type', String, {index: true});
+    property('name', String, {sort: true});
+    property('title', String);
+    property('description', String);
+    property('sortOrder', String);
+    property('count', Number);
+    property('filter', String);
+});

@@ -2,44 +2,36 @@
 
   <%- include _sidebar %>
 
-  <div class="span10">
-    <div class="module">
-      <div class="content table-content">
-
-        <% if (pages.length > 0) { %>
-        <table class="table table-striped pages-table" id="pages-table">
-          <thead>
-            <tr>
-                <th width="40%">
-                    <%- __('Pages') %>
-                </th>
-                <th width="">
-                    <%- __('URL') %>
-                </th>
-                <th width="10%">
-                    <%- __('Privacy') %>
-                </th>
-                <th width="10%">
-                    <%- __('Visibility') %>
-                </th>
-                <th width="55">
-                    <%- __('Actions') %>
-                </th>
-            </tr>
-          </thead>
-          <tbody>
-            <%- include _table %>
-          </tbody>
-        </table>
-        <% } else { %>
-        <p class="alert alert-block alert-info">
-          <strong><%- __('No pages were found.') %></strong>
-        </p>
-        <% } %>
-
-      </div>
+    <div class="span10">
+        <div class="module">
+            <div class="content table-content">
+                <table class="table table-striped pages-table" id="pages-table">
+                    <thead>
+                        <tr>
+                            <th width="40%">
+                                <%- __('Pages') %>
+                            </th>
+                            <th width="">
+                                <%- __('URL') %>
+                            </th>
+                            <th width="10%">
+                                <%- __('Privacy') %>
+                            </th>
+                            <th width="10%">
+                                <%- __('Visibility') %>
+                            </th>
+                            <th width="55">
+                                <%- __('Actions') %>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <%- include _table %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <script type="text/javascript">

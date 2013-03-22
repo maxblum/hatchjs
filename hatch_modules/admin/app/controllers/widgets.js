@@ -1,3 +1,5 @@
+var _ = require('underscore');
+
 module.exports = WidgetController;
 
 function WidgetController(init) {
@@ -63,6 +65,23 @@ WidgetController.prototype.destroy = function destroy(c) {
 
 WidgetController.prototype.settings = function settings(c) {
     this.widgetCore = c.compound.hatch.widget.getWidget(this.widget.type);
+    var widget = this.widget;
+
+    this.visibility = [
+          { icon: 'mobile-phone', class: 'success', name: 'All devices', value: 'visible-all', description: 'This widget can be viewed on all devices'},
+          { icon: 'tablet', class: 'warning', name: 'Tablets', value: 'hidden-phone', description: 'This widget can be viewed on tablets and computers'},
+          { icon: 'desktop', class: 'danger', name: 'Computers', value: 'visible-desktop', description: 'This widget can only be viewed on computers'}
+        ]; 
+    this.visibility.selected = _.find(this.visibility, function(v) { return v.value == (widget.settings && widget.settings.visibility || 'visible-all') });
+
+    this.privacy = [
+          { icon: 'globe', class: 'success', name: 'Public', value: 'public', description: 'All users can see this widget'},
+          { icon: 'user', class: 'warning', name: 'Members', value: 'members-only', description: 'Only members of this group can see this widget'},
+          { icon: 'unlock', class: 'danger', name: 'Private', value: 'private', description: 'Only the group owner and editors can see this widget'},
+          { icon: 'lock', class: '', name: 'Signed out', value: 'non-registered', description: 'Only signed out users will see this widget'}
+        ];
+    this.privacy.selected = _.find(this.privacy, function(p) { return p.value == (widget.settings && widget.settings.privacy || 'public') });
+
     var s = this.widgetCore.info.settings;
     if (s && s.custom) {
         this.page.widgetAction(this.widget.id, 'settings', null, c.req, function (e, s) {

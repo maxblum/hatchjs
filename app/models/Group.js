@@ -98,7 +98,7 @@ module.exports = function (compound, Group) {
         // special page out of this group (sp.defaultPage)
         if (page && page.type !== 'page' && !page.id) {
             if (page.handler) {
-                return page.hanlder(c, gotPage(this, null, page));
+                return page.handler(c, gotPage(this, null, page));
             }
         }
 

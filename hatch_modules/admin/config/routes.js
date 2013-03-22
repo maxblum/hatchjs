@@ -29,9 +29,11 @@ exports.routes = function (map) {
                 pages.get('new-special', '#newSpecial', {as: 'newSpecial'});
                 pages.get('new-special/:type', '#newSpecial', {as: 'newSpecialType'});
                 pages.get('specials', '#specials', {as: 'groupSpecialPages'});
-                pages.get('renderTree', '#tree', {as: 'renderTree'});
+                pages.get('renderTree', '#renderPageTree', {as: 'renderTree'});
+                pages.get('edit/:id', '#edit', {as: 'editPage'});
             });
             page.put('reorder.:format?', 'pages#updateOrder');
+            
         });
     });
 

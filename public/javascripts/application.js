@@ -178,16 +178,16 @@ function savePageOrder(e, revert) {
         _method: 'PUT',
         url: $(this).attr('data-path'),
         order: [].slice.call(order)
-    }, 'json', function (data) {
+    }, function (data) {
+        console.log(data);
         if (data.error) {
             $.noty({text: "<i class='icon-warning-sign'></i> " + data.error, type: "error"});
             revert();
-        } else if (data.html) {
-            $page.parent().html(data.html);
+        } else {
+            $page.parent().html(data.html || data);
             $.noty({text: "<i class='icon-ok'></i> Page order saved", type: "success"});
         }
     });
-
 }
 
 function updateWidgetsOrder(hideNotification) {
