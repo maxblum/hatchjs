@@ -112,8 +112,6 @@ var Content = define('Content', function () {
     property('tags', [], {index: true});
 });
 
-console.log(Content.schema.definitions.Content.properties);
-
 Content.schema.adapter.defineFulltextIndex('Content', 'fulltext');
 
 var ContentFeedItem = define('ContentFeedItem', function () {
@@ -154,7 +152,7 @@ var Tag = define('Tag', function () {
     property('groupId', Number, {index: true});
     property('userId', Number, {index: true});
     property('type', String, {index: true});
-    property('name', String, {sort: true});
+    property('name', String, {index: true});
     property('title', String);
     property('description', String);
     property('sortOrder', String);
