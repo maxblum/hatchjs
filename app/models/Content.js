@@ -449,7 +449,7 @@ module.exports = function (compound, Content) {
         if (diff < oneHour / 2) {
             return moment(post.createdAt).fromNow();
         } else if (diff < oneHour * 12) {
-            return moment(post.createdAt).format('ddd [' + c.__('at') + '] HH:mm');
+            return moment(post.createdAt).format('ddd [' + 'at' + '] HH:mm');
         } else {
             return moment(post.createdAt).format('ddd DD MMM YYYY');
         }
