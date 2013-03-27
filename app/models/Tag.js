@@ -25,10 +25,13 @@ module.exports = function (compound, Tag) {
     Tag.validatesUniquenessOf('name', {message: 'This tag name is taken'});
 
     /**
-     * updates the compound model for the specified tag to make sure the custom sort 
-     * order is defined for the specified tag
+     * updates the compound model for the specified tag to make sure the custom
+     * sort order is defined for the specified tag
+     *
+     * This is needed before any items that use this tag can be saved so that 
+     * the sort orders are correct when they are queried by tag
      * 
-     * @param  {[Tag]} tag [tag to check for]
+     * @param  {Tag} tag [tag to check for]
      */
     Tag.updateModel = function (tag) {
         if(!tag.sortOrder) return;
@@ -42,24 +45,29 @@ module.exports = function (compound, Tag) {
     };
 
     /**
-     * updates the compound model for this tag to make sure the custom sort 
-     * order is defined
+     * updates the compound model for the specified tag to make sure the custom
+     * sort order is defined for the specified tag
+     *
+     * This is needed before any items that use this tag can be saved so that 
+     * the sort orders are correct when they are queried by tag
      */
     Tag.prototype.updateModel = function () {
         Tag.updateModel(this);
     };
 
     /**
-     * rebuilds the index for this tag
+     * rebuilds the index for this tag. This should be used if the sort order
+     * for this tag has been modified
      */
     Tag.prototype.rebuildIndex = function () {
         Tag.rebuildIndex(this);
     };
 
     /**
-     * rebuilds the index for the specified tag
+     * rebuilds the index for this tag. This should be used if the sort order
+     * for this tag has been modified
      * 
-     * @param  {[Tag]} tag [tag to rebuild index for]
+     * @param  {Tag} tag [tag to rebuild index for]
      */
     Tag.rebuildIndex = function (tag) {
         //make sure the custom sort is correct in the schema
@@ -75,8 +83,16 @@ module.exports = function (compound, Tag) {
 
     /**
      * gets the filter function for this tag
+     *
+     * a filter function is used to automatically tag objects based on a 
+     * javascript An example filter function could be as follows:
+     *
+     * // add all content with more than 5 likes to this tag
+     * function (obj) {
+     *     return obj.likesTotal > 5;
+     * }
      * 
-     * @return {[Function]} [the filter function (if any)]
+     * @return {Function} [the filter function (if any)]
      */
     Tag.prototype.filterFn = function () {
         if (!this.filter) throw new Error('No filter defined');
@@ -84,10 +100,10 @@ module.exports = function (compound, Tag) {
     };
 
     /**
-     * gets whether an object matches this tag's filter
+     * gets whether an object matches this tag's filter function
      * 
-     * @param  {[object]}   obj  [object to test]
-     * @return {[Boolean]}       [true or false]
+     * @param  {object}   obj  [object to test]
+     * @return {Boolean}       [true or false]
      */
     Tag.prototype.matchFilter = function (obj) {
         if (!this.filter) {
@@ -97,7 +113,8 @@ module.exports = function (compound, Tag) {
     };
 
     /**
-     * updates the count for this tag
+     * updates the count for this tag by querying the database and caching the 
+     * result
      * 
      * @param  {Function} callback [callback function]
      */
@@ -111,9 +128,9 @@ module.exports = function (compound, Tag) {
     /**
      * updates the counts for all tags (within a specific group/type - optional)
      *
-     * @params {[String]}   type     [type of tag to update]
-     * @param  {[Number]}   groupId  [id of group - optional]
-     * @param  {Function}   callback [callback function]
+     * @params {String}   type       [type of tag to update]
+     * @param  {Number}   groupId    [id of group - optional]
+     * @param  {Function} callback   [callback function]
      */
     Tag.updateCounts = function (type, groupId, callback) {
         var cond = {};
@@ -133,9 +150,10 @@ module.exports = function (compound, Tag) {
     };
 
     /**
-     * gets all of the matching tags for the specified object
+     * gets all of the matching tags for the specified object by running the
+     * tag filter functions to find matches
      * 
-     * @param  {[object]}   obj      [object to get matching tags for]
+     * @param  {object}     obj      [object to get matching tags for]
      * @param  {Function}   callback [callback function]
      */
     Tag.getMatchingTags = function (obj, callback) {
@@ -156,9 +174,10 @@ module.exports = function (compound, Tag) {
     };
 
     /**
-     * applies matching tags to this object
+     * applies matching tags to this object by running the
+     * tag filter functions to find matches
      * 
-     * @param  {[object]}   obj      [object to apply matching tags for]
+     * @param  {object}     obj      [object to apply matching tags for]
      * @param  {Function}   callback [callback function]
      */
     Tag.applyMatchingTags = function (obj, callback) {
