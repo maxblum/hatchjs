@@ -42,7 +42,7 @@ module.exports = function (compound, Content) {
 
     Content.setter.createdAt = function(value) {
         value = value || '';
-        if (value && value.match(/now|immediately/i)) {
+        if (value && value.toString().match(/now|immediately/i)) {
             this._createdAt = new Date();
         } else {
             this._createdAt = new Date(value);
@@ -107,7 +107,7 @@ module.exports = function (compound, Content) {
 
         //get the group and check all tag filters
         Group.find(content.groupId, function(err, group) {
-            if(!group) return;
+            if(!group) return done();
             
             var tags = group.getTagsForContent(content);
             if(!content.tags) content.tags = [];
@@ -449,7 +449,7 @@ module.exports = function (compound, Content) {
         if (diff < oneHour / 2) {
             return moment(post.createdAt).fromNow();
         } else if (diff < oneHour * 12) {
-            return moment(post.createdAt).format('ddd [' + c.__('at') + '] HH:mm');
+            return moment(post.createdAt).format('ddd [' + 'at' + '] HH:mm');
         } else {
             return moment(post.createdAt).format('ddd DD MMM YYYY');
         }

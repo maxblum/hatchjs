@@ -68,3 +68,5 @@ exports.pageTitle = function () {
     var req = this.req, page = req.page;
     return req.title || page.metaTitle || page.title + " - " + req.group.name;
 };
+
+

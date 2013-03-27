@@ -1,8 +1,12 @@
-test:
-	@./node_modules/.bin/mocha --ignore-leaks --require ./test/init.js test/*.test.js
-test-verbose:
-	@./node_modules/.bin/mocha --reporter spec --require ./test/init.js  test/*.test.js
-testing:
-	./node_modules/.bin/mocha --watch --reporter min --require ./test/init.js --require should test/*.test.js
+TESTER = ./node_modules/.bin/mocha
+OPTS = --require ./test/init.js --ignore-leaks
+TESTS = test/*.test.js
 
-.PHONY: test
+test:
+	$(TESTER) $(OPTS) $(TESTS)
+test-verbose:
+	$(TESTER) $(OPTS) --reporter spec $(TESTS)
+testing:
+	$(TESTER) $(OPTS) --watch $(TESTS)
+
+.PHONY: test doc

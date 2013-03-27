@@ -1,3 +1,5 @@
+require('should');
+
 var express = require('express');
 
 if (!process.env.TRAVIS) {
