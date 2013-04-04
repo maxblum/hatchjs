@@ -20,3 +20,4 @@ doc
 public/upload
 coverage
 deps
+public/javascripts/cache*

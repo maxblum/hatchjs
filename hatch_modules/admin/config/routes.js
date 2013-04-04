@@ -3,21 +3,20 @@ exports.routes = function (map) {
 
     map.root('pages#index');
     
-    map.resources('groups', function (group) {
-
-    });
+    map.resources('groups');
 
     map.resources('modules', function (module) {
         module.collection(function (modules) {
-            modules.get('marketplace', {as: 'groupModulesMarketplace'});
+            modules.get('marketplace', {as: 'modulesMarketplace'});
         });
+        module.get('setup');
         module.get('disable');
         module.get('enable');
     });
     map.resources('content', {as: 'content', suffix: 'entry'}, function (item) {
         item.collection(function (items) {
-            items.get('filter/:filter.:format?', '#index', {as: 'filteredGroupContent' });
-            items.del('destroyAll', {as: 'destroySelectedGroupContent'});
+            items.get('filter/:filter.:format?', '#index', {as: 'filteredContent' });
+            items.del('destroyAll', {as: 'destroySelectedContent'});
         });
     });
     map.resources('tags', function (tag) {
