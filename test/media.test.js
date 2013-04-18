@@ -15,11 +15,11 @@ describe('Media', function() {
         // create a fake request
         var req = {
             body: {
-                file: 'http://eofdreams.com/data_images/dreams/mountain/mountain-02.jpg'
+                file: 'http://edibleapple.com/wp-content/uploads/2009/04/apple_rainbow_logo.jpeg'
             }
         };
 
-        Media.createWithRequest(req, function (err, media) {
+        Media.createWithUrl(req.body.file, null, function (err, media) {
             media.resized.length.should.equal(4);
 
             var url = media.getUrl('100x0');
@@ -43,11 +43,11 @@ describe('Media', function() {
         // create a fake request
         var req = {
             body: {
-                file: 'http://eofdreams.com/data_images/dreams/mountain/mountain-02.jpg'
+                file: 'http://edibleapple.com/wp-content/uploads/2009/04/apple_rainbow_logo.jpeg'
             }
         };
 
-        Media.createWithRequest(req, function (err, media) {
+        Media.createWithUrl(req.body.file, null, function (err, media) {
             media.resized.length.should.equal(4);
 
             var url = media.getUrl('100x0');
