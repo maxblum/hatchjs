@@ -1,6 +1,6 @@
 var app, compound, Media;
 
-describe('Media', function() {
+describe.skip('Media', function() {
 
     before(function (done) {
         app = require('../')();
