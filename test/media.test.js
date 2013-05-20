@@ -1,15 +1,12 @@
 var should = require('./');
 var app, compound, Media;
 
-describe('Media', function() {
+describe.skip('Media', function() {
 
     before(function (done) {
-        app = require('../')();
+        app = getApp(done);
         compound = app.compound;
-        compound.on('ready', function () {
-            Media = compound.models.Media;
-            Media.destroyAll(done);
-        });
+        Media = compound.models.Media;
     });
 
     it('should download an image file, put in upload dir and resize', function (done) {
@@ -53,8 +50,6 @@ describe('Media', function() {
 
             var url = media.getUrl('100x0');
             url.should.match(/128x0/);
-
-            console.log(url);
 
             done();
         });
