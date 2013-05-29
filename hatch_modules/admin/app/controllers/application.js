@@ -17,44 +17,51 @@
 //
 
 var _ = require('underscore');
+var util = require('util');
 
 var Application = module.exports = function Application(init) {
-
-    init.before(function requireUser(c) {
-        this.admin = c.req.user && c.req.user.adminOf(c.req.group);
-        if (this.admin) {
-            c.next();
-        } else {
-            c.next(new Error('403'));
-        }
-    });
-
-    init.before(function initApp(c) {
-        var locals = this;
-        this.pageName = c.actionName;
-        this.sectionName = c.controllerName;
-        this._ = _;
-        this.req = c.req;
-        this.tabs = c.compound.tabs;
-        locals.group = c.req.group;
-        if (c.req.query.pageId && isNaN(parseInt(c.req.query.pageId, 10))) {
-            var url = c.req.query.pageId.replace(/^.*?\//, '/');
-            c.req.group.definePage(url, c, function(err, page) {
-                c.req.page = page;
-                c.next();
-            });
-        } else if (c.req.query.pageId) {
-            c.Page.find(c.req.query.pageId, function (err, page) {
-                c.req.page = page;
-                c.next();
-            });
-        } else {
-            c.next();
-        }
-    });
-
+    init.before(requireUser);
+    init.before(initApp);
     init.before(loadContentTypes);
     init.before(loadMemberRoles);
+};
+
+function requireUser(c) {
+    if(!c.req.user) {
+        // User not found
+        return c.next(new Error('404'));
+    }
+    if(!c.req.user.adminOf(c.req.group)) {
+        // User is not an admin
+        return c.next(new Error('401'));
+    }
+    else {
+        c.next();
+    }
+};
+
+function initApp(c) {
+    var locals = this;
+    this.pageName = c.actionName;
+    this.sectionName = c.controllerName;
+    this._ = _;
+    this.req = c.req;
+    this.tabs = c.compound.tabs;
+    locals.group = c.req.group;
+    if (c.req.query.pageId && isNaN(parseInt(c.req.query.pageId, 10))) {
+        var url = c.req.query.pageId.replace(/^.*?\//, '/');
+        c.req.group.definePage(url, c, function(err, page) {
+            c.req.page = page;
+            c.next();
+        });
+    } else if (c.req.query.pageId) {
+        c.Page.find(c.req.query.pageId, function (err, page) {
+            c.req.page = page;
+            c.next();
+        });
+    } else {
+        c.next();
+    }
 };
 
 // load all of the different content types that have been defined in the app
