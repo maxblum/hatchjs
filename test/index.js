@@ -34,7 +34,7 @@ before(function(done) {
     });
 });
 
-global.getApp = function(done) {
+module.exports.getApp = global.getApp = function(done) {
     var schema = app.compound.models.User.schema;
     delete schema.log;
     schema.adapter.client.flushdb(function() {
