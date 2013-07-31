@@ -15,7 +15,6 @@ log/*.log
 .c9revisions
 coverage.html
 .settings
-doc
 
 public/upload/*
 !public/upload/*.keep
