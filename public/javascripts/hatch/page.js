@@ -1,8 +1,12 @@
-PageController = function () {
-	
+PageController = function (options) {
+	this.options = $.extend(PageController.defaultOptions, options);
 };
 
-PageController.prototype.init = function (window) {
+PageController.defaultOptions = {
+
+};
+
+PageController.prototype.init = function () {
 	//TODO: setup pjax
 	//TODO: setup ajax links
 	//TOOD: setup ajax forms

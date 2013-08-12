@@ -1,5 +1,9 @@
-StyleController = function (window) {
-	this.window = window;
+StyleController = function (options) {
+	this.options = $.extend(StyleController.defaultOptions, options);
+};
+
+StyleController.defaultOptions = {
+
 };
 
 StyleController.prototype.init = function () {

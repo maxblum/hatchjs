@@ -1,5 +1,17 @@
-EditController = function (window) {
-	this.window = window;
+EditController = function (options) {
+	this.options = $.extend(EditController.defaultOptions, options);
+	this.widgets = [];
+	this.columns = [];
+};
+
+EditController.defaultOptions = {
+	columns: 12,
+	classes: {
+		widget: 'widget',
+		widgetList: 'widget-list',
+		column: 'column',
+		resizer: 'resizer'
+	}
 };
 
 EditController.prototype.init = function () {
