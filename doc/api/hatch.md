@@ -29,9 +29,9 @@ Widget is a view connected to controller that renders part of page html. Hatch
 provides multi-column interface to manage widgets on the page: widgets can be
 moved, configured, stylized using convenient interface.
 
-Any complex page can be built using widget, for example if we building blogging
-platform we can use widgets for creating index page such as blog roll, tags,
-latest comments, popular post, etc.. And widgets for post page: view post,
+Any complex page can be built using set of widgets, for example if we building
+blogging platform we can use widgets for creating index page such as blog roll,
+tags, latest comments, popular post, etc.. And widgets for post page: view post,
 similar posts, comments, social bar, etc..
 
 See hatch-widgets(3)
