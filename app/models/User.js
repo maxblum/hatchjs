@@ -23,6 +23,7 @@ var moment = require('moment');
 var crypto = require('crypto');
 
 module.exports = function (compound, User) {
+    var unsafeChars = /[^-_\.a-z0-9A-Z]+/g;
     var Group = compound.models.Group;
 
     User.validatesPresenceOf('username', {message: 'Please enter a username'});
@@ -420,7 +421,9 @@ module.exports = function (compound, User) {
         } else {
             username = data.username + Math.random();
         }
-        username = username.replace(/[^-_\.a-z0-9A-Z]+/g, '.').toLowerCase();
+        if (username) {
+            username = username.replace(unsafeChars, '.').toLowerCase();
+        }
         User.findOne({
             where: {
                 username: username

@@ -212,6 +212,7 @@ module.exports = function (compound, Content) {
             text = text.replace(/[^-a-zA-Z0-9\s]+/ig, '');
             text = text.replace(/-/gi, "_");
             text = text.replace(/\s/gi, "-");
+            text = text.replace(/-+$/, '');
             return text;
         }
     };
@@ -718,6 +719,55 @@ module.exports = function (compound, Content) {
             });
 
             callback(err, posts);
+        });
+    };
+
+    var allContent = Content.all;
+    Content.all = function all(query, cb) {
+        if (typeof query === 'function') {
+            cb = query;
+            query = null;
+        }
+        allContent.call(Content, query, function(err, posts) {
+            if (err) {
+                return cb(err, posts);
+            }
+            if (query) {
+                delete query.skip;
+            }
+            var futurePosts = 0;
+            if (!query || !query.future) {
+                futurePosts = posts.length;
+                var now = new Date();
+                console.log(posts.countBeforeLimit);
+                var countBeforeLimit = posts && posts.countBeforeLimit;
+                posts = posts && posts.filter(function(post) {
+                    return post.createdAt < now;
+                });
+                posts.countBeforeLimit = countBeforeLimit;
+                futurePosts -= posts.length;
+                if (futurePosts > 0 && query && query.limit) {
+                    query.offset = (query.offset || 0) + query.limit;
+                    query.limit = futurePosts;
+                    console.log(query);
+                    Content.all(query, function(err, morePosts) {
+                        if (err) {
+                            return cb(err, morePosts);
+                        }
+                        posts.futurePosts += morePosts.futurePosts;
+                        morePosts.forEach(function(post) {
+                            posts.push(post);
+                        });
+                        cb(err, posts);
+                    });
+                } else {
+                    posts.futurePosts = futurePosts;
+                    cb(err, posts);
+                }
+            } else {
+                posts.futurePosts = futurePosts;
+                cb(err, posts);
+            }
         });
     };
 

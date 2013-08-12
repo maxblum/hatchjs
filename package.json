@@ -1,12 +1,12 @@
 {
-  "name": "hatch-compound",
-  "version": "0.0.5",
+  "name": "hatch",
+  "version": "0.0.5-3",
   "engines": [
     "node >= 0.8.0"
   ],
   "main": "server.js",
   "dependencies": {
-    "bootstrap": "https://github.com/twitter/bootstrap/tarball/v2.3.1",
+    "bootstrap": "https://github.com/twbs/bootstrap/tarball/v2.3.1",
     "font-awesome": "https://github.com/kersten/Font-Awesome/tarball/master",
     "ejs": "*",
     "ejs-ext": "latest",

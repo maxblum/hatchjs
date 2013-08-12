@@ -77,7 +77,7 @@ function loadContent(c, callback) {
             cond = {
                 tags: filterBy
             }
-        } else {
+        } else if (filterBy !== 'all') {
             cond.type = filterBy;
         }
     }
@@ -98,6 +98,7 @@ function loadContent(c, callback) {
         }
 
         c.Content.all({
+            future: true,
             where: cond,
             order: orderBy,
             offset: offset,
