@@ -1,6 +1,8 @@
 load('widgets/common');
 
 action(function show() {
+    // show inline editing tools
+    this.inlineEditAllowed = true;
     render();
 });
 

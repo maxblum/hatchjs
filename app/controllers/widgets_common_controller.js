@@ -10,7 +10,7 @@ before('init env', function (c) {
     req.data = body.data; 
     locals.data = req.data && req.data.data;
     locals.canEdit = req.user && req.group && req.user.adminOf(req.group);
-    locals.inlineEditAllowed = locals.canEdit;
+    locals.inlineEditAllowed = false;
 
     locals.group.definePage(req.pagePath, c, gotPage);
 

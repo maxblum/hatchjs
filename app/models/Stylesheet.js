@@ -16,16 +16,17 @@
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 
+'use strict';
+
 var webrequest = require('request');
 var async = require('async');
 var fs = require("fs");
 var less = require("less");
-var finder = require('findit');
+var find = require('find-file-sync');
 var _ = require('underscore');
-var csso = require('csso');
+var path = require('path');
 
 module.exports = function (compound, Stylesheet) {
-    
     var Group = compound.models.Group;
 
     // define the stylesheet cache
@@ -76,27 +77,27 @@ module.exports = function (compound, Stylesheet) {
     Stylesheet.prototype.compile = function (callback) {
         var self = this;
         var tree, css;
-        var path = __dirname + '/../../public' + compound.app.get('cssDirectory') + "theme-template.less";
+        var templatePath = path.join(__dirname, '/../../public/less/theme_template.less');
 
-        fs.readFile(path, 'utf-8', function (err, str) {
-            if (err) { return callback(err) }
+        fs.readFile(templatePath, 'utf-8', function (err, str) {
+            if (err) { 
+                return callback(err);
+            }
 
             var moduleCss = '';
 
-            // TODO: get the module and widget stylesheets
-            /*
-            compound.hatch.module.getModuleInstancesList().forEach(function(instance) {
-                var path = instance.module.root;
-
+            // get the module and widget stylesheets
+            Object.keys(compound.hatch.modules).forEach(function(key) {
+                var module = compound.hatch.modules[key];
+                
                 //search for stylesheets
-                var results = _.filter(finder.sync(path), function(path) { return path.indexOf('.less') > -1 && path.indexOf('node_modules') == -1; });
+                var results = find(module.path, '*.less');
 
-                results.forEach(function(path) {
-                    var css = fs.readFileSync(path);
+                (results || []).forEach(function(modulePath) {
+                    var css = fs.readFileSync(modulePath);
                     moduleCss += css + '\n';
                 });
             });
-            */
 
             //replace the variables, bootswatch and the module Css
             str = str.replace("@import \"theme-template-variables.less\";", self.less.variables);
@@ -107,15 +108,15 @@ module.exports = function (compound, Stylesheet) {
             str += '\n' + self.less.custom;
 
             new(less.Parser)({
-                paths: [require('path').dirname(path)],
-                optimization: 1
+                paths: [path.dirname(templatePath)],
+                optimization: 0
             }).parse(str, function (err, tree) {
                 if (err) {
                     callback(err);
                 } else {
                     try {
                         css = tree.toCSS({
-                            compress: true
+                            compress: false
                         });
 
                         //css should be a string
@@ -199,7 +200,6 @@ module.exports = function (compound, Stylesheet) {
         //get the cached version
         if (!Stylesheet.cache[name]) {
             //load the template
-            var path = __dirname + '/../../public' + compound.app.get('cssDirectory') + "theme-template.less";
             var theme = compound.hatch.themes.getTheme(name);
 
             //if no theme found, use the default theme settings

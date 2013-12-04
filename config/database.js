@@ -17,8 +17,8 @@ module.exports =
     }
   , "production":
     { "driver":   "redis-hq"
-    , "prefix":   "prod"
-    , "database": 2
+    , "prefix":   "dev"
+    , "database": 0
     , "fulltext": {
         driver: 'solr',
         host: 'index.websolr.com',

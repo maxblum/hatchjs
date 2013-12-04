@@ -19,7 +19,7 @@
 var fs = require('fs');
 var zlib = require('zlib');
 var express = require('express');
-var fontStatic = express.static(__dirname + '/../../../../node_modules/font-awesome', { maxAge: 31557600000 });
+var fontStatic = express.static(__dirname + '/../../../../bower_components/font-awesome', { maxAge: 31557600000 });
 
 module.exports = StylesheetController;
 

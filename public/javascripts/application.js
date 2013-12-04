@@ -17,15 +17,15 @@ $(function () {
 
     $(document).on('contents-updated', '.inline-edit', updateWidgetContent);
 
-    $(document).on('click', '.module-controls > .delete', function (e) {
+    $(document).on('click', '.widget-controls > .delete', function (e) {
         e.stopPropagation();
 
         if (!confirm('Are you sure you wish to delete this widget?')) {
             return false;
         }
 
-        var $module = $(this).closest('.module');
-        removeWidget($module);
+        var $widget = $(this).closest('.widget');
+        removeWidget($widget);
         return false;
     });
 
@@ -35,7 +35,8 @@ $(function () {
 
     $(document).on('ajax:success', '.widget-settings-form', function (e, data) {
         $.noty({ text: '<i class="icon-ok"></i> Widget settings saved', type: 'success' });
-        $(this).modal('hide');
+        $('#modal-settings').modal('hide');
+        e.stopPropagation();
     });
 
     $(document).on('ajax:success', '[data-widget-action]', function () {
@@ -60,7 +61,7 @@ $(function () {
 
     $(document).on('ajax:success', '.adjust', function (e, data) {
         //reload the widget
-        widgetAction('render:' + $(this).parents(".module").attr("data-id"));
+        widgetAction('render:' + $(this).parents(".widget").attr("data-id"));
     });
 
     var $w = $(window), $d = $(document);
@@ -83,9 +84,9 @@ function widgetAction(handle, data) {
     }
     $.post(path, {}, function (data) {
         if (h.length) {
-            $('.editable .module[data-id=' + id + '] [data-id=' + h[0] + ']').replaceWith(data);
+            $('.editable .widget[data-id=' + id + '] [data-id=' + h[0] + ']').replaceWith(data);
         } else {
-            $('.editable .module[data-id=' + id + ']').replaceWith(data);
+            $('.editable .widget[data-id=' + id + ']').replaceWith(data);
         }
     });
 }
@@ -148,12 +149,12 @@ function createWidget(type, col, row) {
             $.noty({text: "<i class='icon-ok'></i> Widget added", type: "success"});
             var $home;
             if (typeof col != 'undefined') {
-                $home = $('.module-list:eq(' + col + ')');
+                $home = $('.widget-list:eq(' + col + ')');
             } else if (name === 'mainmenu' || name === 'group-header') {
-                $home = $('.module-list:eq(0)');
+                $home = $('.widget-list:eq(0)');
             } else {
                 var first = true;
-                $('.module-list').each(function () {
+                $('.widget-list').each(function () {
                     if (first) {
                         first = false;
                         return;
@@ -184,7 +185,7 @@ function selectGrid(type, el) {
     $(el).parent().find('li.selected-grid').removeClass('selected-grid');
     $('#templates-layouts input').attr("checked", null);
     send('page/grid', {grid: type}, 'json', function (data) {
-        $('.module-list:first').closest('#row-content').html(data.html);
+        $('.widget-list:first').closest('#row-content').html(data.html);
 
         //re-intialise the dragdrop
         dragdrop.init();
@@ -199,7 +200,7 @@ function selectGrid(type, el) {
 function selectPageTemplate(templateId) {
     $('li.selected-grid').removeClass('selected-grid');
     send('page/grid', {templateId: templateId}, 'json', function (data) {
-        $('.module-list:first').closest('#row-content').html(data.html);
+        $('.widget-list:first').closest('#row-content').html(data.html);
 
         //re-intialise the dragdrop
         dragdrop.init();
@@ -234,13 +235,11 @@ function savePageOrder(e, revert) {
 function updateWidgetsOrder(hideNotification) {
     var res = [];
     $('.column').each(function () {
-        var size = $(this).attr('class').match(/span(\d\d?)/)[1];
-        var moduleList = $(this).hasClass("module-list") ? this : $(".module-list:first-child", this);
-
-        console.log(moduleList)
+        var size = $(this).attr('class').match(/col\-md\-(\d\d?)/)[1];
+        var widgetList = $(this).hasClass("widget-list") ? this : $(".widget-list:first-child", this);
 
         var mods = [];
-        $(moduleList).find('> .module').each(function () {
+        $(widgetList).find('> .widget').each(function () {
             mods.push(parseInt($(this).attr('data-id'), 10));
         });
         res.push({
@@ -256,7 +255,7 @@ function updateWidgetsOrder(hideNotification) {
 
 function updateWidgetContent() {
     var $el = $(this);
-    var $widget = $el.closest('.module');
+    var $widget = $el.closest('.widget');
     var widgetId = $widget.attr('data-id');
     sendToWidget(widgetId, {
         _method: 'PUT',

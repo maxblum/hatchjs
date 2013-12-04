@@ -1,7 +1,7 @@
 <div class="header-container">
     <div class="container">
         <div class="row">
-            <div class="column span<%- size[0] || 12 %> module-list">
+            <div class="column col-md-<%- size[0] || 12 %> widget-list">
                 <%- column[0] %>
             </div>
         </div>
@@ -9,9 +9,9 @@
 </div>
 <div class="container">
     <div class="row">
-      <div class="column span<%- size[1] || 4 %> module-list"><%- column[1] %></div>
-      <div class="column span<%- size[2] || 4 %> module-list"><%- column[2] %></div>
-      <div class="column span<%- size[3] || 4 %> module-list"><%- column.slice(3).join(' ') %></div>
+      <div class="column col-md-<%- size[1] || 4 %> widget-list"><%- column[1] %></div>
+      <div class="column col-md-<%- size[2] || 4 %> widget-list"><%- column[2] %></div>
+      <div class="column col-md-<%- size[3] || 4 %> widget-list"><%- column.slice(3).join(' ') %></div>
     </div>
 </div>
 

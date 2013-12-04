@@ -2,11 +2,11 @@
     @model.t('editconsole.help.widgets')
 </p>
 
-<ul class="unstyled new-widgets-list">
+<ul class="list-unstyled new-widgets-list">
     @model.request.widgets.forEach(function (w) {
         <li>
             <span class="widget">
-                <i class="@w.info.icon"></i> 
+                <i class="fa fa-@w.info.icon.replace('icon-', '')"></i> 
                 <a href="#@(w.module + '/' + w.name)">@w.info.title</a>
             </span>
         </li>

@@ -21,8 +21,8 @@ $(document).ready(function() {
         $.pjax.defaults.headers = { 'Content-Type' : '' };
         $.pjax.defaults.dataType = '';
 
-        $('#all').pjax('#main .nav a:not([rel=nopjax]), #main .breadcrumb a:not([rel=nopjax])');
-        $('#all').on('pjax:end', function() { hatchInit(); });
+        $('#pjax-body').pjax('#main .nav a:not([rel=nopjax]), #main .breadcrumb a:not([rel=nopjax])');
+        $('#pjax-body').on('pjax:end', function() { hatchInit(); });
     }
 
     //validation and default ajax handlers
@@ -272,7 +272,7 @@ function hatchInit() {
                     var input = $('#privacy');
                     var el = $('#widget-privacy');
 
-                    el.find('.btn:first').text(value.name);
+                    el.find('.btn').text(value.name);
                     el.find('.btn').removeClass('btn-success btn-warning btn-danger').addClass('btn-' + value['class']);
                     input.val(value.value);
 
@@ -287,7 +287,7 @@ function hatchInit() {
                     var input = $('#visibility');
                     var el = $('#widget-visibility');
 
-                    el.find('.btn:first').text(value.name);
+                    el.find('.btn').text(value.name);
                     el.find('.btn').removeClass('btn-success btn-warning btn-danger').addClass('btn-' + value['class']);
                     input.val(value.value);
 
@@ -298,129 +298,16 @@ function hatchInit() {
                 });
             });
 
-            toggleEditConsole = function(show) {
-                if (typeof show === 'undefined') {
-                    show = !$('.edit-console').is(':visible');
-                }
-
-                //set the cookie
-                $.cookie('edit-console-visible', show, { path : '/' });
-
-                if (show) {
-                    showEditConsole();
-                } else {
-                    hideEditConsole();
-                }
-
-            };
-
-            //hides the edit console
-            hideEditConsole = function () {
-                $('#edit-page-link i.icon-eye-close').show();
-                $('#edit-page-link i.icon-eye-open').hide();
-
-                //set the cookie
-                $.cookie('edit-console-visible', null, { path : '/' });
-
-                $('.edit-console').fadeOut();
-            };
-
-            //shows the edit console
-            showEditConsole = function() {
-                $('#edit-page-link i.icon-eye-open').show();
-                $('#edit-page-link i.icon-eye-close').hide();
-
-                if ($('#editConsole').length === 0) {
-                    $('#editConsoleHolder').load(pathTo('admin/page/editconsole'), function() {
-                        $('.edit-console').fadeIn();
-
-                        //set the position
-                        positionEditConsole();
-
-                        //allow widget dragging
-                        $('#edit-console-widgets li span.widget').draggable({
-                            appendTo: 'body',
-                            helper: function(event) {
-                                return $('<div class="drag-helper">' + $(this).html() + '</div>');
-                            },
-                            connectToSortable: '.module-list.editable',
-                            stop: function(event, ui) {
-                                var widget = $('a', this).attr('href').replace('#', '');
-                                var $el = $('.module-list .widget');
-
-                                var row = $el.index();
-                                var col = $el.parent().attr('id');
-
-                                //if we don't have a column, give up
-                                if (!col) {
-                                    return;
-                                }
-
-                                col = col.replace('col-', '');
-
-                                //remove the placeholder
-                                $el.remove();
-
-                                //add the new widget
-                                createWidget(widget, col, row);
-                            }
-                        });
-
-                        //initialise style editor
-                        var styleeditor = new StyleEditorController();
-                        styleeditor.init();
-
-                        //attach events
-                        $('.edit-console .close').bind('click', hideEditConsole);
-                        $('.edit-console').draggable({
-                            handle: 'div.console-header',
-                            stop: function() {
-                                $.cookie('edit-console-xy', JSON.stringify($('.edit-console').position()), { path : '/' });
-                            }
-                        });
-                        $('#column-layout-choices input').bind('click', function() {
-                            $('#templates-layouts, #columns-layouts').hide();
-                            $('#' + this.value + '-layouts').show();
-                        });
-                    });
-                }
-                else {
-                    $('#editConsole').fadeIn();
-                    positionEditConsole();
-
-                    //reload the layouts tab
-                    $('#edit-console-layouts').load(pathTo('admin/page/editconsole?tab=layouts'));
-                }
-            };
-
-            //positions the edit console with the value in the cookie
-            positionEditConsole = function() {
-                //position the edit console
-                var editConsolePosition = $.cookie('edit-console-xy');
-                if (editConsolePosition) {
-                    editConsolePosition = JSON.parse(editConsolePosition);
-
-                    //make sure the position is within the bounds of the window
-                    if (editConsolePosition.left + $('.edit-console').outerWidth() > $(window).width()) {
-                        editConsolePosition.left = Math.max(0, $(window).width() - $('.edit-console').outerWidth());
-                    }
-
-                    if (editConsolePosition.top + $('.edit-console').outerHeight() > $(window).height()) {
-                        editConsolePosition.top = Math.max(0, $(window).height() - $('.edit-console').outerHeight());
-                    }
-
-                    $('.edit-console').css({left: editConsolePosition.left + 'px', top: editConsolePosition.top + 'px'});
-                }
-            };
+            var editConsole = new EditConsoleController();
 
             //show the edit console?
             if ($('#editConsoleHolder').length > 0 && $.cookie('edit-console-visible')) {
-                toggleEditConsole(true);
+                editConsole.toggle(true);
             }
 
             //edit console link
             $('#edit-page-link').click(function () {
-                toggleEditConsole();
+                editConsole.toggle();
                 return false;
             });
         }

@@ -42,6 +42,7 @@ module.exports = function (compound) {
         app.enable('trust proxy');
 
         app.use(express.static(app.root + '/public', { maxAge: 86400000 }));
+        app.use(express.static(app.root + '/bower_components', { maxAge: 86400000 }));
         app.use(express.bodyParser());
         app.use(express.cookieParser('secret'));
         app.use(express.session({
@@ -54,6 +55,7 @@ module.exports = function (compound) {
 
         app.use(require('express-mobile-agent'));
         app.use(hatch.middleware.csrf(compound));
+        app.use(hatch.middleware.pjax(compound));
         app.use(hatch.middleware.rewrite(compound));
         app.use('/do', hatch.mediator);
         app.use(hatch.middleware.hatch(compound));

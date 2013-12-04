@@ -22,6 +22,9 @@ REPO = marcusgreenwood/hatchjs
 FROM = $(GITBRANCH)
 TO = $(GITBRANCH)
 
+install:
+	node install
+
 pull:
 	git pull origin $(FROM)
 

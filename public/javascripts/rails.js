@@ -395,14 +395,17 @@
         csrf_token = $('meta[name=csrf-token]').attr('content');
         csrf_param = $('meta[name=csrf-param]').attr('content');
         $('form input[name="' + csrf_param + '"]').val(csrf_token);
-        $('a[data-modal]').on('ajax:success', function (e, html) {
+        $('body').on('ajax:success', 'a[data-modal]', function (e, html) {
             var modal = $(html);
-
             var $modalContainer = $("#modal-container");
-            if($modalContainer.length === 0) $modalContainer = $('<div id="modal-container"></div>').appendTo($('body'));
+
+            if($modalContainer.length === 0) {
+                $modalContainer = $('<div id="modal-container"></div>').appendTo($('body'));
+            }
+            
             $modalContainer.empty().append(modal);
 
-            modal.modal();
+            modal.modal('show');
             hatchModalInit();
         });
         $('*[data-target-id]').on('ajax:success', function(e, html) {

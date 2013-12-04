@@ -79,10 +79,27 @@ WidgetController.prototype.__missingAction = function __missingAction(c) {
 WidgetController.prototype.create = function(c) {
     var page = this.page;
     var type = c.body.addWidget;
+    
+    // get the widget definition
+    var widgetDefinition = c.compound.hatch.widget.getWidget(type);
+    var settings = {
+        title: widgetDefinition.info.title
+    };
 
+    if (widgetDefinition.info.settings) {
+        // set the default settings values
+        Object.keys(widgetDefinition.info.settings.fields).forEach(function (key) {
+            var field = widgetDefinition.info.settings.fields[key];
+            if (field.default) {
+                settings[key] = field.default;
+            }
+        });
+    }
+
+    // add to the page
     var widget = page.widgets.push({
         type: type, 
-        settings: {}
+        settings: settings
     });
 
     // save the new widget, render and add to the page

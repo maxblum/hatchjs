@@ -20,11 +20,23 @@
 
 var compound = require('compound');
 var fs = require('fs');
+var path = require('path');
 var fsTools = require('fs-tools');
 
 module.exports = function (c) {
     // register the default themes
-    var themes = ['Amelia', 'Cerulean', 'Cosmo', 'Cyborg', 'Journal', 'Readable', 'Simplex', 'Slate', 'Spacelab', 'Spruce', 'Superhero', 'United'];
+    var themes = [];
+
+    var bootswatchDir = path.join(__dirname, '../../bower_components/bootswatch');
+    var themeDirs = fs.readdirSync(bootswatchDir);
+
+    themeDirs.forEach(function (dir) {
+        var themeDir = path.join(bootswatchDir, dir);
+        
+        if (fs.existsSync(themeDir + '/bootswatch.less') && fs.existsSync(themeDir + '/variables.less')) {
+            themes.push(dir);
+        }
+    });
 
     themes.forEach(function (name) {
         c.hatch.themes.registerTheme({ title: name, name: name.toLowerCase() });

@@ -2,6 +2,10 @@ exports.__ = function (s) {
     return s;
 };
 
+exports.icon = function (icon) {
+    return '<i class="fa fa-' + icon + '"></i>';
+};
+
 exports.openGraphTags = function () {
     var req = this.req,
         page = req.page,
@@ -33,7 +37,7 @@ exports.openGraphTags = function () {
 
 var javascripts = {
     common: [
-        'jquery', 'bootstrap', 'bootstrap-typeahead', 'jquery-easyticker',
+        'jquery2.0.0', 'bootstrap', 'bootstrap-typeahead', 'jquery-easyticker',
         'jquery-hoverintent', 'jquery-blink', 'jquery-valadd',
         'jquery-textarea-autogrow', 'jquery-noty', 'jquery-cookie',
         'jquery-pjax', 'jquery-hovercard', 'jquery-highlight', 'uploader',
@@ -45,7 +49,7 @@ var javascripts = {
         'jquery-selectrange', 'jquery-blockui', 'jquery-spectrum',
         'jquery-colorscheme', 'hatch-dragdrop', 'hatch-css-properties',
         'hatch-styleeditor', 'hatch-inline-edit', 'hatch-management',
-        'redactor/redactor'
+        'redactor/redactor', 'hatch-editconsole'
     ],
     all: null
 };

@@ -4,7 +4,7 @@ exports.buildForm = function buildForm(form, data) {
 
     var fieldBuilders = {
         select: function (name, params) {
-            var select = '<select name="' + name + '">';
+            var select = '<select name="' + name + '" class="form-control">';
             params.options.forEach(function (opt) {
                 opt = opt.toString();
                 var text = opt.indexOf(':') > -1 ? opt.split(':').pop() : opt;
@@ -18,15 +18,15 @@ exports.buildForm = function buildForm(form, data) {
         },
         input: function (name, params) {
             var val = data.hasOwnProperty(name) ? data[name] : '';
-            return '<input type="text" name="' + name + '" value="' + val + '" />';
+            return '<input type="text" name="' + name + '" value="' + val + '" class="form-control" />';
         },
         textarea: function (name, params) {
             var val = data.hasOwnProperty(name) ? data[name] : '';
-            return '<textarea name="' + name + '">' + val + '</textarea>';
+            return '<textarea name="' + name + '" class="form-control">' + val + '</textarea>';
         },
         html: function(name, params) {
             var val = data.hasOwnProperty(name) ? data[name] : '';
-            return '<textarea class="html" name="' + name + '">' + val + '</textarea>';  
+            return '<textarea class="html" name="' + name + '" class="form-control">' + val + '</textarea>';  
         },
         checkbox: function (name, params) {
             var val = data.hasOwnProperty(name) ? data[name] : false;
@@ -90,10 +90,10 @@ exports.buildForm = function buildForm(form, data) {
     function formFields(fields) {
         var html = '';
         for (f in fields) {
-            html += '<div class="control-group">' +
-                '<label class="control-label" for="widget-' + f +
+            html += '<div class="form-group">' +
+                '<label class="control-label col-md-3" for="widget-' + f +
                 '">' + c.__(fields[f].title || f) + '</label>\n' +
-                '<div class="controls">' +
+                '<div class="col-md-5">' +
                 fieldBuilders[fields[f].type](f, fields[f]) + 
                 (fields[f].type != 'checkbox' && fields[f].description ? '<small class="help-block">' + c.__(fields[f].description) + '</small>' : ''
                 ) +

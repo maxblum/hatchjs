@@ -1,35 +1,33 @@
 
 <!-- primary navigation -->
-<div class="">
+<nav class="navbar navbar-inverse">
     <% var breadcrumbPages = breadcrumb(page); %>
 
-    <div class="subnav <%- breadcrumbPages.length > 0 ? 'withBreadcrumb':'' %> <%- widget.settings.fixedTop == 'yes' ? 'fixed-top':'' %> <%- widget.settings.align === 'right' ? 'pull-right': '' %>">
-        <ul class="nav nav-pills">
-            <!-- level 0 and 1 pages are displayed here -->
-            <% group.pagesCache.forEach(function (p) { %>
-              <% if (/true/.test(p.hideFromNavigation)) return; %>
-              <% if ((p.type === 'page' || !p.type) && (p.level === 0 || p.level === 1)) { %>
-              <li class="<%- p.id == page.id ? 'active' : '' %>">
-                <%- linkTo(p.title, '//' + p.url) %>
-              </li>
-              <% } %>
-            <% }); %>
-        </ul>
-    </div>
-
-    <!-- show breadcrumb if we have pages with level > 2 -->
-    <% if (breadcrumbPages.length > 1) { %>
-        <ul class="breadcrumb">
-            <% breadcrumbPages.forEach(function (p, i) { %>
-                <% if(/true/.test(p.hideFromNavigation)) return; %>
-                <li<%- p.selected ? ' class="active"':''%>>
+    <ul class="nav navbar-nav">
+        <!-- level 0 and 1 pages are displayed here -->
+        <% group.pagesCache.forEach(function (p) { %>
+            <% if (/true/.test(p.hideFromNavigation)) return; %>
+                <% if ((p.type === 'page' || !p.type) && (p.level === 0 || p.level === 1)) { %>
+                <li class="<%- p.id == page.id ? 'active' : '' %>">
                     <%- linkTo(p.title, '//' + p.url) %>
-                    <% if(p.separator) { %>
-                        <span class="divider"><i class="icon-<%- p.separator %>"></i></span>
-                    <% } %>
                 </li>
-            <% }); %>
-        </ul>
-    <% } %>
-</div>
+            <% } %>
+        <% }); %>
+    </ul>
+</nav>
+
+<!-- show breadcrumb if we have pages with level > 2 -->
+<% if (breadcrumbPages.length > 1) { %>
+    <ol class="breadcrumb">
+        <% breadcrumbPages.forEach(function (p, i) { %>
+            <% if(/true/.test(p.hideFromNavigation)) return; %>
+            <li<%- p.selected ? ' class="active"':''%>>
+                <%- linkTo(p.title, '//' + p.url) %>
+                <% if(p.separator) { %>
+                    <span class="divider"><i class="icon-<%- p.separator %>"></i></span>
+                <% } %>
+            </li>
+        <% }); %>
+    </ol>
+<% } %>
 
