@@ -1130,7 +1130,7 @@
                 rule.append(property + ":" + value);
 
                 // add the rule manually to the style preview css
-                c.els.styleCss.text(c.els.styleCss.text() + '\n' + selector + '{ ' + property + ':' + value + '; }');
+                c.els.styleCss.text(c.els.styleCss.text() + '\n' + selector + '{ ' + property + ':' + value + ' ! important; }');
             }
             
             //set the changes pending flag

@@ -11,7 +11,7 @@ en:
     private: Private
     visible: Visible
     hidden: Hidden
-    enterTags: 'Enter tags ...'
+    enterTags: 'Enter tags ....'
     help: Help
     renderSpeed: Rendered in
     hatchCredit: 'Built on Hatch.js'
