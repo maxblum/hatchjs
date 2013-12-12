@@ -1135,13 +1135,13 @@
       return (
         '<div class="bootstrap-datetimepicker-widget dropdown-menu">' +
           '<ul>' +
-            '<li' + (collapse ? ' class="collapse in"' : '') + '>' +
+            '<li' + (collapse ? ' class="panel-group collapse in"' : '') + '>' +
               '<div class="datepicker">' +
                 DPGlobal.template +
               '</div>' +
             '</li>' +
             '<li class="picker-switch accordion-toggle"><a><i class="' + timeIcon + '"></i></a></li>' +
-            '<li' + (collapse ? ' class="collapse"' : '') + '>' +
+            '<li' + (collapse ? ' class="panel-group collapse"' : '') + '>' +
               '<div class="timepicker">' +
                 TPGlobal.getTemplate(is12Hours, showSeconds) +
               '</div>' +

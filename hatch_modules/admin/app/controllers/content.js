@@ -279,6 +279,7 @@ ContentController.prototype.new = function(c) {
     this.post = new c.Content();
     this.post.type = c.req.params.type;
     this.pageName = 'new-' + this.post.type;
+    this.moment = moment;
 
     renderInputForm(c, function () {
         c.render();
@@ -292,6 +293,8 @@ ContentController.prototype.new = function(c) {
  *                       c.id - content item id
  */
 ContentController.prototype.edit = function edit(c) {
+    this.moment = moment;
+
     renderInputForm(c, function () {
         c.render();
     });
@@ -315,10 +318,11 @@ ContentController.prototype.create = function create(c) {
     data.authorId = c.req.user.id;
 
     // if there is no date, set to now. otherwise parse with moment to fix format
-    if (!data.createdAt) {
+    if (!data.createdAt.date) {
         data.createdAt = new Date();
     } else {
-        data.createdAt = moment(data.createdAt, c.app.get('datetimeformat')).toDate();
+        data.createdAt = moment(data.createdAt.date + ' ' + data.createdAt.time, c.app.get('datetimeformat')).toDate();
+        console.log('DATE IS', data.createdAt)
     }
 
     data.updatedAt = new Date();
@@ -351,7 +355,13 @@ ContentController.prototype.update = function update(c) {
     var post = this.post;
 
     // parse the date format with moment
-    data.createdAt = moment(data.createdAt, c.app.get('datetimeformat')).toDate();
+    if (!data.createdAt.date) {
+        data.createdAt = new Date();
+    } else {
+        data.createdAt = moment(data.createdAt.date + ' ' + data.createdAt.time, c.app.get('datetimeformat')).toDate();
+        console.log('DATE IS', data.createdAt)
+    }
+    
     data.updatedAt = new Date();
 
     c.Tag.assignTagsForObject(post, data.Content_tags || data.tags, function () {

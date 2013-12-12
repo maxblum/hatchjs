@@ -29,10 +29,23 @@
         <div class="form-group">
             <%- form.label('createdAt', t('post.createdAt')) %>
             <p class="instructions"><%= t('post.instructions.createdAt') %></p>
+            <div class="input-append date col-md-4 no-padding" data-date="<%- post.createdAt && moment(post.createdAt).format(datetimeformat.split(' ')[0]) %>" data-date-format="<%- datetimeformat.split(' ')[0].toLowerCase() %>">
+                <input type="text" class="form-control" name="Content[createdAt[date]" value="<%- post.createdAt && moment(post.createdAt).format(datetimeformat.split(' ')[0]) %>">
+                <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span> 
+            </div>
+            <div class="input-append bootstrap-timepicker-component col-md-5 col-md-offset-2">
+                <input type="text" class="timepicker-24" name="Content[createdAt[time]" value="<%- post.createdAt && moment(post.createdAt).format(datetimeformat.split(' ')[1]) %>">
+                <span class="add-on"><span class="arrow"></span><i class="icon-time"></i></span> 
+            </div>
+
+            <div class="clearfix"></div>
+
+            <!--
             <div class="input-append date" id="createdAtDatePicker">
                 <%- form.input('createdAt', {class: 'form-control', 'data-format': datetimeformat.replace(/DD/ig, 'dd').replace(/YY/ig, 'yy').replace(/HH/, 'hh') })
                 %><span class="add-on"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i></span>
             </div>
+            -->
         </div>
 
         <div class="clearfix"></div>
@@ -40,22 +53,6 @@
         <div class="form-group">
             <%- form.label('tags', t('post.tags')) %>
             <p class="instructions"><%= t('post.instructions.tags') %></p>
-            <!--
-            <%- form.select('tags', tags, {
-                fieldname: 'title',
-                fieldvalue: 'id',
-                matcher: function (tag, postTag) {
-                    console.log('tag = ' + tag)
-                    console.log('postTag = ' + postTag)
-                    return tag == postTag.id;
-                },
-                name: 'tags[]',
-                multiple: 'multiple',
-                class: 'span3 chzn-select-create',
-                'data-placeholder': t('post.actions.enterTags')
-            }) %>
-            -->
-
             <select id="tags" name="Content_tags" multiple="multiple" class="chzn-select-create form-control" data-placeholder="<%- t('post.actions.enterTags') %>">
                 <% tags.forEach(function (tag) { %>
                     <option value="<%- tag.id %>"<%- post.tags.find(tag.id, 'id') ? ' selected="selected"':'' %>><%- tag.title %></option>
@@ -93,12 +90,20 @@
 
         setupRichtextEditors();
 
-        $('#Content_createdAt').val('');
-        var picker = $('#createdAtDatePicker').datetimepicker({
-            orientation: 'left',
-            pick12HourFormat: false
-        }).data('datetimepicker');
-        picker.setDate(new Date('<%- post.createdAt %>').getTime() - new Date().getTimezoneOffset() * 60000);
+        // Date Pickers
+        var datePicker = $('.input-append.date').datepicker({
+            autoclose: true,
+            todayHighlight: true,
+            format: '<%- datetimeformat.split(' ')[0].toLowerCase() %>'
+        });
+
+        // Time pickers
+        $('.timepicker-24').timepicker({
+            minuteStep: 1,
+            showSeconds: true,
+            showMeridian: false,
+            defaultTime: false
+        });
 
         var uploader = new qq.FileUploader({
             params: { _csrf: $('meta[name=csrf-token]').attr('content') },
