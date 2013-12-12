@@ -16,6 +16,8 @@
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 
+'use strict';
+
 var Application = require('./application');
 var async = require('async');
 var _ = require('underscore');

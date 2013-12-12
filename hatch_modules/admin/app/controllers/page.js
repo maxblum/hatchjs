@@ -16,6 +16,8 @@
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 
+'use strict';
+
 var _ = require('underscore');
 var googleImages = require('google-images');
 var google = require('google');

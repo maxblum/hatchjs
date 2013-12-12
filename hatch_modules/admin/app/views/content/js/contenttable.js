@@ -145,10 +145,7 @@ $(document).ready(function() {
             { "sDefaultContent": "", "fnRender" : function(obj, val) {
                     var content = obj.aData;
                     var score = content.score;
-                    var html = '';
-
-                    for (var i=0; i+.5 < score; i++) html += '<i class="icon-star"></i>';
-                    if(i-score == -.5) html += '<i class="icon-star-half"></i>';
+                    var html = '<div class="progress"><div data-percentage="' + Math.min(10, content.score) * 10 + '%" id="" class="progress-bar progress-bar-success animate-progress-bar" style="width: ' + Math.min(10, content.score) * 10 + '%;"></div></div>';
 
                     return html;
                 }
@@ -175,4 +172,4 @@ $(document).ready(function() {
             { "bSortable": false, "aTargets": [ 0, 5 ] }
         ]
     } );
-} );
+});

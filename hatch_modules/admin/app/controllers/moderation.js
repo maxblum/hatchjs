@@ -19,6 +19,8 @@
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 
+'use strict';
+
 var Content = require('./content');
 
 module.exports = ModerationController;

@@ -16,8 +16,16 @@
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 
+'use strict';
+
 var _ = require('underscore');
 
+/**
+ * Instantiate the admin application base controller. Handles security
+ * and loads data required by all of the admin controllers.
+ * 
+ * @param  {context} init - initialiser.
+ */
 var Application = module.exports = function Application(init) {
 
     init.before(function requireUser(c) {

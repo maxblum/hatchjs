@@ -16,6 +16,8 @@
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 
+'use strict';
+
 module.exports = StylesheetController;
 
 function StylesheetController(init) {
