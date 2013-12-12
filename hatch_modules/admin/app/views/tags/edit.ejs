@@ -1,13 +1,11 @@
-<div class="row-fluid">
+<div class="page-title">
+    <h3><%= t('tags.headers.edit') %></h3>
+</div>
 
-    <%- renderPartial('../content/_sidebar') %>
-
-    <div class="span10">
-        <div class="module">
-            <div class="content">
-                <h3><%= t('tags.headers.edit') %></h3>
-                <hr />
-
+<div class="row">
+    <div class="col-md-12">
+        <div class="grid simple">
+            <div class="grid-body">
                 <%- formTagBegin({action: pathTo.tag(sectionName, theTag.id), remote: true, method: 'PUT', id: 'tag-form' }) %>
                     <input type="hidden" name="type" value="<%- theTag.type %>" />
                     <% include _form %>

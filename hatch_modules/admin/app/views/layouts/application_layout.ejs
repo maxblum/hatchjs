@@ -1,156 +1,185 @@
-<% if(!req.query._pjax) { %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <title><%- t(['admin.title', group.name]) %></title>
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <%- csrfMetaTag() %>
 
-    <link type="text/css" rel="stylesheet" href="/do/stylesheet/theme/admin" id="main-stylesheet" />
+    <!-- standard bootstrap css -->
+    <link href="/admin/webarch/assets/plugins/boostrapv3/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/admin/webarch/assets/plugins/boostrapv3/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/admin/webarch/assets/plugins/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css"/>
+    <link href="/admin/webarch/assets/css/animate.min.css" rel="stylesheet" type="text/css"/>
 
-    <style id="preview-stylesheet" type="text/css"></style>
+    <!-- js plugins css -->
+    <link href="/admin/webarch/assets/plugins/chosen-bootstrap/chosen/chosen.css" rel="stylesheet" type="text/css"/>
+    <link type="text/css" rel="stylesheet" href="/admin/css/noty.css" />
     <link rel="stylesheet" href="/javascripts/redactor/redactor.css" />
+
+    <!-- theme specific css -->
+    <link type="text/css" rel="stylesheet" href="/admin/webarch/assets/css/style.css" />
+    <link type="text/css" rel="stylesheet" href="/admin/webarch/assets/css/responsive.css" />
+    <link type="text/css" rel="stylesheet" href="/admin/webarch/assets/css/custom-icon-set.css" />
+    <link type="text/css" rel="stylesheet" href="/admin/webarch/assets/plugins/font-awesome/css/font-awesome.css" />
+    <link type="text/css" rel="stylesheet" href="/admin/css/admin.css" />
+    
     <meta name="groupId" content="<%- group && group.id %>" />
 
     <% if (group.favicon) { %>
-    <link rel="icon" type="image/png" href="<%- group.favicon %>" />
+        <link rel="icon" type="image/png" href="<%- group.favicon %>" />
     <% } %>
 
-    <!-- TODO: implement contentFor('footer') helper and put following line to footer -->
-    <script type="text/javascript">
-        canEdit = <%- (req.member && req.user.canEdit) ? "true":"false" %>;
-    </script>
-    <%- javascriptIncludeTag('jquery', 'redactor/redactor', 'bootstrap', 'bootstrap-typeahead', 'jquery-easyticker', 'jquery-hoverintent', 'jquery-blink', 'jquery-valadd', 'jquery-textarea-autogrow', 'jquery-noty', 'jquery-cookie', 'jquery-pjax', 'jquery-hovercard', 'jquery-highlight', 'uploader', 'rails', 'forms', 'hatch-search', 'hatch', 'hatch-io', 'jquery-zoom', 'bootstrap-datetimepicker', 'application', 'i18n') %>
-    <%- javascriptIncludeTag('jquery-ui.min', 'chosen.jquery', 'jquery-rule', 'jquery-datatables', 'jquery-selectrange', 'jquery-blockui', 'jquery-spectrum', 'jquery-colorscheme', 'hatch-dragdrop', 'hatch-css-properties', 'hatch-styleeditor', 'hatch-inline-edit', 'hatch-management') %>
+    <%- javascriptIncludeTag('jquery', 'redactor/redactor', 'bootstrap', 'bootstrap-typeahead', 'jquery-easyticker', 'jquery-hoverintent', 'jquery-blink', 'jquery-valadd', 'jquery-textarea-autogrow', 'jquery-noty', 'jquery-cookie', 'jquery-pjax', 'jquery-hovercard', 'jquery-highlight', 'uploader', 'rails', 'forms', 'hatch-search', 'hatch', 'hatch-io', 'jquery-zoom', 'bootstrap-datetimepicker', 'application', 'i18n', 'jquery-ui.min', 'chosen.jquery', 'jquery-rule', 'jquery-datatables', 'jquery-selectrange', 'jquery-blockui', 'jquery-spectrum', 'jquery-colorscheme', 'hatch-editconsole', 'hatch-dragdrop', 'hatch-css-properties', 'hatch-styleeditor', 'hatch-inline-edit', 'hatch-management') %>
 </head>
-<body class="navbar-fixed-not">
-    
-    <div id="all">
-    <% } else { %>
-    <!-- pjax title -->
-        <title><%- t(['admin.title', group.name]) %></title>
-    <% } %>
+<body>
+    <div id="pjax-body">
+        <div id="main">
+            <div class="header navbar navbar-inverse">
+                <div class="navbar-inner">
+                    <div class="header-seperation">
+                        <a class="brand" href="//<%- group.homepage.url %>"><strong>Hatch</strong><small>.js</small></a>
 
-    <div class="navbar navbar-fixed-top-not">
-        <div class="navbar-inner">
-            <div class="container-fluid">
-                <div class="navbar-container">
-                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </a>
-                    <%- linkTo(
-                        icon('cog') +
-                        t(['admin.title', '<span class="group-name">' + group.name + '</span>']), '//' + group.url, {class: 'brand'}) %>
-                    </a>
-                    <div class="pull-right">
-                        <%- contentFor('layout.topBar.left') %>
-                        <%- contentFor('layout.topBar.middle') %>
-                        <% if (req.user) { var user = req.user; %>
-                        <ul class="nav">
-                            <li class="dropdown" id="menu1">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="/">
-                                    <%= user.displayName || user.username || user.email %>
-                                    <b class="caret"></b>
-                                </a>
-                                <ul class="dropdown-menu pull-right">
-                                    <li><%- linkTo(icon('user') + t('user.viewProfile'), specialPagePath('profile', { username: req.user.username })) %></li>
-                                    <li><%- linkTo(icon('cogs') + t('user.editAccont'), specialPagePath('account')) %></a></li>
-                                    <li class="divider"></li>
-                                    <li> <%- linkTo(icon('off') + t('user.signOut'), pathFor('user').logout) %> </li>
-                                </ul>
+                        <ul class="nav pull-right notifcation-center">  
+                            <li class="dropdown"> 
+                                <a href="//<%- group.homepage.url %>" class="dropdown-toggle active" rel="nopjax">
+                                    <div class="iconset top-home"></div>
+                                </a> 
                             </li>
+                            <li class="dropdown"> 
+                                <a href="#dashboard" class="dropdown-toggle" rel="nopjax"> 
+                                    <div class="iconset top-messages"></div>
+                                </a>      
+                            </li>  
                         </ul>
-                        <% } %>
-                        <%- contentFor('layout.topBar.right') %>
                     </div>
-                </div><!--/.nav-collapse -->
+                    <div class="header-quick-nav">
+                        <div class="pull-left"> 
+                            <ul class="nav quick-section">
+                                <li>
+                                    <div class="input-prepend inside search-form no-boarder">
+                                        <span class="add-on"> <a href="#" class=""><div class="iconset top-search"></div></a></span>
+                                        <input name="" type="text" class="no-boarder " placeholder="Search Dashboard" style="width:250px;">
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="pull-right">
+                            <div class="chat-toggler">
+                                <a href="#">
+                                    <div class="user-details">
+                                        <div class="username">
+                                            <strong><%- request.user.displayName %></strong>
+                                        </div>
+                                    </div>
+                                </a>
+                                <div class="profile-pic">
+                                    <img src="<%- request.user.avatar %>" width="35" height="35">
+                                </div>
+                            </div>
+                            <ul class="nav quick-section ">
+                                <li class="quicklinks"> 
+                                    <a class="pull-right" href="<%- specialPagePath('account') %>" rel="nopjax">
+                                        <i class="icon-cog"></i>
+                                    </a>
+                                </li> 
+                                <li class="quicklinks"> <span class="h-seperate"></span></li> 
+                                <li class="quicklinks">     
+                                    <a href="<%- pathFor('user').logout %>" rel="nopjax">
+                                        <i class="icon-off"></i>
+                                    </a> 
+                                </li> 
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <div id="header-content">
-        <div class="container-fluid">
-            <% tabs = _.sortBy(tabs, 'rank'); %>
+            <div class="page-container row">
+                <div class="page-sidebar">
+                    <div class="user-info-wrapper"> 
+                        <div class="user-info">
+                            <div class="username"><%- group.name %></div>
+                            <div class="status">Group access: <a href="#"><div class="status-icon green"></div>Public</a></div>
+                        </div>
+                    </div>
 
-            <header class="jumbotron subhead" id="overview" xmlns="http://www.w3.org/1999/html">
-                <div class="subnav">
-                    <ul class="nav nav-pills">
+                    <!-- main navigation -->
+                    <% tabs = _.sortBy(tabs, 'rank'); %>
+                    <ul>
                         <% tabs.forEach(function(tab) {
                            var tabUrl = pathFor(tab.module || 'admin')[tab.url]();
                            if (!tab.module || moduleEnabled(tab.module)) { %>
                             <li<%- tab.name === sectionName ? ' class="active"' : '' %>>
-                                <%- linkTo(t('tabs.' + tab.name), tabUrl) %>
-                            </li>
-                        <% }
-                        }) %>
+                                <a href="<%- tabUrl %>" class="pjax">
+                                    <%- icon(tab.icon || 'circle') + ' ' + t('tabs.' + tab.name) %>
+                                    <span class="arrow <%- tab.name === sectionName ? 'open':'' %>"></span>
+                                </a>
+                                <% if (tab.name === sectionName) { %>
+                                    <% if (typeof subTabs !== 'undefined') { %>
+                                        <ul class="sub-menu">
+                                            <% subTabs.forEach(function (tab) { %>
+                                                <% if (tab.type === 'separator') { %>
+                                                    <li class="separator"></li>
+                                                <% return; } %>
+                                                <% if (tab.header) { %>
+                                                    <li class="sub-header">
+                                                        <small><%- t(tab.header) || tab.header %></small>
+                                                    </li>
+                                                <% return; } %>
 
-                        <li class="pull-right">
-                            <%- linkTo(icon('chevron-left') + t('back'), '//' + group.homepage.url, {rel: "nopjax"}) %>
-                        </li>
+                                                <% tabUrl = pathFor(tab.module || 'admin')[tab.url] || tab.url %>
+                                                <li <%- tab.active ? 'class="active"':'' %>>
+                                                    <a href="<%- tabUrl %>">
+                                                        <%- t(tab.name) || tab.name %>
+                                                        <% if (tab.count) { %>
+                                                            <span class="badge badge-disable pull-right"><%- tab.count %></span>
+                                                        <% } %>
+                                                    </a>
+                                                </li>
+                                            <% }) %>
+                                        </ul>
+                                    <% } %>
+                                <% } %>
+                            </li>
+                        <% }}) %>
                     </ul>
                 </div>
-            </header>
-        </div>
-    </div>
-
-    <div class="container-fluid">
-        <div id="row-content">
-            <%- body %>
-            <script>
-                <% var flash = request.flash('info'); if (flash) flash.forEach(function(m, i) { %>
-                    setTimeout(function() {
-                        $.noty({
-                            type: 'success',
-                            text: '<i class="icon-info-sign"></i> <%= m %>'
-                        });
-                    }, 100 * <%= i %>);
-                <% }) %>
-            </script>
-
-        </div>
-
-        <hr />
-
-        <div class="footer-container">
-            <footer>
-                <div class="pull-right">
-                    <i class="icon-bolt"></i>
-                    <%- t('common.renderSpeed') %> <%- (new Date() - req.startedAt)/1000 %>s
+                <div class="page-content">
+                    <div class="content">
+                        <%- body %>
+                    </div>
                 </div>
-
-                <%- t('common.hatchCredit') %>
-            </footer>
+            </div>
         </div>
-
-        <%- contentFor('layout.body.end') %>
-
-    <% if(!req.query._pjax) { %>
-
+        <!-- END PJAX-BODY -->
     </div>
-</div>
 
-<% if(group.googleAnalyticsId) { %>
+    <!-- show each of the flash messages -->
+    <script type="text/javascript">
+        <% var flash = request.flash('info'); if (flash) flash.forEach(function(m, i) { %>
+            setTimeout(function() {
+                $.noty({
+                    type: 'success',
+                    text: '<i class="icon-info-sign"></i> <%= m %>'
+                });
+            }, 100 * <%= i %>);
+        <% }) %>
+    </script>
 
-<script type="text/javascript">
+    <% if(group.googleAnalyticsId) { %>
+        <script type="text/javascript">
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', '<%- group.googleAnalyticsId %>']);
+            _gaq.push(['_setDomainName', '<%- req.headers.host %>']);
+            _gaq.push(['_trackPageview']);
 
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', '<%- group.googleAnalyticsId %>']);
-    _gaq.push(['_setDomainName', '<%- req.headers.host %>']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-
-</script>
-
-<% } %>
-
+            (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        </script>
+    <% } %>
 </body>
 </html>
-
-<% } %>

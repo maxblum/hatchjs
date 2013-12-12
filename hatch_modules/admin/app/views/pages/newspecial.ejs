@@ -1,54 +1,43 @@
-<div class="row-fluid">
+<div class="page-title">
+    <h3><%- t('pages.headers.newSpecial') %></h3>
+</div>
 
-    <% include _sidebar %>
+<div class="row">
+    <div class="col-md-12">
+        <div class="grid simple">
+            <div class="grid-body">
+                <%- errorMessagesFor(page) %>
 
-  <div class="span10">
-    <div class="module">
-      <div class="content">
+                <%- formTagBegin({action: pathTo.pages(), remote: true, method: 'POST', id: 'page_form', class: 'form-vertical'}) %>
+                    <input type="hidden" name="parentId" value="<%- req.pagesTree[0].id %>" />
 
-        <h3><%- t('pages.headers.newSpecial') %></h3>
+                    <% if (!page.id) { %>
+                    <div class="form-group">
+                        <label for="type" class="control-label"><%- t('pages.labels.specialPageType') %></label>
+                        <select id="type" name="type" class="form-control">
+                            <% specials.forEach(function (sp) { %>
+                                <option <%- sp.type == type ? 'selected="selected"':'' %>> <%- sp.type %> </option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <% } %>
 
-        <hr/>
+                    <div class="form-group">
+                        <label for="page_title" class="control-label"><%- t('pages.labels.title') %></label>
+                        <input type="text" name="title" id="page_title" class="form-control" value="<%- page.title || '' %>" />
+                    </div>
 
-        <%- errorMessagesFor(page) %>
+                    <div class="form-group">
+                        <label for="page_url" class="control-label"><%- t('pages.labels.url') %></label>
+                        <input type="text" name="url" id="page_url" class="form-control" value="<%- page.url %>" />
+                    </div>
 
-        <%- formTagBegin({action: pathTo.pages(), remote: true, method: 'POST', id: 'page_form', class: 'form-vertical'}) %>
-            <input type="hidden" name="parentId" value="<%- req.pagesTree[0].id %>" />
-
-            <% if (!page.id) { %>
-            <div class="control-group">
-                <label for="type" class="control-label"><%- t('pages.labels.specialPageType') %></label>
-                <div class="controls">
-                    <select id="type" name="type">
-                        <% specials.forEach(function (sp) { %>
-                            <option <%- sp.type == type ? 'selected="selected"':'' %>> <%- sp.type %> </option>
-                        <% }) %>
-                    </select>
-                </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i> <%- t('pages.actions.create') %></button>
+                        <%- linkTo(t('pages.actions.cancel'), pathTo.pages(), {class: 'btn'}) %>
+                    </div>
+                <%- formTagEnd() %>
             </div>
-            <% } %>
-
-            <div class="control-group">
-                <label for="page_title" class="control-label"><%- t('pages.labels.title') %></label>
-                <div class="controls">
-                    <input type="text" name="title" id="page_title" class="input-xlarge" value="<%- page.title || '' %>" />
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label for="page_url" class="control-label"><%- t('pages.labels.url') %></label>
-                <div class="controls">
-                    <input type="text" name="url" id="page_url" class='input-xlarge' value="<%- page.url %>" />
-                </div>
-            </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i> <%- t('pages.actions.create') %></button>
-                <%- linkTo(t('pages.actions.cancel'), pathTo.pages(), {class: 'btn'}) %>
-            </div>
-        <%- formTagEnd() %>
-
-      </div>
+        </div>
     </div>
-  </div>
 </div>

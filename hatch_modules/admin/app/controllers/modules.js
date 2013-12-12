@@ -22,10 +22,27 @@ module.exports = ModulesController;
 
 function ModulesController(init) {
     Application.call(this, init);
+    init.before(setupTabs);
     init.before(findModule, {only: ['configure', 'update', 'disable']});
 }
 
 require('util').inherits(ModulesController, Application);
+
+function setupTabs(c) {
+    var subTabs = [
+        { name: 'modules.headers.manageModules', url: 'modules' }
+    ];
+
+    // set the active subtab
+    subTabs.map(function (tab) {
+        if (c.req.originalUrl.split('?')[0] == (c.pathTo[tab.url] || tab.url)) {
+            tab.active = true;
+        }
+    });
+
+    c.locals.subTabs = subTabs;
+    c.next();
+}
 
 // finds a specific module for the context
 function findModule(c) {

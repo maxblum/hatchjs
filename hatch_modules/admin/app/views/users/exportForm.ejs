@@ -1,22 +1,18 @@
-<div class="row-fluid">
+<div class="page-title">
+    <h3><%- t('users.headers.exportMembers') %></h3>
+</div>
 
-    <% include _sidebar %>
-
-    <div class="span10">
-        <div class="module">
-            <div class="content">
-                <h3><%- t('users.headers.exportMembers') %></h3>
-                <hr/>
-
+<div class="row">
+    <div class="col-md-12">
+        <div class="grid simple">
+            <div class="grid-body">
                 <%- formTagBegin(pathTo.export, { class: 'form-vertical', method: 'post' }) %>
-                    <div class="control-group">
+                    <div class="form-group">
                         <label class="control-label" for="format"><%- t('users.labels.exportFormat') %></label>
-                        <div class="controls">
-                            <select id="format" name="format">
-                                <option value="csv">CSV</option>
-                                <option value="json">JSON</option>
-                            </select>
-                        </div>
+                        <select id="format" name="format" class="form-control">
+                            <option value="csv">CSV</option>
+                            <option value="json">JSON</option>
+                        </select>
                     </div>
 
                     <div class="form-actions">

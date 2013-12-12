@@ -28,6 +28,43 @@ function GroupController(init) {
         c.next();
     });
     init.before(loadModules);
+    init.before(setupTabs);
+}
+
+function setupTabs(c) {
+    var subTabs = [];
+
+    subTabs.push({ header: 'group.headers.groupSettings' });
+
+    // actions
+    subTabs.push({ name: 'group.headers.settings', url: c.pathTo.group('settings') });
+    subTabs.push({ name: 'group.headers.url', url: c.pathTo.group('url') });
+    subTabs.push({ name: 'group.headers.headerfooter', url: c.pathTo.group('headerfooter') });
+    subTabs.push({ name: 'group.headers.analytics', url: c.pathTo.group('analytics') });
+    subTabs.push({ name: 'group.headers.locale', url: c.pathTo.group('locale') });
+
+    if (c.locals.modulesEnabled.length > 0) {
+        subTabs.push({ header: 'group.headers.moduleSettings' });
+
+        c.locals.modulesEnabled.forEach(function (inst) {
+            if (inst.name && inst.module && inst.module.info.title) {
+                subTabs.push({
+                    name: inst.module.info.title,
+                    url: c.pathTo.setupModule(inst.name)
+                });
+            }
+        });
+    }
+
+    // set the active subtab
+    subTabs.map(function (tab) {
+        if (c.req.originalUrl.split('?')[0] == (c.pathTo[tab.url] || tab.url)) {
+            tab.active = true;
+        }
+    });
+
+    c.locals.subTabs = subTabs;
+    c.next();
 }
 
 // loads the modules that are enabled for this group to display in the sidebar

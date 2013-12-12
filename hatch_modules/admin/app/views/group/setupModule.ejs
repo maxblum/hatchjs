@@ -1,12 +1,11 @@
-<div class="row-fluid">
+<div class="page-title">
+    <h3><%- t(['modules.headers.configure', inst.module.info.title || inst.module.info.name]) %></h3>
+</div>
 
-    <% include _sidebar %>
-
-    <div class="span10">
-        <div class="module">
-            <div class="content">
-                <h3><%- t(['modules.headers.configure', inst.module.info.title || inst.module.info.name]) %></h3>
-
+<div class="row">
+    <div class="col-md-12">
+        <div class="grid simple">
+            <div class="grid-body">
                 <% if(inst.module.info.settings.intro) { %>
                     <p>
                         <%- inst.module.info.settings.intro %>
@@ -20,14 +19,14 @@
                     method: 'PUT',
                     remote: true,
                     id: 'settingsForm',
-                    class: 'form-horizontal'
+                    class: 'form-vertical'
                 }) %>
 
                     <% Object.keys(inst.module.info.settings.fields).forEach(function(settingName) { 
                         var setting = inst.module.info.settings.fields[settingName]; 
                         setting.name = settingName;
                     %>
-                        <%- formInput(setting, inst.contract && inst.contract[settingName] || '') %>
+                        <%- formInput(setting, inst.contract && inst.contract[settingName] || '', { class: 'form-control'}) %>
                     <% }) %>
 
                     <div class="form-actions">

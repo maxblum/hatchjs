@@ -1,25 +1,22 @@
-<div class="row-fluid">
+<div class="page-title">
+    <h3><%- t('pages.headers.edit') %></h3>
+</div>
 
-  <%- include _sidebar %>
+<div class="row">
+    <div class="col-md-12">
+        <div class="grid simple">
+            <div class="grid-body">
+                <%- formTagBegin({action: pathTo.page(page.id), remote: true, id: 'page_form', class: 'form-vertical'}) %>
+                    <input type="hidden" name="_method" value="PUT" />
 
-  <div class="span10">
-    <div class="module">
-      <div class="content">
-
-        <h3><%- t('pages.headers.edit') %></h3>
-
-        <hr/>
-
-        <%- formTagBegin({action: pathTo.page(page.id), remote: true, id: 'page_form', class: 'form-vertical'}) %>
-          <input type="hidden" name="_method" value="PUT" />
-
-        <%- include _pageForm %>
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i> <%- t('pages.actions.save') %></button>
-          <%- linkTo(t('pages.actions.cancel'), pathTo.pages(), {class: 'btn'}) %>
+                    <%- include _pageForm %>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i> <%- t('pages.actions.save') %></button>
+                        <%- linkTo(t('pages.actions.cancel'), pathTo.pages(), {class: 'btn'}) %>
+                    </div>
+                <%- formTagEnd() %>
+            </div>
         </div>
-        <%- formTagEnd() %>
-      </div>
     </div>
-  </div>
 </div>

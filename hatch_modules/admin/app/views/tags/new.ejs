@@ -1,13 +1,11 @@
-<div class="row-fluid">
+<div class="page-title">
+    <h3><%= t('tags.headers.add') %></h3>
+</div>
 
-    <%- renderPartial('_sidebar') %>
-
-    <div class="span10">
-        <div class="module">
-            <div class="content">
-                <h3><%= t('tags.headers.add') %></h3>
-                <hr/>
-
+<div class="row">
+    <div class="col-md-12">
+        <div class="grid simple">
+            <div class="grid-body">
                 <%- formTagBegin({action: pathTo.tag(sectionName), remote: true, method: 'PUT', id: 'tag-form' }) %>
                     <input type="hidden" name="id" value="<%- tag && tag.id %>" />
 
@@ -18,7 +16,6 @@
                         <a href="<%- pathTo.tags(type) %>" class="btn"><%= t('common.cancel') %></a>
                     </div>
                 <%- formTagEnd() %>
-
             </div>
         </div>
     </div>

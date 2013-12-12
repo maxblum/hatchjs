@@ -41,7 +41,7 @@ exports.formInput = function(params, value) {
     if(!value) value = '';
 
     // start input holder
-    html += '<div class="control-group">';
+    html += '<div class="form-group">';
 
     // label
 
@@ -51,7 +51,7 @@ exports.formInput = function(params, value) {
     }
     html += view.labelTag(labelText, {class: 'control-label', for: params.name});
 
-    html += '<div class="controls">';
+    html += '';
 
     // input
     switch (params.type) {
@@ -62,7 +62,7 @@ exports.formInput = function(params, value) {
             value: value,
             id: params.name,
             name: params.name,
-            class: 'input-xlarge'
+            class: 'form-control'
         });
         break;
         case "textarea":
@@ -70,7 +70,7 @@ exports.formInput = function(params, value) {
         break;
         case "select":
         case "select-list":
-        html += '<select id="' + params.name + '" name="' + params.name + '">';
+        html += '<select id="' + params.name + '" name="' + params.name + '" class="form-control">';
         html += '<option value="">Please select</option>';
 
         params.options.forEach(function(opt) {
@@ -136,7 +136,7 @@ exports.formInput = function(params, value) {
     }
 
     // end
-    html += '</div></div>';
+    html += '</div>';
 
     return html;
 };

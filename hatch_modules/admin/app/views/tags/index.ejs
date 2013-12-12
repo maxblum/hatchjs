@@ -1,15 +1,12 @@
-<div class="row-fluid">
+<div class="page-title">
+    <h3><%- t('tags.headers.manageTags') %></h3>
+</div>
 
-    <%- include _sidebar %>
-
-    <div class="span10">
-        <div class="module">
-            <div class="content">
-
-                <h3><%- t('tags.headers.manageTags') %></h3>
-                <hr/>
-
-                <table class="table table-striped" id="member-lists-table">
+<div class="row">
+    <div class="col-md-12">
+        <div class="grid simple">
+            <div class="grid-body">
+                <table class="table">
                     <thead>
                         <tr>
                             <th colspan="2" width="">
@@ -30,42 +27,41 @@
                         </tr>
                     </thead>
                     <tbody>
-                    <% if(tags.length == 0) { %>
-                        <tr>
-                            <td colspan="5"><%- t('tags.help.noTagsDefined') %></td>
-                        </tr>
-                    <% } %>
-                    <% tags.forEach(function(tag) { %>
-                        <tr>
-                            <td width="2%">
-                                <i class="icon-tag"></i>
-                            </td>
-                            <td>
-                                <%- linkTo(tag.title, 'filter/' + tag.id) %>
-                            </td>
-                            <td>
-                                <%- tag.sortOrder %>
-                            </td>
-                            <td>
-                                <% if(tag.filter) { %>
-                                    <i class="icon-ok"></i>
-                                <% } else { %>
-                                    -
-                                <% } %>
-                            </td>
-                            <td>
-                                <%- formatNumber(tag.count) %>
-                            </td>
-                            <td>
-                                <%- linkTo('Edit', pathTo.editTag(type, tag.id.toString())) %>
-                                &nbsp;
-                                <%- linkTo('<i class="icon-remove"></i>', pathTo.tag(type, tag.id.toString()), { remote: true, method: 'DELETE', "data-confirm": t('tags.help.deleteConfirm') }) %>
-                            </td>
-                        </tr>
-                    <% }) %>
+                        <% if(tags.length == 0) { %>
+                            <tr>
+                                <td colspan="5"><%- t('tags.help.noTagsDefined') %></td>
+                            </tr>
+                        <% } %>
+                        <% tags.forEach(function(tag) { %>
+                            <tr>
+                                <td width="2%">
+                                    <i class="icon-tag"></i>
+                                </td>
+                                <td>
+                                    <%- linkTo(tag.title, 'filter/' + tag.id) %>
+                                </td>
+                                <td>
+                                    <%- tag.sortOrder %>
+                                </td>
+                                <td>
+                                    <% if(tag.filter) { %>
+                                        <i class="icon-ok"></i>
+                                    <% } else { %>
+                                        -
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <%- formatNumber(tag.count) %>
+                                </td>
+                                <td>
+                                    <%- linkTo('Edit', pathTo.editTag(type, tag.id.toString())) %>
+                                    &nbsp;
+                                    <%- linkTo('<i class="icon-remove"></i>', pathTo.tag(type, tag.id.toString()), { remote: true, method: 'DELETE', "data-confirm": t('tags.help.deleteConfirm') }) %>
+                                </td>
+                            </tr>
+                        <% }) %>
                     </tbody>
                 </table>
-
             </div>
         </div>
     </div>

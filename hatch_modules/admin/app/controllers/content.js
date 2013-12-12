@@ -31,6 +31,7 @@ function ContentController(init) {
     init.before(setDateTimeFormat);
     init.before(loadTags);
     init.before(findContent);
+    init.before(ContentController.setupTabs);
     init.before(function (c) {
         this.sectionName = 'content';
         c.next();
@@ -38,6 +39,81 @@ function ContentController(init) {
 }
 
 require('util').inherits(ContentController, Application);
+
+ContentController.setupTabs = function(c) {    
+    var subTabs = [];
+    var filterTabs = [];
+
+    subTabs.push({ header: 'content.header.content' });
+
+    subTabs.push({
+        name: 'content.list',
+        url: c.req.params.filterBy && isNaN(c.req.params.filterBy) && c.pathTo.filteredContent(c.req.params.filterBy) || 'content'
+    });
+
+    filterTabs.push({
+        name: 'content.all',
+        url: 'content'
+    });
+
+    c.locals.contentTypes.forEach(function (type) {
+        filterTabs.push({
+            name: 'content.' + type.name,
+            url: c.pathTo.filteredContent(type.name)
+        });
+    });
+
+    subTabs.push({ header: 'content.header.tags' });
+    subTabs.push({ name: 'tags.headers.manageTags', url: c.pathTo.tags('content') });
+
+    c.locals.tags.forEach(function(tag) { 
+        subTabs.push({
+            name: tag.title,
+            url: c.pathTo.filteredContent(tag.id.toString()),
+            count: tag.count
+        });
+    });
+
+    subTabs.push({ name: 'tags.actions.new', url: c.pathTo.newTag('content') });
+
+    subTabs.push({ header: 'content.header.actions' });
+
+    c.locals.contentTypes.forEach(function (type) {
+        if (type.editForm) {
+            subTabs.push({
+                name: 'content.new' + type.name,
+                url: c.pathTo.newContentForm(type.name)
+            });
+        }
+    });
+
+    subTabs.push({ header: 'streams.headers.import' });
+    subTabs.push({ name: 'streams.actions.manage', url: c.pathTo.streams });
+    subTabs.push({ name: 'streams.actions.add', url: c.pathTo.newStream });
+
+    /*
+    subTabs.push({ header: 'content.header.moderation' });
+    subTabs.push({ name: 'moderation.content', url: c.pathTo.moderation('content') });
+    subTabs.push({ name: 'moderation.comments', url: c.pathTo.moderation('comments') });
+    */
+
+    // set the active subtab
+    subTabs.map(function (tab) {
+        if (c.req.originalUrl.split('?')[0] == (c.pathTo[tab.url] || tab.url)) {
+            tab.active = true;
+        }
+    });
+
+    filterTabs.map(function (tab) {
+        if (c.req.originalUrl.split('?')[0] == (c.pathTo[tab.url] || tab.url)) {
+            tab.active = true;
+        }
+    });
+
+    c.locals.filterTabs = filterTabs;
+    c.locals.subTabs = subTabs;
+    c.next();
+}
 
 // Load the content tags for this group to display on the left navigation
 function loadTags(c) {

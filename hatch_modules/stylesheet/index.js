@@ -52,8 +52,8 @@ module.exports = function (c) {
     // this is a bit of a hack to make sure the font awesome fonts exist when
     // css is being written to file system in production mode
     // copy font awesome fonts if they do not already exist
-    var fontRoot = __dirname + '/../../public/font';
-    var fontAwesome = __dirname + '/../../node_modules/FontAwesome/font';
+    var fontRoot = __dirname + '/../../public/fonts';
+    var fontAwesome = __dirname + '/../../bower_components/font-awesome/fonts';
 
     fs.readdir(fontAwesome, function (err, files) {
         if (files)

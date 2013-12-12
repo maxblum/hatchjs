@@ -27,6 +27,29 @@ function PagesController(init) {
     Application.call(this, init);
     init.before(findPage, {only: 'destroy, edit, show, update'});
     init.before(prepareTree, {only: 'index, new, newSpecial, edit'});
+    init.before(setupTabs);
+}
+
+function setupTabs(c) {
+    var subTabs = [];
+
+    subTabs.push({ header: 'pages.headers.pages' });
+    subTabs.push({ name: 'pages.sitemap', url: c.pathTo.pages });
+    subTabs.push({ name: 'pages.specials', url: c.pathTo.specialPages });
+
+    subTabs.push({ header: 'pages.headers.actions' });
+    subTabs.push({ name: 'pages.actions.new', url: c.pathTo.newPage });
+    subTabs.push({ name: 'pages.actions.newSpecial', url: c.pathTo.newSpecial });
+
+    // set the active subtab
+    subTabs.map(function (tab) {
+        if (c.req.originalUrl.split('?')[0] == (c.pathTo[tab.url] || tab.url)) {
+            tab.active = true;
+        }
+    });
+
+    c.locals.subTabs = subTabs;
+    c.next();
 }
 
 // find the page by its id

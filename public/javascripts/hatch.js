@@ -21,7 +21,7 @@ $(document).ready(function() {
         $.pjax.defaults.headers = { 'Content-Type' : '' };
         $.pjax.defaults.dataType = '';
 
-        $('#pjax-body').pjax('#main .nav a:not([rel=nopjax]), #main .breadcrumb a:not([rel=nopjax])');
+        $('#pjax-body').pjax('#main .nav a:not([rel=nopjax]), #main .breadcrumb a:not([rel=nopjax]), #main .sub-menu a, .pjax');
         $('#pjax-body').on('pjax:end', function() { hatchInit(); });
     }
 
@@ -352,6 +352,8 @@ function hatchInit() {
 
         $win.on('scroll', processScroll);
     }
+
+    setupRichtextEditors();
 }
 
 //sets up richtext editors with the default options

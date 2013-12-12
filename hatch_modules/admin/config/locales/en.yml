@@ -15,6 +15,8 @@ en:
     audit: Audit
   users:
     headers:
+      manageCommunity: Manage community
+      users: Users
       filter: Filter
       tags: Tags
       actions: Actions
@@ -23,6 +25,7 @@ en:
       membership: Membership
       since: Since
       usersPerPage: Users per page
+      list: Member list
       all: All users
       members: Members
       editors: Editors
@@ -112,10 +115,12 @@ en:
       destroyConfirm: Are you sure you wish to delete this post?
       destroyed: post deleted
     header:
+      content: Content
       actions: Actions
       filter: Filter
       tags: Tags
       moderation: Moderation
+      manageContent: Manage content
     tableHead:
       title: Content
       text: Text
@@ -127,6 +132,7 @@ en:
       author: Author
     loading: Loading content
     all: All content
+    list: Content list
     blogpost: Blog posts
     discussion: Discussions
     statusupdate: Status updates

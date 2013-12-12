@@ -2,6 +2,7 @@
 
 var HatchPlatform = require('./lib/hatch').HatchPlatform;
 var createServer = require('compound').createServer;
+var cluster = require('cluster');
 
 /**
  * Server module exports method which returns new instance of application server
@@ -23,11 +24,24 @@ if (!module.parent) {
     var host = process.env.HOST || '0.0.0.0';
 
     var server = app();
-    server.listen(port, host, function () {
-        console.log(
-            'Compound server listening on %s:%d within %s environment',
-            host, port, server.set('env')
-        );
-    });
+
+    if (cluster.isMaster && process.env.CLUSTER) {
+        // Count the machine's CPUs
+        var cpuCount = require('os').cpus().length;
+
+        console.log('Starting Hatch cluster with %d threads', cpuCount);
+
+        // Create a worker for each CPU
+        for (var i = 0; i < cpuCount; i += 1) {
+            cluster.fork();
+        }
+    } else {
+        server.listen(port, host, function () {
+            console.log(
+                'Hatch server listening on %s:%d within %s environment',
+                host, port, server.set('env')
+            );
+        });
+    }
 }
 

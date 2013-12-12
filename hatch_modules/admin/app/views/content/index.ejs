@@ -1,47 +1,58 @@
-<div class="row-fluid">
+<div class="page-title">
+    <h3><%- t('content.header.manageContent') %></h3>
+</div>
 
-    <%- renderPartial('_sidebar') %>
-
-    <div class="span10">
-        <div class="module">
-            <div class="content content-table-content">
+<div class="row">
+    <div class="col-md-12">
+        <ul class="nav nav-tabs pull-right filter-tabs">
+            <% filterTabs.forEach(function (tab) { %>
+                <% tabUrl = pathFor(tab.module || 'admin')[tab.url] || tab.url %>
+                <li <%- tab.active ? 'class="active"':'' %>>
+                    <a href="<%- tabUrl %>">
+                        <%- t(tab.name) || tab.name %>
+                    </a>
+                </li>
+            <% }) %>
+        </ul>
+        <div class="grid simple">
+            <div class="grid-body">
                 <% var caret = ' <span class="caret"></span>'; %>
 
                 <div class="pull-left">
-                    <div class="btn-group pull-left" style="margin-right : 3px;">
+                    <div class="btn-group">
                         <%- buttonTag(t('content.actions.common') + caret, {
                             class: 'btn btn-primary dropdown-toggle',
                             'data-toggle': 'dropdown'}) %>
                         <ul class="dropdown-menu">
-                            <li><%- linkTo(icon('remove') + t('content.actions.delete'),
+                            <li><%- linkTo(t('content.actions.delete'),
                                 pathTo.destroySelectedContent,
                                 {rel: 'multiAjaxLink', method: 'DELETE'}) %></li>
                         </ul>
                     </div>
-
+                    &nbsp;
                     <% if (tags.length > 0) { %>
-                        <div class="btn-group pull-left">
+                        <div class="btn-group">
                             <%- buttonTag(t('content.actions.addTag') + caret, {
                                 class: 'btn dropdown-toggle',
                                 'data-toggle': 'dropdown'}) %>
                             <ul class="dropdown-menu">
                                 <% tags.forEach(function(tag) { %>
                                     <% if(!tag) return; %>
-                                    <li><%- linkTo(icon('tag') + tag.title,
+                                    <li><%- linkTo(tag.title,
                                         pathTo.addToTag('content', tag.id),
                                         {rel: 'multiAjaxLink'}) %></li>
                                 <% }) %>
                             </ul>
                         </div>
-
-                        <div class="btn-group pull-left">
+                        &nbsp;
+                        <div class="btn-group">
                             <%- buttonTag(t('content.actions.removeTag') + caret, {
                                 class: 'btn dropdown-toggle',
                                 'data-toggle': 'dropdown'}) %>
                             <ul class="dropdown-menu">
                                 <% tags.forEach(function(tag) { %>
                                     <% if (!tag) return; %>
-                                    <li><%- linkTo(icon('tag') + tag.title,
+                                    <li><%- linkTo(tag.title,
                                         pathTo.removeFromTag('content', tag.id), 
                                         {rel: 'multiAjaxLink'}) %></li>
                                 <% }) %>
@@ -50,12 +61,14 @@
                     <% } %>
                 </div>
 
-                <table class="table table-striped" id="content-table">
+                <table class="table" id="content-table">
                     <thead>
                         <tr>
                             <th width="3%">
-                                <%- inputTag({type: 'checkbox', class: 'checkbox',
-                                    id: 'selectAllContent'}) %>
+                                <div class="checkbox check-default">
+                                    <input type="checkbox" value="all" id="selectAllContent" rel="tooltip" title="Select all content" />    
+                                    <label for="selectAllContent"></label>
+                                </div>
                             </th>
                             <th>
                                 <%= t('content.tableHead.title') %>
@@ -83,192 +96,12 @@
                     </tbody>
                 </table>
 
+                <div class="clearfix"></div>
             </div>
         </div>
     </div>
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function() {
-        // setup ajax links
-        $("a[rel=multiAjaxLink]").on("click", function() {
-            if(window.selectedContent.length > 0) {
-                var method = $(this).attr('data-method');
-                if (!method) method = 'POST';
-                $.ajax(this.href, {
-                    type: 'POST',
-                    data: {
-                        _method: method,
-                        ids: window.selectedContent,
-                        selectedContent: window.selectedContent,
-                        unselectedContent: window.unselectedContent,
-                        filterBy: '<%- filterBy %>',
-                        search: $('#content-table_filter input').val()
-                    },
-                    success: function(data) {
-                        if(data.redirect) {
-                            window.location = data.redirect;
-                        }
-                        else {
-                            // show notification
-                            $.noty({ text: '<i class="icon-ok"></i> ' + data.message, type: 'success' });
-
-                            // redraw table
-                            window.table.fnDraw(false);
-
-                            setTimeout(function () {
-                                // update tag counts
-                                refreshTagCounts();
-                            }, 500);
-                        }
-                    }
-                });
-            }
-            else alert("Please select some content!");
-
-            // hide the menu
-            $(this).parents(".btn-group").removeClass("open");
-
-            return false;
-        });
-
-        function refreshTagCounts() {
-            $.ajax('<%- pathTo.tagsCounts('content') %>', {
-                success: function (data) {
-                    data.tags.forEach(function (tag) {
-                        $('#tagCount-' + tag.id).text(tag.count);
-                    });
-                }
-            });
-        }
-
-        // handle the selectAllContent checkbox events
-        $("#selectAllContent").on("click", function() {
-            if(this.checked) {
-                // check all checkboxes
-                $("#content-table tbody input[type=checkbox]").attr("checked", true);
-
-                // reset the selected content array with only the "all" value
-                $.ajax('<%- pathTo.contentIds %>?filterBy=<%- filterBy %>&sSearch=' + $('#content-table_filter input').val(), {
-                    success: function (data) {
-                        window.selectedContent = data.ids;        
-                    }
-                });
-            }
-            else {
-                // unselect all content
-                window.selectedContent = [];
-
-                // uncheck all checkboxes
-                $("#content-table tbody input[type=checkbox]").attr("checked", null);
-            }
-        });
-
-        // setup user arrays
-        window.selectedContent = [];
-        window.unselectedContent = [];
-
-        window.table = $('#content-table').dataTable( {
-            "bProcessing": true,
-            "bServerSide": true,
-            "sAjaxSource": "<%- pathTo.content({format: 'json'}) %>?filterBy=<%- filterBy %>",
-            "fnDrawCallback": function() {
-                // setup tooltips
-                $('#content-table *[rel=tooltip]').tooltip();
-
-                // setup ajax actions
-                $('#content-table a[data-remote]').on("ajax:success", function() {
-                    //show notification
-                    $.noty({ text: '<i class="icon-ok"></i> ' + $(this).attr("data-success"), type: 'success' });
-
-                    // redraw table
-                    window.table.fnDraw(false);
-
-                    refreshTagCounts();
-                });
-
-                // click the checkboxes which are ticked
-                $("#content-table tbody input[type=checkbox]").each(function(i, checkbox) {
-                    if(window.selectedContent.indexOf(checkbox.value) > -1 || (window.selectedContent.indexOf("all") > -1 && window.unselectedContent.indexOf(checkbox.value) == -1)) checkbox.checked = true;
-                });
-
-                // attach events to the checkboxes
-                $("#content-table tbody input[type=checkbox]").on("click", function() {
-                    if(this.checked) {
-                        window.selectedContent.push(this.value);
-                        if(window.unselectedContent.indexOf(this.value) > -1) window.unselectedContent.splice(window.unselectedContent.indexOf(this.value), 1);
-                    }
-                    else {
-                        if(window.selectedContent.indexOf(this.value) > -1) window.selectedContent.splice(window.selectedContent.indexOf(this.value), 1);
-                        window.unselectedContent.push(this.value);
-                    }
-                });
-            },
-            "aoColumns": [
-                { "mDataProp": null,
-                    "fnRender": function(obj, val) {
-                        var content = obj.aData;
-                        var checkbox = '<input type="checkbox" value="' + content.id + '" />';
-                        return checkbox;
-                    }
-                },
-                { "mDataProp": null,
-                    fnRender: function(obj, val) {
-                        var content = obj.aData;
-                        var text = content.title || content.text;
-                        text = text.substring(0, Math.min(32, text.length)) + (text.length > 32 ? '...':'');
-                        text = text || '<span class="muted"><%= __('untitled post') %></span>';
-
-                        return '<a href="//' + content.url + '" class="title">' + text + '</a>';
-                    }
-                },
-                { "mDataProp": "tags",
-                    "fnRender": function(obj, val) {
-                        var html = '<ul class="tags">';
-
-                        $(val).each(function(i, tag) {
-                            html += '<li><a href="<%- pathTo.content %>/filter/' + tag.id + '">' + tag.title + '</a></li>';
-                        });
-
-                        html += '</ul>';
-                        return html;
-                    }
-                },
-                { "mDataProp": "timeSince" },
-                { "mDataProp": null,
-                    "fnRender" : function(obj, val) {
-                        var content = obj.aData;
-                        var score = content.score;
-                        var html = '';
-
-                        for (var i=0; i+.5 < score; i++) html += '<i class="icon-star"></i>';
-                        if(i-score == -.5) html += '<i class="icon-star-half"></i>';
-
-                        return html;
-                    }
-                },
-                { "mDataProp": null,
-                    "fnRender" : function(obj, val) {
-                        var content = obj.aData;
-                        var html = '<div class="pull-right">';
-
-                        if (content.canEdit || true) html += '<a href="<%- pathTo.content %>/' + content.id + '/edit"><%= t('content.actions.edit') %></a>';
-                        html += ' &nbsp; <a href="<%- pathTo.content %>/' + content.id + '" data-remote="true" data-method="DELETE" data-confirm="<%= t('content.actions.destroyConfirm') %>" rel="tooltip" title="<%- t('content.actions.destroy') %>" data-success="<%= t('content.actions.destroyed') %>"><i class="icon-remove"></i></a>';
-
-                        html += '</div>';
-
-                        return html;
-                    }
-                }
-            ],
-            "sDom": "<''<'pull-right'f>r>t<''<'pull-left'l><'pull-left'i><'pull-right'p>>",
-            "sPaginationType": "bootstrap",
-            "oLanguage": {
-                "sLengthMenu": "_MENU_ <%= t('common.itemsPerPage') %>"
-            },
-            "aoColumnDefs": [
-                { "bSortable": false, "aTargets": [ 0, 5 ] }
-            ]
-        } );
-    } );
+    <% include js/contenttable.js %>
 </script>

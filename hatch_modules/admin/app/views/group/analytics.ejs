@@ -1,22 +1,16 @@
-<div class="row-fluid">
+<div class="page-title">
+    <h3><%- t('group.headers.analytics') %></h3>
+</div>
 
-    <% include _sidebar %>
-
-    <div class="span10">
-        <div class="module">
-            <div class="content">
-
+<div class="row">
+    <div class="col-md-12">
+        <div class="grid simple">
+            <div class="grid-body">
                 <%- formTagBegin({ action: pathTo.groupSave, id: 'settingsForm', class: 'form-vertical', method: 'post', enctype: 'multipart/form-data', remote: true }) -%>
 
-                    <h3><%- t('group.headers.analytics') %></h3>
-
-                    <hr/>
-
-                    <div class="control-group">
+                    <div class="form-group">
                         <label class="control-label" for="googleAnalyticsId"><%- t('group.labels.googleAnalytics') %></label>
-                        <div class="controls">
-                            <input type="text" class="input-xlarge" id="googleAnalyticsId" name="googleAnalyticsId" value="<%- group.googleAnalyticsId %>">
-                        </div>
+                        <input type="text" class="form-control" id="googleAnalyticsId" name="googleAnalyticsId" value="<%- group.googleAnalyticsId %>">
                         <span class="help-block"><%- t('group.help.googleAnalytics') %></span>
                     </div>
 
@@ -25,7 +19,6 @@
                     </div>
 
                 <%- formTagEnd() %>
-
             </div>
         </div>
     </div>

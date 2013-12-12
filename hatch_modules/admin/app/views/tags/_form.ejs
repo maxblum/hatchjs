@@ -1,36 +1,27 @@
-
-
-
-<div class="control-group">
+<div class="form-group">
     <label class="control-label" for="title"><%= t('tags.labels.name') %></label>
-    <div class="controls">
-        <input type="text" class="input-xlarge" id="title" name="title" value="<%- theTag.title %>">
-    </div>
+    <input type="text" class="form-control" id="title" name="title" value="<%- theTag.title %>">
 </div>
 
-<div class="control-group">
+<div class="form-group">
     <label class="control-label" for="sortOrder"><%= t('tags.labels.sortOrder') %></label>
-    <div class="controls">
-        <select id="sortOrder" name="sortOrder">
-            <% sortOrders.forEach(function (order) { %>
-                <option value="<%- order.value %>" <%- order.value === theTag.sortOrder ? 'selected="selected"':'' %>>
-                    <%- order.name %>
-                </option>
-            <% }) %>
-        </select>
-    </div>
+    <select id="sortOrder" name="sortOrder" class="form-control">
+        <% sortOrders.forEach(function (order) { %>
+            <option value="<%- order.value %>" <%- order.value === theTag.sortOrder ? 'selected="selected"':'' %>>
+                <%- order.name %>
+            </option>
+        <% }) %>
+    </select>
 </div>
 
-<div class="control-group">
+<div class="form-group">
     <label class="control-label" for="description"><%= t('tags.labels.description') %></label>
-    <div class="controls">
-        <textarea id="description" name="description" class="input-xlarge span6 richtext" rows="5"><%- theTag.description %></textarea>
-    </div>
+    <textarea id="description" name="description" class="input-xlarge span6 richtext" rows="5"><%- theTag.description %></textarea>
 </div>
 
-<div class="control-group">
-    <label class="checkbox">
-        <input type="checkbox" class="checkbox" name="filterEnabled" id="filterEnabled" <%- theTag.filter ? 'checked="checked"':'' %> />
+<div class="form-group">
+    <label class="">
+        <input type="checkbox" class="" name="filterEnabled" id="filterEnabled" <%- theTag.filter ? 'checked="checked"':'' %> />
         <%= t('tags.labels.filter') %>
     </label>
 
@@ -58,16 +49,18 @@
     <% if(modelName === 'User') { %>
         <hr/>
 
-        <div class="accordion" id="permissions">
-            <div class="accordion-group">
-                <div class="accordion-heading">
-                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#permissions" href="#list">
-                        <i class="icon-lock"></i> <%- t('tags.labels.permissions') %>
-                    </a>
+        <div class="panel-group" id="permissions">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#permissions" href="#list">
+                            <i class="icon-lock"></i> <%- t('tags.labels.permissions') %>
+                        </a>
+                    </h4>
                 </div>
                 <div id="list" class="accordion-body collapse <%- theTag.permissions && theTag.permissions.length > 0 ? 'in':'' %>">
                     <div class="accordion-inner">
-                        <ul class="unstyled">
+                        <ul class="list-unstyled" style="margin: 10px;">
                             <%- renderPermissions(permissions.root) %>
                         </ul>
                     </div>
@@ -76,104 +69,9 @@
         </div>
     <% } %>
 
-    <style>
-        #filter
-        {
-            position : relative;
-            width : auto;
-            height: 100px;
-            font-family : 'Courier New', Courier, fixed-width;
-            padding: 0px;
-        }
-
-        .filter-cover
-        {
-            background: #ddd url(/img/stripes.png);
-            height: 120px;
-            margin: -121px 1px 0;
-            opacity: .85;
-        }
-
-        .filter
-        {
-            display : none;
-        }
-
-        .filter.enabled
-        {
-            display: block;
-        }
-
-        .filter.enabled .filter-cover
-        {
-            display : none;
-        }
-
-        .editor
-        {
-            padding: 10px;
-            border: solid 1px #ddd;
-            overflow: hidden;
-            opacity : .99;
-            margin-bottom: 10px;
-        }
-
-        .filter.enabled .editor
-        {
-            opacity : 1;
-        }
-
-        ul.unstyled ul
-        {
-            list-style: none;
-        }
-    </style>
-
     <script src="/javascripts/ace/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="/javascripts/ace/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
-
     <script type="text/javascript">
-        var editor = ace.edit("filter");
-        var JavaScriptMode = require("ace/mode/javascript").Mode;
-        editor.getSession().setMode(new JavaScriptMode());
-        editor.renderer.setShowGutter(false);
-        editor.renderer.setPrintMarginColumn(-1);
-
-        editor.getSession().on('change', function(){
-            document.getElementById("filterValue").value = editor.getSession().getValue();
-        });
-
-        $("#filterEnabled").bind("click", function() {
-            if(this.checked) $("#filter-holder").addClass("enabled");
-            else $("#filter-holder").removeClass("enabled");
-        });
-
-        function refreshFilterResults() {
-            var url = '<%- pathTo.groupTag %>';
-            $('#filter-results-count').load(url, {
-                type: 'POST',
-                filter: $('#filterValue').val()
-            });
-
-            return false;
-        }
-
-        $('#refresh-filter').bind('click', refreshFilterResults);
-
-        $('#filterExisting').bind('click', function() {
-            if(this.checked) {
-                $('#filter-count').show();
-                refreshFilterResults();
-            }
-            else $('#filter-count').hide();
-        });
+        <% include js/tagsform.js %>
     </script>
-
 </div>
-
-<script type="text/javascript">
-    $(document).ready(function() {
-        //convert richtexts
-        setupRichtextEditors();
-    });
-</script>

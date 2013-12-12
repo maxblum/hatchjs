@@ -1,117 +1,113 @@
-<div class="row-fluid">
+<div class="page-title">
+    <h3><%- t('users.headers.profileFields') %></h3>
+</div>
 
-    <%- include _sidebar %>
-
-    <div class="span10">
-        <div class="module">
-            <div class="content">
-
-                <h3><%- t('users.headers.profileFields') %></h3>
-
+<div class="row">
+    <div class="col-md-12">
+        <div class="grid simple">
+            <div class="grid-body">
                 <p><%- t(['users.help.profileFields', '<i class="icon-move"></i>']) %>
 
                 <hr/>
 
-                <table class="table table-striped pages-table" id="fields-table">
+                <table class="table" id="fields-table">
                     <thead>
-                    <tr>
-                        <th>
-                            <%- t('users.headers.field') %>
-                        </th>
-                        <th width="15%">
-                            <%- t('users.headers.type') %>
-                        </th>
-                        <th width="12%">
-                            <%- t('users.headers.mandatory') %>
-                        </th>
-                        <th width="15%">
-                            <%- t('users.headers.privacy') %>
-                        </th>
-                        <th width="7%">
-                            <%- t('users.headers.actions') %>
-                        </th>
-                    </tr>
+                        <tr>
+                            <th>
+                                <%- t('users.headers.field') %>
+                            </th>
+                            <th width="15%">
+                                <%- t('users.headers.type') %>
+                            </th>
+                            <th width="12%">
+                                <%- t('users.headers.mandatory') %>
+                            </th>
+                            <th width="15%">
+                                <%- t('users.headers.privacy') %>
+                            </th>
+                            <th width="7%">
+                                <%- t('users.headers.actions') %>
+                            </th>
+                        </tr>
                     </thead>
                     <tbody>
-                    <tr class="core">
-                        <td>
-                            <i class="icon-lock"></i>
-                            <%- t('users.labels.fullname') %> 
-                        </td>
-                        <td>
-                            <%- t('users.labels.name') %>
-                        </td>
-                        <td>
+                        <tr class="core">
+                            <td>
+                                <i class="icon-lock"></i>
+                                <%- t('users.labels.fullname') %> 
+                            </td>
+                            <td>
+                                <%- t('users.labels.name') %>
+                            </td>
+                            <td>
 
-                        </td>
-                        <td>
-                            <%- t('common.public') %>
-                        </td>
-                        <td>
-                            -
-                        </td>
-                    </tr>
-                    <tr class="core">
-                        <td>
-                            <i class="icon-lock"></i>
-                            <%- t('users.labels.username') %>
-                        </td>
-                        <td>
-                            <%- t('common.text') %>
-                        </td>
-                        <td>
-                            <i class="icon-ok"></i>
-                        </td>
-                        <td>
-                            <%- t('common.public') %>
-                        </td>
-                        <td>
-                            -
-                        </td>
-                    </tr>
-                    <tr class="core">
-                        <td>
-                            <i class="icon-lock"></i>
-                            <%- t('users.labels.emailAddress') %>
-                        </td>
-                        <td>
-                            <%- t('common.email') %>
-                        </td>
-                        <td>
-                            <i class="icon-ok"></i>
-                        </td>
-                        <td>
-                            <%- t('common.private') %>
-                        </td>
-                        <td>
-                            -
-                        </td>
-                    </tr>
-
-                    <% profileFields.forEach(function(field) { %>
-                        <tr data-id="<%- field.id %>">
-                            <td>
-                                <i class="icon-move"></i>
-                                <%- field.title %>
                             </td>
                             <td>
-                                <%- t('users.labels.' + field.type) %>
+                                <%- t('common.public') %>
                             </td>
                             <td>
-                                <% if(field.mandatory) { %>
-                                    <i class="icon-ok"></i>
-                                <% } %>
-                            </td>
-                            <td>
-                                <%- t('common.' + field.privacy) %>
-                            </td>
-                            <td>
-                                <a href="<%- pathTo.editProfileField(field.id.toString()) %>">Edit</a> &nbsp;
-                                <a href="<%- pathTo.deleteProfileField(field.id.toString()) %>" rel="delete-field"><i class="icon-remove"></i></a>
+                                -
                             </td>
                         </tr>
-                    <% }) %>
-
+                        <tr class="core">
+                            <td>
+                                <i class="icon-lock"></i>
+                                <%- t('users.labels.username') %>
+                            </td>
+                            <td>
+                                <%- t('common.text') %>
+                            </td>
+                            <td>
+                                <i class="icon-ok"></i>
+                            </td>
+                            <td>
+                                <%- t('common.public') %>
+                            </td>
+                            <td>
+                                -
+                            </td>
+                        </tr>
+                        <tr class="core">
+                            <td>
+                                <i class="icon-lock"></i>
+                                <%- t('users.labels.emailAddress') %>
+                            </td>
+                            <td>
+                                <%- t('common.email') %>
+                            </td>
+                            <td>
+                                <i class="icon-ok"></i>
+                            </td>
+                            <td>
+                                <%- t('common.private') %>
+                            </td>
+                            <td>
+                                -
+                            </td>
+                        </tr>
+                        <% profileFields.forEach(function(field) { %>
+                            <tr data-id="<%- field.id %>">
+                                <td>
+                                    <i class="icon-move"></i>
+                                    <%- field.title %>
+                                </td>
+                                <td>
+                                    <%- t('users.labels.' + field.type) %>
+                                </td>
+                                <td>
+                                    <% if(field.mandatory) { %>
+                                        <i class="icon-ok"></i>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <%- t('common.' + field.privacy) %>
+                                </td>
+                                <td>
+                                    <a href="<%- pathTo.editProfileField(field.id.toString()) %>">Edit</a> &nbsp;
+                                    <a href="<%- pathTo.deleteProfileField(field.id.toString()) %>" rel="delete-field"><i class="icon-remove"></i></a>
+                                </td>
+                            </tr>
+                        <% }) %>
                     </tbody>
                 </table>
 
@@ -125,48 +121,5 @@
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function() {
-        $('#fields-table tbody').sortable({
-            handle: ".icon-move",
-            items: "tr:not(.core)",
-            placeholder: {
-                element: function(currentItem) {
-                    return $("<tr class=\"placeholder\"><td colspan=\"5\"><div></div></td></tr>")[0];
-                },
-                update: function(container, p) {
-                    return;
-                }
-            },
-            //fix the column widths
-            create: function() {
-                var ui = $('#fields-table tbody');
-                $("td", ui).each(function(i, td) {
-                    $(td).css({ width: $(td).width() + "px" });
-                });
-            },
-            update: function() {
-                var data = [];
-
-                $("#fields-table tbody tr:not(.core)").each(function(i, tr) {
-                    data.push($(tr).attr("data-id"));
-                });
-
-                $.ajax('<%- pathTo.reorderProfileFields() %>', { type: 'POST', data: { ids: data }, success: function(data) {
-                    //display notification
-                    $.noty({text: '<i class="icon-' + data.icon + '"></i> ' + data.message, type: data.status});
-                }});
-            }
-        });
-
-        $("a[rel=delete-field]").on("click", function() {
-            var el = this;
-            if(confirm("<%- t('users.help.deleteProfileField') %>")) {
-                $.post(this.href, { success: function() {
-                    $(el).parents("tr").remove();
-                }});
-            }
-
-            return false;
-        });
-    } );
+    <% include js/profilefields.js %>
 </script>

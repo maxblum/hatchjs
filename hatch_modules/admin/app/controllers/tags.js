@@ -25,7 +25,13 @@ module.exports = TagController;
 function TagController(init) {
     Application.call(this, init);
     init.before(loadTags);
+    init.before(setupTabs);
     init.before(findTag, {only: 'new,edit,update,destroy,add,remove'});
+}
+
+function setupTabs(c) {
+    var parent = require('./' + this.type);
+    parent.setupTabs(c);
 }
 
 // gets the name of the active model
@@ -118,13 +124,13 @@ TagController.prototype.edit = TagController.prototype.new = function (c) {
     // create the recursive renderPermissions function
     c.locals.renderPermissions = function(permission) {
         var tag = self.theTag;
-        var html = '<li><label class="checkbox"><input type="checkbox" name="permission-' +
+        var html = '<li><label class=""><input type="checkbox" name="permission-' +
             permission.name + '" ' +
             (tag.permissions && tag.permissions.find(permission.name, 'id') ? 'checked="checked"':'') +
             ' /> ' + permission.title + '</label>';
 
         if((permission.permissions || []).length > 0) {
-            html += '<ul class="">';
+            html += '<ul class="list-unstyled" style="margin-left: 20px;">';
             permission.permissions.forEach(function(permission) {
                 html += c.locals.renderPermissions(permission);
             });

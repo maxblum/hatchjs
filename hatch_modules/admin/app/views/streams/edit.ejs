@@ -1,12 +1,11 @@
-<div class="row-fluid">
-    <%- include ../content/_sidebar %>
+<div class="page-title">
+    <h3><%= t('streams.headers.edit') %></h3>
+</div>
 
-    <div class="span10">
-        <div class="module">
-            <div class="content">
-                <h3><%= t('streams.headers.edit') %></h3>
-                <hr/>
-
+<div class="row">
+    <div class="col-md-12">
+        <div class="grid simple">
+            <div class="grid-body">
                 <%- formTagBegin({
                     action: pathTo.stream(stream.id),
                     method: 'PUT',

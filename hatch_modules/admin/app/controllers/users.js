@@ -30,9 +30,73 @@ function UsersController(init) {
     });
     init.before(findMember, {only: 'edit, update, destroy, resendInvite, accept, remove, upgrade, downgrade, resendInvite'});
     init.before(loadTags);
+    init.before(UsersController.setupTabs);
 }
 
 require('util').inherits(UsersController, Application);
+
+UsersController.setupTabs = function(c) {
+    var subTabs = [];
+    var filterTabs = [];
+
+    subTabs.push({ header: 'users.headers.users' });
+
+    subTabs.push({
+        name: 'users.headers.list',
+        url: c.req.params.filterBy && isNaN(c.req.params.filterBy) && c.pathTo.filteredUsers(c.req.params.filterBy) || 'community'
+    });
+
+    filterTabs.push({
+        name: 'users.headers.all',
+        url: 'community'
+    });
+
+    c.locals.memberRoles.forEach(function (role) {
+        filterTabs.push({
+            name: 'users.headers.' + role.name,
+            url: c.pathTo.filteredUsers(role.filter)
+        });
+    });
+
+    subTabs.push({ header: 'users.headers.tags' });
+    subTabs.push({ name: 'tags.headers.manageTags', url: c.pathTo.tags('users') });
+
+    c.locals.tags.forEach(function(tag) { 
+        subTabs.push({
+            name: tag.title,
+            url: c.pathTo.filteredUsers(tag.id.toString()),
+            count: tag.count
+        });
+    });
+
+    subTabs.push({ name: 'tags.actions.new', url: c.pathTo.newTag('users') });
+
+    subTabs.push({ header: 'users.headers.actions' });
+
+    // actions
+    subTabs.push({ name: 'users.actions.invite', url: c.pathTo.inviteForm });
+    subTabs.push({ name: 'users.actions.sendMessage', url: c.pathTo.sendMessageForm });
+    subTabs.push({ name: 'users.actions.profileFields', url: c.pathTo.profileFields });
+    subTabs.push({ name: 'users.actions.export', url: c.pathTo.export });
+
+    // set the active subtab
+    subTabs.map(function (tab) {
+        if (c.req.originalUrl.split('?')[0] == (c.pathTo[tab.url] || tab.url)) {
+            tab.active = true;
+        }
+    });
+
+    // set the active subtab
+    filterTabs.map(function (tab) {
+        if (c.req.originalUrl.split('?')[0] == (c.pathTo[tab.url] || tab.url)) {
+            tab.active = true;
+        }
+    });
+
+    c.locals.filterTabs = filterTabs;
+    c.locals.subTabs = subTabs;
+    c.next();
+}
 
 // load the user tags for this group to display on the left navigation
 function loadTags(c) {

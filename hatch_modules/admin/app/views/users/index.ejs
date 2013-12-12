@@ -1,46 +1,57 @@
-<div class="row-fluid">
+<div class="page-title">
+    <h3><%- t('users.headers.manageCommunity') %></h3>
+</div>
 
-    <% include _sidebar %>
-
-    <div class="span10">
-        <div class="module">
-            <div class="content community-table-content">
+<div class="row">
+    <div class="col-md-12">
+        <ul class="nav nav-tabs pull-right filter-tabs">
+            <% filterTabs.forEach(function (tab) { %>
+                <% tabUrl = pathFor(tab.module || 'admin')[tab.url] || tab.url %>
+                <li <%- tab.active ? 'class="active"':'' %>>
+                    <a href="<%- tabUrl %>">
+                        <%- t(tab.name) || tab.name %>
+                    </a>
+                </li>
+            <% }) %>
+        </ul>
+        <div class="grid simple">
+            <div class="grid-body">
                 <div class="pull-left">
                     <% var caret = ' <span class="caret"></span>'; %>
 
-                    <div class="btn-group pull-left" style="margin-right : 8px;">
+                    <div class="btn-group">
                         <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><%- t('users.actions.memberActions') %> <span class="caret"></span></button>
                         <ul class="dropdown-menu">
-                            <li><%- linkTo('<i class="icon-envelope"></i> ' + t('users.actions.sendMessage'), pathTo.sendMessageTo(), { rel: 'multiAjaxLink' }) %></li>
-                            <li><%- linkTo('<i class="icon-remove"></i> ' + t('users.actions.removeMembers'), pathTo.removeMembers(), { rel: 'multiAjaxLink' }) %></li>
-                            <li><%- linkTo('<i class="icon-flag"></i> ' + t('users.actions.blacklistMembers'), pathTo.blacklistMembers(), { rel: 'multiAjaxLink' }) %></li>
-                            <li><%- linkTo('<i class="icon-heart"></i> ' + t('users.actions.unblacklistMembers'), pathTo.unblacklistMembers(), { rel: 'multiAjaxLink' }) %></li>
+                            <li><%- linkTo(t('users.actions.sendMessage'), pathTo.sendMessageTo(), { rel: 'multiAjaxLink' }) %></li>
+                            <li><%- linkTo(t('users.actions.removeMembers'), pathTo.removeMembers(), { rel: 'multiAjaxLink' }) %></li>
+                            <li><%- linkTo(t('users.actions.blacklistMembers'), pathTo.blacklistMembers(), { rel: 'multiAjaxLink' }) %></li>
+                            <li><%- linkTo(t('users.actions.unblacklistMembers'), pathTo.unblacklistMembers(), { rel: 'multiAjaxLink' }) %></li>
                         </ul>
                     </div>
-
+                    &nbsp;
                     <% if (tags.length > 0) { %>
-                        <div class="btn-group pull-left">
+                        <div class="btn-group">
                             <%- buttonTag(t('users.actions.addTag') + caret, {
                                 class: 'btn dropdown-toggle',
                                 'data-toggle': 'dropdown'}) %>
                             <ul class="dropdown-menu">
                                 <% tags.forEach(function(tag) { %>
                                     <% if(!tag) return; %>
-                                    <li><%- linkTo(icon('tag') + tag.title,
+                                    <li><%- linkTo(tag.title,
                                         pathTo.addToTag('users', tag.id),
                                         {rel: 'multiAjaxLink'}) %></li>
                                 <% }) %>
                             </ul>
                         </div>
-
-                        <div class="btn-group pull-left">
+                        &nbsp;
+                        <div class="btn-group">
                             <%- buttonTag(t('users.actions.removeTag') + caret, {
                                 class: 'btn dropdown-toggle',
                                 'data-toggle': 'dropdown'}) %>
                             <ul class="dropdown-menu">
                                 <% tags.forEach(function(tag) { %>
                                     <% if (!tag) return; %>
-                                    <li><%- linkTo(icon('tag') + tag.title,
+                                    <li><%- linkTo(tag.title,
                                         pathTo.removeFromTag('users', tag.id),
                                         {rel: 'multiAjaxLink'}) %></li>
                                 <% }) %>
@@ -49,25 +60,28 @@
                     <% } %>
                 </div>
 
-                <table class="table table-striped members-table" id="members-table">
+                <table class="table members-table" id="members-table">
                     <thead>
                         <tr>
-                            <th width="3%">
-                                <input type="checkbox" class="checkbox" value="all" id="selectAllUsers" rel="tooltip" title="Select all users" />
+                            <th width="3%" role="columnheader">
+                                <div class="checkbox check-default">
+                                    <input type="checkbox" value="all" id="selectAllUsers" rel="tooltip" title="Select all users" />    
+                                    <label for="selectAllUsers"></label>
+                                </div>
                             </th>
-                            <th>
+                            <th role="columnheader">
                                 <%- t('users.headers.memberName') %>
                             </th>
-                            <th width="300">
+                            <th width="300" role="columnheader">
                                 <%- t('users.headers.tags') %>
                             </th>
-                            <th width="110">
+                            <th width="110" role="columnheader">
                                 <%- t('users.headers.membership') %>
                             </th>
-                            <th width="130">
+                            <th width="130" role="columnheader">
                                 <%- t('users.headers.since') %>
                             </th>
-                            <th width="80">
+                            <th width="80" role="columnheader">
                                 <%- t('users.headers.actions') %>
                             </th>
                         </tr>
@@ -80,205 +94,13 @@
                         </tr>
                     </tbody>
                 </table>
+
+                <div class="clearfix"></div>
               </div>
         </div>
     </div>
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function() {
-        //setup ajax links
-        $("a[rel=multiAjaxLink]").on("click", function() {
-            if(window.selectedUsers.length > 0) {
-                $.ajax(this.href, {
-                    type: 'POST',
-                    data: {
-                        ids: window.selectedUsers,
-                        filterBy: '<%- filterBy %>',
-                        search: $('#members-table_filter input').val()
-                    },
-                    success: function(data) {
-                        if(data.redirect) {
-                            window.location = data.redirect;
-                        }
-                        else {
-                            //show notification
-                            $.noty({ text: '<i class="icon-ok"></i> ' + data.message, type: 'success' });
-
-                            //redraw table
-                            window.table.fnDraw(false);
-
-                            setTimeout(function () {
-                                // update tag counts
-                                refreshTagCounts();
-                            }, 500);
-                        }
-                    }
-                });
-            }
-            else alert("<%- t('users.help.selectSomeUsers') %>");
-
-            //hide the menu
-            $(this).parents(".btn-group").removeClass("open");
-
-            return false;
-        });
-
-        // handle the selectAllContent checkbox events
-        $("#selectAllUsers").on("click", function() {
-            if(this.checked) {
-                // check all checkboxes
-                $("#members-table tbody input[type=checkbox]").attr("checked", true);
-
-                // reset the selected content array with only the "all" value
-                $.ajax('<%- pathTo.userIds %>?filterBy=<%- filterBy %>&sSearch=' + $('#members-table_filter input').val(), {
-                    success: function (data) {
-                        window.selectedUsers = data.ids;
-                    }
-                });
-            }
-            else {
-                // unselect all content
-                window.selectedUsers = [];
-
-                // uncheck all checkboxes
-                $("#members-table tbody input[type=checkbox]").attr("checked", null);
-            }
-        });
-
-        function refreshTagCounts() {
-            $.ajax('<%- pathTo.tagsCounts('users') %>', {
-                success: function (data) {
-                    data.tags.forEach(function (tag) {
-                        $('#tagCount-' + tag.id).text(tag.count);
-                    });
-                }
-            });
-        }
-
-        //setup user arrays
-        window.selectedUsers = [];
-        window.unselectedUsers = [];
-
-        window.table = $('#members-table').dataTable( {
-            "bProcessing": true,
-            "bServerSide": true,
-            "sAjaxSource": "<%- pathTo.community %>.json?filterBy=<%- filterBy %>",
-            "fnDrawCallback": function() {
-                //setup tooltips
-                $('#members-table *[rel=tooltip]').tooltip();
-
-                //setup ajax actions
-                $('#members-table a[data-remote]').on("ajax:success", function() {
-                    //show notification
-                    $.noty({ text: '<i class="icon-ok"></i> ' + $(this).attr("data-success"), type: 'success' });
-
-                    //redraw table
-                    window.table.fnDraw(false);
-                });
-
-                //click the checkboxes which are ticked
-                $("#members-table tbody input[type=checkbox]").each(function(i, checkbox) {
-                    if(window.selectedUsers.indexOf(checkbox.value) > -1 || (window.selectedUsers.indexOf("all") > -1 && window.unselectedUsers.indexOf(checkbox.value) == -1)) checkbox.checked = true;
-                });
-
-                //attach events to the checkboxes
-                $("#members-table tbody input[type=checkbox]").on("click", function() {
-                    if(this.checked) {
-                        window.selectedUsers.push(this.value);
-                        if(window.unselectedUsers.indexOf(this.value) > -1) window.unselectedUsers.splice(window.unselectedUsers.indexOf(this.value), 1);
-                    }
-                    else {
-                        if(window.selectedUsers.indexOf(this.value) > -1) window.selectedUsers.splice(window.selectedUsers.indexOf(this.value), 1);
-                        window.unselectedUsers.push(this.value);
-                    }
-                });
-            },
-            "aoColumns": [
-                { "mDataProp": null,
-                    "fnRender": function(obj, val) {
-                        var user = obj.aData;
-                        var checkbox = '<input type="checkbox" value="' + user.id + '" />';
-                        return checkbox;
-                    }
-                },
-                { "mDataProp": "displayName" },
-                { "mDataProp": "tags",
-                    "fnRender": function(obj, val) {
-                        var html = '<ul class="tags">';
-
-                        $(val).each(function(i, tag) {
-                            html += '<li><a href="<%- pathTo.community %>/filter/' + tag.id + '">' + tag.title + '</a></li>';
-                        });
-
-                        html += '</ul>';
-                        return html;
-                    }
-                },
-                { "mDataProp": "membership.role",
-                    "fnRender": function(obj, val) {
-                        var html = '';
-                        var user = obj.aData;
-
-                        if (user.membership.state === 'blacklisted') {
-                            html += '<i class="icon-flag"></i> ';
-                        } else if (user.membership.state === 'pending') {
-                            html += '<i class="icon-time"></i> ';
-                        }
-
-                        html += user.membership.role;
-                        return html;
-                    }
-                },
-                { "mDataProp": "membership.timeSince" },
-                { "mDataProp": null,
-                    "fnRender" : function(obj, val) {
-                        var user = obj.aData;
-                        var html = '';
-
-                        //owner = no actions possible
-                        if(user.membership.role == 'owner') {
-                            return '-';
-                        }
-                        //requested = show approve
-                        else if(user.membership.state === 'pending' && user.membership.requested) {
-                            html += '<a href="<%- pathTo.community %>/' + user.id + '/accept" data-remote="true" rel="tooltip" title="<%- t('users.labels.approveMembership') %>" data-success="<%- t('users.help.membershipApproved') %>"><i class="icon-ok"></i></a>';
-                        }
-                        //pending = show resent invite
-                        else if (user.membership.state === 'pending') {
-                            html += '<a href="<%- pathTo.community %>/' + user.id + '/resendinvite" data-remote="true" rel="tooltip" title="<%= t('users.labels.resendInvite') %>" data-success="<%= t('users.help.inviteResent') %>"><i class="icon-envelope-alt"></i></a>';
-                        }
-                        //member = show upgrade to editor
-                        else if (user.membership.role === 'member') {
-                            html += '<a href="<%- pathTo.community %>/' + user.id + '/upgrade" data-remote="true" rel="tooltip" title="<%= t('users.labels.upgradeToEditor') %>" data-success="<%= t('users.help.memberUpgraded') %>"><i class="icon-thumbs-up"></i></a>';
-                        }
-                        //editor = show downgrade to member
-                        else if (user.membership.role === 'editor') {
-                            html += '<a href="<%- pathTo.community %>/' + user.id + '/downgrade" data-remote="true" rel="tooltip" title="<%= t('users.labels.downgradeToMember') %>" data-success="<%= t('users.help.editorDowngraded') %>"><i class="icon-thumbs-down"></i></a>';
-                        }
-
-                        html += ' &nbsp; <a href="<%- pathTo.community %>/' + user.id + '/remove" data-remote="true" data-confirm="<%= t('users.help.removeMember') %>" rel="tooltip" title="<%= t('users.labels.removeMember') %>" data-success="<%= t('users.help.memberRemoved') %>"><i class="icon-remove"></i></a>';
-
-                        <% if (req.user.type === 'administrator') { %>
-                            html += ' &nbsp; <a href="<%- pathTo.community %>/' + user.id + '/destroy" data-remote="true" data-confirm="<%= t('users.help.destroyUser') %>" rel="tooltip" title="<%= t('users.labels.destroyUser') %>" data-success="<%= t('users.help.destroyedUser') %>"><i class="icon-trash"></i></a>';
-                        <% } %>
-
-                        return html;
-                    }
-                }
-            ],
-            "sDom": "<''<'pull-right'f>r>t<''<'pull-left'l><'pull-left'i><'pull-right'p>>",
-            "sPaginationType": "bootstrap",
-            "oLanguage": {
-                "sLengthMenu": "_MENU_ <%= t('users.headers.usersPerPage') %>",
-                "oPaginate": {
-                    "sNext": "",
-                    "sPrevious": ""
-                }
-            },
-            "aoColumnDefs": [
-                { "bSortable": false, "aTargets": [ 0, 3,4,5 ] }
-            ]
-        });
-    });
+    <% include js/userstable.js %>
 </script>
