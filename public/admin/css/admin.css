@@ -1,3 +1,14 @@
+.chzn-container-multi .chzn-choices 
+{
+    box-shadow: none;
+    border-color: #e8e8e8;
+}
+
+.chzn-container-multi .chzn-choices .search-choice
+{
+    margin: 8px 0 0 8px;
+}
+
 .brand 
 {
     font-family: 'Open Sans';
