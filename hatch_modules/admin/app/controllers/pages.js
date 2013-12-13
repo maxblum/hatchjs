@@ -29,10 +29,10 @@ function PagesController(init) {
     Application.call(this, init);
     init.before(findPage, {only: 'destroy, edit, show, update'});
     init.before(prepareTree, {only: 'index, new, newSpecial, edit'});
-    init.before(setupTabs);
+    init.before('setupTabs', PagesController.setupTabs);
 }
 
-function setupTabs(c) {
+PagesController.setupTabs = function(c) {
     var subTabs = [];
 
     subTabs.push({ header: 'pages.headers.pages' });
@@ -45,7 +45,7 @@ function setupTabs(c) {
 
     c.locals.subTabs = subTabs;
     c.next();
-}
+};
 
 // find the page by its id
 function findPage(c) {

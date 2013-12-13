@@ -32,32 +32,19 @@ function UsersController(init) {
     });
     init.before(findMember, {only: 'edit, update, destroy, resendInvite, accept, remove, upgrade, downgrade, resendInvite'});
     init.before(loadTags);
-    init.before(UsersController.setupTabs);
+    init.before('setupTabs', UsersController.setupTabs);
 }
 
 require('util').inherits(UsersController, Application);
 
-UsersController.setupTabs = function(c) {
+UsersController.setupSubTabs = function(c) {
     var subTabs = [];
-    var filterTabs = [];
-
+    
     subTabs.push({ header: 'users.headers.users' });
 
     subTabs.push({
         name: 'users.headers.list',
         url: c.req.params.filterBy && isNaN(c.req.params.filterBy) && c.pathTo.filteredUsers(c.req.params.filterBy) || 'community'
-    });
-
-    filterTabs.push({
-        name: 'users.headers.all',
-        url: 'community'
-    });
-
-    c.locals.memberRoles.forEach(function (role) {
-        filterTabs.push({
-            name: 'users.headers.' + role.name,
-            url: c.pathTo.filteredUsers(role.filter)
-        });
     });
 
     subTabs.push({ header: 'users.headers.tags' });
@@ -83,10 +70,33 @@ UsersController.setupTabs = function(c) {
     subTabs.push({ name: 'users.actions.profileFields', url: c.pathTo.profileFields });
     subTabs.push({ name: 'users.actions.export', url: c.pathTo.export });
 
-    c.locals.filterTabs = filterTabs;
-    c.locals.subTabs = subTabs;
+    return subTabs;
+};
+
+UsersController.setupFilterTabs = function(c) {
+    var filterTabs = [];
+
+    filterTabs.push({
+        name: 'users.headers.all',
+        url: 'community'
+    });
+
+    c.locals.memberRoles.forEach(function (role) {
+        filterTabs.push({
+            name: 'users.headers.' + role.name,
+            url: c.pathTo.filteredUsers(role.filter)
+        });
+    });
+
+    return filterTabs;
+};
+
+UsersController.setupTabs = function(c) {
+    c.locals.filterTabs = UsersController.setupFilterTabs(c);
+    c.locals.subTabs = UsersController.setupSubTabs(c);
+
     c.next();
-}
+};
 
 // load the user tags for this group to display on the left navigation
 function loadTags(c) {
@@ -569,7 +579,7 @@ UsersController.prototype.saveProfileField = function(c) {
  */
 UsersController.prototype.reorderProfileFields = function(c) {
     var order = 0;
-    
+
     c.body.ids.forEach(function(id) {
         c.req.group.customProfileFields.find(id, 'id').order = order++;
     });

@@ -30,10 +30,10 @@ function GroupController(init) {
         c.next();
     });
     init.before(loadModules);
-    init.before(setupTabs);
+    init.before('setupTabs', GroupController.setupTabs);
 }
 
-function setupTabs(c) {
+GroupController.setupTabs = function(c) {
     var subTabs = [];
 
     subTabs.push({ header: 'group.headers.groupSettings' });
@@ -60,7 +60,7 @@ function setupTabs(c) {
 
     c.locals.subTabs = subTabs;
     c.next();
-}
+};
 
 // loads the modules that are enabled for this group to display in the sidebar
 function loadModules(c) {

@@ -42,7 +42,7 @@ function ContentController(init) {
 
 require('util').inherits(ContentController, Application);
 
-ContentController.setupContentTabs = function (c) {    
+ContentController.setupSubTabs = function (c) {    
     var subTabs = [];
     
     // content list
@@ -104,7 +104,7 @@ ContentController.setupFilterTabs = function (c) {
 }
 
 ContentController.setupTabs = function (c) {
-    c.locals.subTabs = ContentController.setupContentTabs(c);
+    c.locals.subTabs = ContentController.setupSubTabs(c);
     c.locals.filterTabs = ContentController.setupFilterTabs(c);
 
     c.next();

@@ -24,20 +24,20 @@ module.exports = ModulesController;
 
 function ModulesController(init) {
     Application.call(this, init);
-    init.before(setupTabs);
+    init.before('setupTabs', ModulesController.setupTabs);
     init.before(findModule, {only: ['configure', 'update', 'disable']});
 }
 
 require('util').inherits(ModulesController, Application);
 
-function setupTabs(c) {
+ModulesController.setupTabs = function(c) {
     var subTabs = [
         { name: 'modules.headers.manageModules', url: 'modules' }
     ];
 
     c.locals.subTabs = subTabs;
     c.next();
-}
+};
 
 // finds a specific module for the context
 function findModule(c) {
