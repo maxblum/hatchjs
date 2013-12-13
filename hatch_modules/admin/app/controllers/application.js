@@ -94,12 +94,14 @@ module.exports = Application;
  * @param {HttpContext} c - context
  */
 Application.setActiveTab = function (c) {
-    // set the active subtab
-    c.locals.subTabs.map(function (tab) {
-        if (c.req.originalUrl.split('?')[0] == (c.pathTo[tab.url] || tab.url)) {
-            tab.active = true;
-        }
-    });
+    if (c.locals.subTabs) {
+        // set the active subtab
+        c.locals.subTabs.map(function (tab) {
+            if (c.req.originalUrl.split('?')[0] == (c.pathTo[tab.url] || tab.url)) {
+                tab.active = true;
+            }
+        });
+    }
 
     if (c.locals.filterTabs) {
         // set the active subtab

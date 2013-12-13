@@ -1,4 +1,4 @@
-var Application = require('./app/controllers/Application');
+var Application = require('./app/controllers/application');
 
 /**
  * Server module exports method which returns new instance of application
