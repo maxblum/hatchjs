@@ -83,20 +83,6 @@ UsersController.setupTabs = function(c) {
     subTabs.push({ name: 'users.actions.profileFields', url: c.pathTo.profileFields });
     subTabs.push({ name: 'users.actions.export', url: c.pathTo.export });
 
-    // set the active subtab
-    subTabs.map(function (tab) {
-        if (c.req.originalUrl.split('?')[0] == (c.pathTo[tab.url] || tab.url)) {
-            tab.active = true;
-        }
-    });
-
-    // set the active subtab
-    filterTabs.map(function (tab) {
-        if (c.req.originalUrl.split('?')[0] == (c.pathTo[tab.url] || tab.url)) {
-            tab.active = true;
-        }
-    });
-
     c.locals.filterTabs = filterTabs;
     c.locals.subTabs = subTabs;
     c.next();
@@ -583,6 +569,7 @@ UsersController.prototype.saveProfileField = function(c) {
  */
 UsersController.prototype.reorderProfileFields = function(c) {
     var order = 0;
+    
     c.body.ids.forEach(function(id) {
         c.req.group.customProfileFields.find(id, 'id').order = order++;
     });

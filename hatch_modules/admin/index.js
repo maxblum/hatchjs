@@ -1,3 +1,5 @@
+var Application = require('./app/controllers/Application');
+
 /**
  * Server module exports method which returns new instance of application
  * server
@@ -23,6 +25,11 @@ var app = module.exports = function getServerInstance(parent) {
                     app.compound.structure.views[key] = parent.structure.views[key];
                 }
             });
+        });
+
+        // set the active subtab before page is rendered
+        app.compound.on('render', function (vc, c) {
+            Application.setActiveTab(c);
         });
 
         // register the permissions for this module

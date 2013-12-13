@@ -33,7 +33,7 @@ function ContentController(init) {
     init.before(setDateTimeFormat);
     init.before(loadTags);
     init.before(findContent);
-    init.before(ContentController.setupTabs);
+    init.before('setupTabs', ContentController.setupTabs);
     init.before(function (c) {
         this.sectionName = 'content';
         c.next();
@@ -42,16 +42,51 @@ function ContentController(init) {
 
 require('util').inherits(ContentController, Application);
 
-ContentController.setupTabs = function(c) {    
+ContentController.setupContentTabs = function (c) {    
     var subTabs = [];
-    var filterTabs = [];
-
+    
+    // content list
     subTabs.push({ header: 'content.header.content' });
-
     subTabs.push({
         name: 'content.list',
         url: c.req.params.filterBy && isNaN(c.req.params.filterBy) && c.pathTo.filteredContent(c.req.params.filterBy) || 'content'
     });
+
+    // actions - new posts
+    subTabs.push({ header: 'content.header.actions' });
+    c.locals.contentTypes.forEach(function (type) {
+        if (type.editForm) {
+            subTabs.push({
+                name: 'content.new' + type.name,
+                url: c.pathTo.newContentForm(type.name)
+            });
+        }
+    });
+
+    // tag management and filters
+    subTabs.push({ header: 'content.header.tags' });
+    subTabs.push({ name: 'tags.headers.manageTags', url: c.pathTo.tags('content') });
+    c.locals.tags.forEach(function(tag) { 
+        if (tag.count > 0) {
+            subTabs.push({
+                name: tag.title,
+                url: c.pathTo.filteredContent(tag.id.toString()),
+                count: tag.count
+            });
+        }
+    });
+    subTabs.push({ name: 'tags.actions.new', url: c.pathTo.newTag('content') });
+
+    // import streams
+    subTabs.push({ header: 'streams.headers.import' });
+    subTabs.push({ name: 'streams.actions.manage', url: c.pathTo.streams });
+    subTabs.push({ name: 'streams.actions.add', url: c.pathTo.newStream });
+
+    return subTabs;
+}
+
+ContentController.setupFilterTabs = function (c) {
+    var filterTabs = [];
 
     filterTabs.push({
         name: 'content.all',
@@ -65,59 +100,15 @@ ContentController.setupTabs = function(c) {
         });
     });
 
-    subTabs.push({ header: 'content.header.actions' });
-
-    c.locals.contentTypes.forEach(function (type) {
-        if (type.editForm) {
-            subTabs.push({
-                name: 'content.new' + type.name,
-                url: c.pathTo.newContentForm(type.name)
-            });
-        }
-    });
-
-    subTabs.push({ header: 'content.header.tags' });
-    subTabs.push({ name: 'tags.headers.manageTags', url: c.pathTo.tags('content') });
-
-    c.locals.tags.forEach(function(tag) { 
-        if (tag.count > 0) {
-            subTabs.push({
-                name: tag.title,
-                url: c.pathTo.filteredContent(tag.id.toString()),
-                count: tag.count
-            });
-        }
-    });
-
-    subTabs.push({ name: 'tags.actions.new', url: c.pathTo.newTag('content') });
-
-    subTabs.push({ header: 'streams.headers.import' });
-    subTabs.push({ name: 'streams.actions.manage', url: c.pathTo.streams });
-    subTabs.push({ name: 'streams.actions.add', url: c.pathTo.newStream });
-
-    /*
-    subTabs.push({ header: 'content.header.moderation' });
-    subTabs.push({ name: 'moderation.content', url: c.pathTo.moderation('content') });
-    subTabs.push({ name: 'moderation.comments', url: c.pathTo.moderation('comments') });
-    */
-
-    // set the active subtab
-    subTabs.map(function (tab) {
-        if (c.req.originalUrl.split('?')[0] == (c.pathTo[tab.url] || tab.url)) {
-            tab.active = true;
-        }
-    });
-
-    filterTabs.map(function (tab) {
-        if (c.req.originalUrl.split('?')[0] == (c.pathTo[tab.url] || tab.url)) {
-            tab.active = true;
-        }
-    });
-
-    c.locals.filterTabs = filterTabs;
-    c.locals.subTabs = subTabs;
-    c.next();
+    return filterTabs;
 }
+
+ContentController.setupTabs = function (c) {
+    c.locals.subTabs = ContentController.setupContentTabs(c);
+    c.locals.filterTabs = ContentController.setupFilterTabs(c);
+
+    c.next();
+};
 
 // Load the content tags for this group to display on the left navigation
 function loadTags(c) {
@@ -309,7 +300,7 @@ ContentController.prototype.create = function create(c) {
     var group = this.group;
     var data = c.body.Content || c.req.body;
 
-    // set the constructor
+    // set the constructor so that the tags are assigned the correct type
     data.constructor = c.Content;
 
     // set the groupId and authorId for the new post
@@ -317,17 +308,13 @@ ContentController.prototype.create = function create(c) {
     data.authorId = c.req.user.id;
 
     // if there is no date, set to now. otherwise parse with moment to fix format
-    if (!data.createdAt.date) {
-        data.createdAt = new Date();
-    } else {
+    if (data.createdAt.date) {
         data.createdAt = moment(data.createdAt.date + ' ' + data.createdAt.time, c.app.get('datetimeformat')).toDate();
     }
 
-    data.updatedAt = new Date();
-
     // assign tags to the new object and then save after that
     c.Tag.assignTagsForObject(data, data.Content_tags || data.tags, function () {
-        c.Content.create(data, function(err, content) {
+        c.Content.create(data, function(err) {
             if (err) {
                 err.message = 'One or more fields have errors'
                 c.sendError(err);
@@ -346,38 +333,21 @@ ContentController.prototype.create = function create(c) {
  *                       c.Content - content params
  */
 ContentController.prototype.update = function update(c) {
-    var Content = c.Content;
-    var id = c.params.id;
-    var group = c.req.group;
     var data = c.body.Content || c.req.body;
     var post = this.post;
 
     // parse the date format with moment
-    if (!data.createdAt.date) {
-        data.createdAt = new Date();
-    } else {
+    if (data.createdAt.date) {
         data.createdAt = moment(data.createdAt.date + ' ' + data.createdAt.time, c.app.get('datetimeformat')).toDate();
     }
     
-    data.updatedAt = new Date();
-
-    c.Tag.assignTagsForObject(post, data.Content_tags || data.tags, function () {
-        delete data.tags;
-
-        // update the keys manually
-        Object.keys(data).forEach(function(key) {
-            post[key] = data[key];
-        });
-
-        post.save(function (err, content) {
+    // assign tag names/ids to real tag objects
+    c.Tag.assignTagsForObject(data, data.tags, function () {
+        post.updateAttributes(data, function (err, content) {
             if (err) {
                 var HelperSet = c.compound.helpers.HelperSet;
                 var helpers = new HelperSet(c);
-                c.send({
-                    code: 500,
-                    errors: content.errors || err,
-                    html: helpers.errorMessagesFor(content)
-                });
+                c.sendError(content.errors || err);
             } else {
                 c.flash('info', c.t('post.saved'));
                 c.redirect(c.pathTo.content);

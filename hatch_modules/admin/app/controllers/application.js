@@ -20,50 +20,40 @@
 
 var _ = require('underscore');
 
-/**
- * Instantiate the admin application base controller. Handles security
- * and loads data required by all of the admin controllers.
- * 
- * @param  {context} init - initialiser.
- */
-var Application = module.exports = function Application(init) {
-
-    init.before(function requireUser(c) {
-        this.admin = c.req.user && c.req.user.adminOf(c.req.group);
-        if (this.admin) {
+// Load the required data and populate the locals
+function populateLocals(c) {
+    var locals = this;
+    this.pageName = c.actionName;
+    this.sectionName = c.controllerName;
+    this._ = _;
+    this.req = c.req;
+    this.tabs = _.sortBy(c.compound.tabs, 'rank');
+    locals.group = c.req.group;
+    if (c.req.query.pageId && isNaN(parseInt(c.req.query.pageId, 10))) {
+        var url = c.req.query.pageId.replace(/^.*?\//, '/');
+        c.req.group.definePage(url, c, function(err, page) {
+            c.req.page = page;
             c.next();
-        } else {
-            c.redirect('//' + c.req.page.url)
-        }
-    });
-
-    init.before(function initApp(c) {
-        var locals = this;
-        this.pageName = c.actionName;
-        this.sectionName = c.controllerName;
-        this._ = _;
-        this.req = c.req;
-        this.tabs = _.sortBy(c.compound.tabs, 'rank');
-        locals.group = c.req.group;
-        if (c.req.query.pageId && isNaN(parseInt(c.req.query.pageId, 10))) {
-            var url = c.req.query.pageId.replace(/^.*?\//, '/');
-            c.req.group.definePage(url, c, function(err, page) {
-                c.req.page = page;
-                c.next();
-            });
-        } else if (c.req.query.pageId) {
-            c.Page.find(c.req.query.pageId, function (err, page) {
-                c.req.page = page;
-                c.next();
-            });
-        } else {
+        });
+    } else if (c.req.query.pageId) {
+        c.Page.find(c.req.query.pageId, function (err, page) {
+            c.req.page = page;
             c.next();
-        }
-    });
+        });
+    } else {
+        c.next();
+    }
+}
 
-    init.before(loadContentTypes);
-    init.before(loadMemberRoles);
-};
+// Check whether the current user can manage this group.
+function checkPermissions(c) {
+    var isAdmin = c.req.user && c.req.user.adminOf(c.req.group);
+    if (isAdmin) {
+        c.next();
+    } else {
+        c.redirect('//' + c.req.page.url)
+    }
+}
 
 // load all of the different content types that have been defined in the app
 function loadContentTypes(c) {
@@ -82,3 +72,41 @@ function loadMemberRoles(c) {
     ];
     c.next();
 }
+
+/**
+ * Instantiate the admin application base controller. Handles security
+ * and loads data required by all of the admin controllers.
+ * 
+ * @param  {context} init - initialiser.
+ */
+var Application = function Application(init) {
+    init.before(checkPermissions);
+    init.before(populateLocals);
+    init.before(loadContentTypes);
+    init.before(loadMemberRoles);
+};
+
+module.exports = Application;
+
+/**
+ * Set the active sub-tab and filter tab.
+ * 
+ * @param {HttpContext} c - context
+ */
+Application.setActiveTab = function (c) {
+    // set the active subtab
+    c.locals.subTabs.map(function (tab) {
+        if (c.req.originalUrl.split('?')[0] == (c.pathTo[tab.url] || tab.url)) {
+            tab.active = true;
+        }
+    });
+
+    if (c.locals.filterTabs) {
+        // set the active subtab
+        c.locals.filterTabs.map(function (tab) {
+            if (c.req.originalUrl.split('?')[0] == (c.pathTo[tab.url] || tab.url)) {
+                tab.active = true;
+            }
+        });
+    }
+};

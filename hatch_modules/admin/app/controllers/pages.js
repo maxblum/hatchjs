@@ -43,13 +43,6 @@ function setupTabs(c) {
     subTabs.push({ name: 'pages.actions.new', url: c.pathTo.newPage });
     subTabs.push({ name: 'pages.actions.newSpecial', url: c.pathTo.newSpecial });
 
-    // set the active subtab
-    subTabs.map(function (tab) {
-        if (c.req.originalUrl.split('?')[0] == (c.pathTo[tab.url] || tab.url)) {
-            tab.active = true;
-        }
-    });
-
     c.locals.subTabs = subTabs;
     c.next();
 }

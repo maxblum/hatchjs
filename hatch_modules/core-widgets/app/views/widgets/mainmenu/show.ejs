@@ -23,9 +23,6 @@
             <% if(/true/.test(p.hideFromNavigation)) return; %>
             <li<%- p.selected ? ' class="active"':''%>>
                 <%- linkTo(p.title, '//' + p.url) %>
-                <% if(p.separator) { %>
-                    <span class="divider"><i class="icon-<%- p.separator %>"></i></span>
-                <% } %>
             </li>
         <% }); %>
     </ol>

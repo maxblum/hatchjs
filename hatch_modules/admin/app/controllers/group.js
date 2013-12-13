@@ -58,13 +58,6 @@ function setupTabs(c) {
         });
     }
 
-    // set the active subtab
-    subTabs.map(function (tab) {
-        if (c.req.originalUrl.split('?')[0] == (c.pathTo[tab.url] || tab.url)) {
-            tab.active = true;
-        }
-    });
-
     c.locals.subTabs = subTabs;
     c.next();
 }
