@@ -38,8 +38,8 @@ function sendResponse (c, err, params) {
         return c.sendError(err);
     }
 
-    var static = c.app.enabled('static css');
-    var url = static ? params.url : c.pathFor('stylesheet').css(params.version);
+    var isStatic = c.app.enabled('static css');
+    var url = isStatic ? params.url : c.pathFor('stylesheet').css(params.version);
     
     c.send({
         status: 'success',

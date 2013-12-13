@@ -42,7 +42,7 @@ module.exports = function (compound, Tag) {
      */
     Tag.beforeValidate = function (next) {
         if (!this.name) {
-            this.name = (this.groupId ? (this.groupId + '-') : '') + slugify(this.title);
+            this.name = (this.groupId ? (this.groupId + '-') : '') + slugify(this.title) + '-' + this.type;
         }
 
         next();

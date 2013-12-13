@@ -23,6 +23,7 @@
 
             <div class="form-group">
                 <%- form.submit(t('post.actions.publish'), {class: 'btn btn-primary'}) %>
+                &nbsp;
                 <%- form.button(t('post.actions.draft'), {class: 'btn'}) %>
             </div>
 
@@ -46,7 +47,7 @@
             <div class="form-group">
                 <%- form.label('tags', t('post.tags')) %>
                 <p class="instructions"><%= t('post.instructions.tags') %></p>
-                <select id="tags" name="Content_tags" multiple="multiple" class="chzn-select-create form-control" data-placeholder="<%- t('post.actions.enterTags') %>">
+                <select id="tags" name="Content[tags]" multiple="multiple" class="chzn-select-create form-control" data-placeholder="<%- t('post.actions.enterTags') %>">
                     <% tags.forEach(function (tag) { %>
                         <option value="<%- tag.id %>"<%- post.tags.find(tag.id, 'id') ? ' selected="selected"':'' %>><%- tag.title %></option>
                     <% }) %>

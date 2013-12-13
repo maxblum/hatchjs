@@ -178,6 +178,7 @@ TagController.prototype.update = TagController.prototype.create = function (c) {
 
     function done (err, tag) {
         if (err) {
+            err.tag = tag;
             return c.sendError(err);
         }
 
@@ -186,7 +187,9 @@ TagController.prototype.update = TagController.prototype.create = function (c) {
         }
 
         c.flash('info', c.t('models.Tag.messages.saved'));
-        c.redirect(c.pathTo.tags(self.sectionName));
+        c.send({
+            redirect: c.pathTo.tags(self.sectionName)
+        });
     }
 };
 

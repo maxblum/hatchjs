@@ -65,19 +65,6 @@ ContentController.setupTabs = function(c) {
         });
     });
 
-    subTabs.push({ header: 'content.header.tags' });
-    subTabs.push({ name: 'tags.headers.manageTags', url: c.pathTo.tags('content') });
-
-    c.locals.tags.forEach(function(tag) { 
-        subTabs.push({
-            name: tag.title,
-            url: c.pathTo.filteredContent(tag.id.toString()),
-            count: tag.count
-        });
-    });
-
-    subTabs.push({ name: 'tags.actions.new', url: c.pathTo.newTag('content') });
-
     subTabs.push({ header: 'content.header.actions' });
 
     c.locals.contentTypes.forEach(function (type) {
@@ -88,6 +75,21 @@ ContentController.setupTabs = function(c) {
             });
         }
     });
+
+    subTabs.push({ header: 'content.header.tags' });
+    subTabs.push({ name: 'tags.headers.manageTags', url: c.pathTo.tags('content') });
+
+    c.locals.tags.forEach(function(tag) { 
+        if (tag.count > 0) {
+            subTabs.push({
+                name: tag.title,
+                url: c.pathTo.filteredContent(tag.id.toString()),
+                count: tag.count
+            });
+        }
+    });
+
+    subTabs.push({ name: 'tags.actions.new', url: c.pathTo.newTag('content') });
 
     subTabs.push({ header: 'streams.headers.import' });
     subTabs.push({ name: 'streams.actions.manage', url: c.pathTo.streams });
@@ -126,6 +128,7 @@ function loadTags(c) {
     });
 }
 
+// Set the dateTime format in locals
 function setDateTimeFormat (c) {
     c.locals.datetimeformat = c.app.get('datetimeformat');
     c.next();
@@ -199,12 +202,12 @@ function findContent (c) {
         // find the comment or content item for this action
         if (type === 'comment' || type === 'comments') {
             c.Comment.find(id, function (err, post) {
-                this.post = c.locals.post = post;
+                self.post = c.locals.post = post;
                 c.next();
             })
         } else {
             c.Content.find(id, function (err, post) {
-                this.post = c.locals.post = post;
+                self.post = c.locals.post = post;
                 c.next();
             });
         }
@@ -227,28 +230,22 @@ ContentController.prototype.index = function index(c) {
     var suffix = 'string' === typeof this.filterBy ? '-' + this.filterBy : '';
     this.pageName = 'content' + suffix;
 
-    c.respondTo(function(format) {
-        format.html(function() {
-            c.render();
-        });
-        format.json(function() {
-            loadContent(c, function(err, posts) {
-                if (err) {
-                    return c.send({
-                        status: 'error',
-                        error: err
-                    });
-                }
+    if (c.req.params.format === 'json') {
+        loadContent(c, function(err, posts) {
+            if (err) {
+                return c.sendError(err);
+            }
 
-                c.send({
-                    sEcho: c.req.query.sEcho || 1,
-                    iTotalRecords: posts.count,
-                    iTotalDisplayRecords: posts.countBeforeLimit || 0,
-                    aaData: posts
-                });
+            c.send({
+                sEcho: c.req.query.sEcho || 1,
+                iTotalRecords: posts.count,
+                iTotalDisplayRecords: posts.countBeforeLimit || 0,
+                aaData: posts
             });
         });
-    });
+    } else {
+        c.render();
+    }
 };
 
 /**
@@ -324,7 +321,6 @@ ContentController.prototype.create = function create(c) {
         data.createdAt = new Date();
     } else {
         data.createdAt = moment(data.createdAt.date + ' ' + data.createdAt.time, c.app.get('datetimeformat')).toDate();
-        console.log('DATE IS', data.createdAt)
     }
 
     data.updatedAt = new Date();
@@ -361,7 +357,6 @@ ContentController.prototype.update = function update(c) {
         data.createdAt = new Date();
     } else {
         data.createdAt = moment(data.createdAt.date + ' ' + data.createdAt.time, c.app.get('datetimeformat')).toDate();
-        console.log('DATE IS', data.createdAt)
     }
     
     data.updatedAt = new Date();

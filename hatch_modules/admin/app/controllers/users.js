@@ -64,11 +64,13 @@ UsersController.setupTabs = function(c) {
     subTabs.push({ name: 'tags.headers.manageTags', url: c.pathTo.tags('users') });
 
     c.locals.tags.forEach(function(tag) { 
-        subTabs.push({
-            name: tag.title,
-            url: c.pathTo.filteredUsers(tag.id.toString()),
-            count: tag.count
-        });
+        if (tag.count > 0) {
+            subTabs.push({
+                name: tag.title,
+                url: c.pathTo.filteredUsers(tag.id.toString()),
+                count: tag.count
+            });
+        }
     });
 
     subTabs.push({ name: 'tags.actions.new', url: c.pathTo.newTag('users') });

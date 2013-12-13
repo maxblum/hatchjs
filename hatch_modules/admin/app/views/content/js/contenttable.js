@@ -80,6 +80,7 @@ $(document).ready(function() {
     window.table = $('#content-table').dataTable( {
         "bProcessing": true,
         "bServerSide": true,
+        //"iDisplayLength": 20,
         "sAjaxSource": "<%- pathTo.content({format: 'json'}) %>?filterBy=<%- filterBy %>",
         "fnDrawCallback": function() {
             // setup tooltips
@@ -134,7 +135,7 @@ $(document).ready(function() {
                     var html = '';
 
                     $(obj.aData.tags).each(function(i, tag) {
-                        html += '<a href="<%- pathTo.content %>/filter/' + tag.id + '"><span class="label label-info">' + tag.title + '</span></a>';
+                        html += '<a href="<%- pathTo.content %>/filter/' + tag.id + '" class="pjax"><span class="label label-info">' + tag.title + '</span></a> ';
                     });
 
                     html += '';

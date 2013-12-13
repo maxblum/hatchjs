@@ -75,7 +75,7 @@ $(document).ready(function() {
     window.table = $('#members-table').dataTable( {
         "bProcessing": true,
         "bServerSide": true,
-        "iDisplayLength": 20,
+        //"iDisplayLength": 20,
         "sAjaxSource": "<%- pathTo.community %>.json?filterBy=<%- filterBy %>",
         "fnDrawCallback": function() {
             //setup tooltips
