@@ -94,6 +94,9 @@ module.exports = Application;
  * @param {HttpContext} c - context
  */
 Application.setActiveTab = function (c) {
+    // set the active admin section (main tab)
+    c.locals.sectionName = c.req.originalUrl.split('/')[3].split('?')[0];
+
     if (c.locals.subTabs) {
         // set the active subtab
         c.locals.subTabs.map(function (tab) {

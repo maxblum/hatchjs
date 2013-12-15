@@ -15,13 +15,12 @@
                 <hr/>
 
                 <%- formTagBegin({
-                    action: pathTo.module(inst.module.name),
+                    action: pathTo.updateModule(inst.module.name),
                     method: 'PUT',
                     remote: true,
                     id: 'settingsForm',
                     class: 'form-vertical'
                 }) %>
-
                     <% Object.keys(inst.module.info.settings.fields).forEach(function(settingName) { 
                         var setting = inst.module.info.settings.fields[settingName]; 
                         setting.name = settingName;
@@ -32,19 +31,8 @@
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary"><%- t('modules.actions.save') %></button>
                     </div>
-
                 <% formTagEnd() %>
             </div>
         </div>
     </div>
 </div>
-
-<script type="text/javascript">
-    //bind the form ajax
-    $('#settingsForm').bind('ajax:success', function(e, data) {
-        $.noty({text: '<i class="icon-' + data.icon + '"></i> ' + data.message, type: data.status});
-
-        //refresh the page
-        setTimeout(function() { window.location = window.location; }, 1000);
-    });
-</script>

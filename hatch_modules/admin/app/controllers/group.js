@@ -25,14 +25,16 @@ module.exports = GroupController;
 
 function GroupController(init) {
     Application.call(this, init);
-    init.before(function setup(c) {
-        this.sectionName = 'group';
-        c.next();
-    });
     init.before(loadModules);
     init.before('setupTabs', GroupController.setupTabs);
+    init.before(findModule, {only: ['updateModule', 'disableModule']});
 }
 
+/**
+ * Setup the tabs for this controller.
+ * 
+ * @param  {HttpContext} c - context
+ */
 GroupController.setupTabs = function(c) {
     var subTabs = [];
 
@@ -47,6 +49,7 @@ GroupController.setupTabs = function(c) {
 
     if (c.locals.modulesEnabled.length > 0) {
         subTabs.push({ header: 'group.headers.moduleSettings' });
+        subTabs.push({ name: 'modules.headers.manageModules', url: c.pathTo.manageModules });
 
         c.locals.modulesEnabled.forEach(function (inst) {
             if (inst.name && inst.module && inst.module.info.title) {
@@ -62,13 +65,32 @@ GroupController.setupTabs = function(c) {
     c.next();
 };
 
+// finds a specific module for the context
+function findModule(c) {
+    var locals = this;
+    this.group.modules.forEach(function (m, i) {
+        if (m &&  (
+            m.name === c.req.params.module_id ||
+            m.name === c.req.params.id
+        )) {
+            locals.groupModule = m;
+            locals.groupModuleIndex = m.id;
+            locals.module = m;
+        }
+    });
+    c.next();
+}
+
 // loads the modules that are enabled for this group to display in the sidebar
 function loadModules(c) {
     c.locals.modulesEnabled = [];
 
     Object.keys(c.req.group.modules.items).forEach(function (m) {
         var inst = c.req.group.modules.items[m];
-        inst.module = c.compound.hatch.modules[inst.name];
+        inst = { 
+            name: inst.name,
+            module: c.compound.hatch.modules[inst.name] 
+        };
         c.locals.modulesEnabled.push(inst);
     });
 
@@ -133,6 +155,23 @@ GroupController.prototype.save = function(c) {
 };
 
 /**
+ * Show the module list where the administrator can enable or disable modules.
+ * 
+ * @param  {HttpContext} c - http context
+ */
+GroupController.prototype.modulesList = function (c) {
+    c.locals.modulesAvailable = Object.keys(c.compound.hatch.modules).map(function (m) {
+        return c.compound.hatch.modules[m];
+    });
+    
+    c.locals.modulesEnabled = Object.keys(c.locals.group.modules).map(function (m) {
+        return c.locals.group.modules[m];
+    });
+
+    c.render();
+};
+
+/**
  * Show the module settings screen.
  * 
  * @param  {HttpContext} c - http context
@@ -146,4 +185,60 @@ GroupController.prototype.setupModule = function(c) {
     this.inst.module = c.compound.hatch.modules[moduleName];
 
     c.render();
+};
+
+/**
+ * Enable the specified module so that it is available for this group.
+ * 
+ * @param  {HttpContext} c - http context
+ *                       c.module_id - name of the module to enable
+ */
+GroupController.prototype.enableModule = function enable(c) {
+    var locals = this;
+    var group = this.group;
+    var groupModule = {
+        name: c.params.name,
+        contract: {}
+    };
+
+    group.modules.push(groupModule);
+    group.save(function () {
+        c.redirect(c.pathTo.manageModules);
+    });
+};
+
+/**
+ * Update the settings of the specified module.
+ * 
+ * @param  {HttpContext} c - http context
+ *                       c.body - module settings to update
+ */
+GroupController.prototype.updateModule = function(c) {
+    var data = c.req.body;
+    delete data.undefined;
+
+    var module =  c.req.group.modules.find(c.params.id, 'name');
+    module.contract = data;
+
+    console.log(c.req.group)
+
+    c.req.group.save(function() {
+        c.flash('info', 'Module settings updated');
+        c.send({ redirect: c.pathTo.manageModules() });
+    });
+};
+
+/**
+ * Disable the specified module so that it is no longer available for this group.
+ * 
+ * @param  {HttpContext} c - http context
+ *                       c.module_id - name of module to disable
+ */
+GroupController.prototype.disableModule = function (c) {
+    this.group.modules.remove(this.groupModuleIndex);
+    this.group.save(function (err, group) {
+        if (!err) {
+            c.redirect(c.pathTo.manageModules);
+        }
+    });
 };

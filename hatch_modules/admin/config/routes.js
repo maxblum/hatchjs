@@ -5,17 +5,13 @@ exports.routes = function (map) {
     map.root('content#index', { as: 'index' });
 
     map.collection(function (group) {
+        group.get('group/modules', 'group#modulesList', {as: 'manageModules'});
         group.get('group/:tab?', 'group#settings', { as: 'group' });
         group.post('group/save/.:format?', 'group#save', { as: 'groupSave' });
         group.get('group/module/:id/setup', 'group#setupModule', { as: 'setupModule' });
-    });
-
-    map.resources('modules', function (module) {
-        module.collection(function (modules) {
-            modules.get('marketplace', { as: 'modulesMarketplace' });
-        });
-        module.get('disable');
-        module.get('enable');
+        group.get('group/module/:id/disable', 'group#disableModule', { as: 'disableModule' });
+        group.get('group/module/:name/enable', 'group#enableModule', { as: 'enableModule' });
+        group.put('group/module/:id/update.:format?', 'group#updateModule', { as: 'updateModule' });
     });
 
     map.namespace(':section', function (section) {
@@ -90,8 +86,6 @@ exports.routes = function (map) {
         page.put('reorder.:format?', 'pages#updateOrder');
         page.del('destroy', 'pages#destroy', { as: 'deletePage' });
     });
-
-    map.resources('events');
 
     map.post('/page/columns', 'page#updateColumns');
     map.post('/page/grid', 'page#updateGrid');

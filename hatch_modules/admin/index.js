@@ -13,8 +13,7 @@ var app = module.exports = function getServerInstance(parent) {
         { name: 'users',      url: 'community',  rank: 10, icon: 'user' },
         { name: 'content',    url: 'content',    rank: 20, icon: 'align-left' },
         { name: 'pages',      url: 'pages',      rank: 30, icon: 'book' },
-        { name: 'group',      url: 'group',      rank: 40, icon: 'cog' },
-        { name: 'modules',    url: 'modules',    rank: 50, icon: 'cogs' }
+        { name: 'group',      url: 'group',      rank: 40, icon: 'cogs' }
     ];
 
     if (parent) {

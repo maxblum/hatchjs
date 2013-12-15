@@ -22,21 +22,44 @@ var Application = require('./application');
 var _ = require('underscore');
 var async = require('async');
 
-module.exports = UsersController;
-
-function UsersController(init) {
-    Application.call(this, init);
-    init.before(function setup(c) {
-        this.sectionName = 'users';
+// load the user tags for this group to display on the left navigation
+function loadTags(c) {
+    c.Tag.all({ where: { groupIdByType: c.req.group.id + '-User' }, limit: 5}, function (err, tags) {
+        delete tags.countBeforeLimit;
+        c.locals.tags = tags;
         c.next();
     });
+}
+
+// finds a specific member and sets their membership to this group
+function findMember(c) {
+    c.User.find(c.req.params.id, function (err, user) {
+        c.locals.member = user;
+        c.locals.membership = user.getMembership(c.req.group.id);
+        c.next();
+    });
+}
+
+/**
+ * Instantiate a new users controller.
+ */
+function UsersController(init) {
+    Application.call(this, init);
     init.before(findMember, {only: 'edit, update, destroy, resendInvite, accept, remove, upgrade, downgrade, resendInvite'});
     init.before(loadTags);
     init.before('setupTabs', UsersController.setupTabs);
 }
 
+module.exports = UsersController;
+
+// inherit from the application controller
 require('util').inherits(UsersController, Application);
 
+/**
+ * Setup the subtabs for the users controller.
+ * 
+ * @param  {HttpContext} c - context
+ */
 UsersController.setupSubTabs = function(c) {
     var subTabs = [];
     
@@ -50,7 +73,7 @@ UsersController.setupSubTabs = function(c) {
     subTabs.push({ header: 'users.headers.tags' });
     subTabs.push({ name: 'tags.headers.manageTags', url: c.pathTo.tags('users') });
 
-    c.locals.tags.forEach(function(tag) { 
+    c.locals.tags.forEach(function(tag) {
         if (tag.count > 0) {
             subTabs.push({
                 name: tag.title,
@@ -73,6 +96,12 @@ UsersController.setupSubTabs = function(c) {
     return subTabs;
 };
 
+/**
+ * Setup the filter tabs.
+ * 
+ * @param  {HttpContext} c - context
+ * @return {[type]}   [description]
+ */
 UsersController.setupFilterTabs = function(c) {
     var filterTabs = [];
 
@@ -91,31 +120,17 @@ UsersController.setupFilterTabs = function(c) {
     return filterTabs;
 };
 
+/**
+ * Setup the subtabs and filter tabs for the users controller.
+ * 
+ * @param  {HttpContext} c - context
+ */
 UsersController.setupTabs = function(c) {
     c.locals.filterTabs = UsersController.setupFilterTabs(c);
     c.locals.subTabs = UsersController.setupSubTabs(c);
 
     c.next();
 };
-
-// load the user tags for this group to display on the left navigation
-function loadTags(c) {
-    c.Tag.all({ where: { groupIdByType: c.req.group.id + '-User' }, limit: 5}, function (err, tags) {
-        delete tags.countBeforeLimit;
-        c.locals.tags = tags;
-        c.next();
-    });
-}
-
-// finds a specific member and sets their membership to this group
-function findMember(c) {
-    var self = this;
-    c.User.find(c.req.params.id, function (err, user) {
-        self.member = user;
-        self.membership = user.getMembership(c.req.group.id);
-        c.next();
-    });
-}
 
 // loads all/specified members based on the current context
 function loadMembers(c, next) {
@@ -599,7 +614,7 @@ UsersController.prototype.reorderProfileFields = function(c) {
  * @param  {HttpContext} c - http context
  */
 UsersController.prototype.deleteProfileField = function(c) {
-    c.req.group.removeCustomProfileField(c.req.params.id, function (err, group) {
+    c.req.group.removeCustomProfileField(c.req.params.id, function () {
         c.send('ok');
     });
 };

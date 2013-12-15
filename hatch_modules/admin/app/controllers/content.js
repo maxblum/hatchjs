@@ -34,10 +34,6 @@ function ContentController(init) {
     init.before(loadTags);
     init.before(findContent);
     init.before('setupTabs', ContentController.setupTabs);
-    init.before(function (c) {
-        this.sectionName = 'content';
-        c.next();
-    });
 }
 
 require('util').inherits(ContentController, Application);
