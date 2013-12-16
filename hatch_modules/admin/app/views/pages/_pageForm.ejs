@@ -10,7 +10,7 @@
     <div class="form-group">
         <label for="page_url" class="control-label"><%- t('pages.labels.url') %></label>
         <select name="customUrl" id="page_customUrl" class="form-control">
-            <option value="true"><%- t('pages.labels.leaveAsIs') %></option>
+            <% if (page.id) { %><option value="true"><%- t('pages.labels.leaveAsIs') %></option><% } %>
             <option value="false"><%- t('pages.labels.autoAssign') %></option>
             <option value="true" <%- page.customUrl === 'true' ? 'selected="selected"':'' %>><%- t('pages.labels.customUrl') %></option>
         </select>

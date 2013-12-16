@@ -18,9 +18,8 @@
 </div>
 
 <div class="form-group">
-    <label class="control-label" for="tags" rel="popover" title="Help" data-content="<%= t('streams.help.tags') %>">
+    <label class="control-label" for="tags">
         <%= t('streams.labels.tags') %>
-        <i class="icon-info-sign"></i>
     </label>
     <select id="tags" name="tags[]" multiple="multiple" class="col-md-12 chzn-select-create" data-placeholder="<%= t('common.enterTags') %>">
         <% (tags || []).forEach(function(tag) { %>
@@ -44,9 +43,3 @@
     <button type="submit" class="btn btn-primary"><%= t('streams.actions.save') %></button>
     <a href="<%- pathTo.streams() %>" class="btn"><%= t('common.cancel') %></a>
 </div>
-
-<script type="text/javascript">
-    $(function() {
-        $(".content .chzn-select").chosen();
-    });
-</script>

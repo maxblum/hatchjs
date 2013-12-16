@@ -14,10 +14,7 @@
 
                     <div class="form-group">
                         <label class="control-label" for="joinPermissions">
-                            <span>
-                                <%- t('group.labels.joinPermissions') %>
-                                <i class="icon-info-sign" rel="popover" title="<%- t('common.help') %>" data-content="<%- t('group.help.joinPermissions') %>"></i>
-                            </span>
+                            <%- t('group.labels.joinPermissions') %>
                         </label>
                         <select id="joinPermissions" name="joinPermissions" class="form-control">
                             <option value="free" <%- group.joinPermissions == "free" ? 'selected="selected"':'' %>><%- t('group.labels.freeToJoin') %></option>
@@ -29,7 +26,7 @@
                     <div class="form-group">
                         <input type="hidden" id="favicon" name="favicon" value="<%- group.favicon %>" />
                         <label class="control-label" for="favicon"><%- t('group.labels.favicon') %></label>
-                        <a class="btn" href="#" id="faviconButton"><i class="icon-picture"></i> <%- t('group.actions.uploadFavicon') %></a>
+                        <a class="btn btn-info" href="#" id="faviconButton"><i class="icon-picture"></i> <%- t('group.actions.uploadFavicon') %></a>
 
                         <% if(group.favicon) { %>
                             <img src="<%- group.favicon %>" id="faviconPreview" width="16" height="16" />
@@ -40,20 +37,14 @@
 
                     <div class="form-group">
                         <label class="control-label" for="metaDescription">
-                            <span>
-                                <%- t(['group.labels.metaDescription', '&lt;metatags&gt;']) %>
-                                <i class="icon-info-sign"  rel="popover" title="<%- t('common.help') %>" data-content="<%- t('group.help.metaDescription') %>"></i>
-                            </span>
+                            <%- t(['group.labels.metaDescription', '&lt;metatags&gt;']) %>
                         </label>
                         <textarea class="form-control" id="metaDescription" name="metaDescription"><%- group.metaDescription %></textarea>
                     </div>
 
                     <div class="form-group">
                         <label class="control-label" for="metaKeywords">
-                            <span>
-                                <%- t(['group.labels.metaKeywords', '&lt;metatags&gt;']) %>
-                                <i class="icon-info-sign" rel="popover" title="<%- t('common.help') %>" data-content="<%- t('group.help.metaKeywords') %>"></i>
-                            </span>
+                            <%- t(['group.labels.metaKeywords', '&lt;metatags&gt;']) %>
                         </label>
                         <input type="text" class="form-control" id="metaKeywords" name="metaKeywords" value="<%- group.metaKeywords %>">
                     </div>

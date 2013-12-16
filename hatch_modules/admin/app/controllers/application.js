@@ -22,7 +22,6 @@ var _ = require('underscore');
 
 // Load the required data and populate the locals
 function populateLocals(c) {
-    var locals = this;
     this.pageName = c.actionName;
 
     // set the active admin section (main tab)
@@ -31,7 +30,7 @@ function populateLocals(c) {
     this._ = _;
     this.req = c.req;
     this.tabs = _.sortBy(c.compound.tabs, 'rank');
-    locals.group = c.req.group;
+    c.locals.group = c.req.group;
     if (c.req.query.pageId && isNaN(parseInt(c.req.query.pageId, 10))) {
         var url = c.req.query.pageId.replace(/^.*?\//, '/');
         c.req.group.definePage(url, c, function(err, page) {

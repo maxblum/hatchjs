@@ -289,8 +289,8 @@ en:
       navbarMouseclick: Show on mouse-click
       navbarStyle: Navigation bar style
       navbarInverse: Inverse
-      headerHtml: Header HTML
-      footerHtml: Footer HTML
+      headerHtml: Default page header
+      footerHtml: Default page footer
       url: Enter a new URL
       googleAnalytics: Google Analytics ID
       locale: Locale setting

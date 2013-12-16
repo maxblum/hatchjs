@@ -206,12 +206,12 @@ PagesController.prototype.create = function(c) {
             if (err) {
                 c.next(err);
             } else {
+                c.flash('info', c.t('models.Page.messages.added'));
+
                 if (page.type && page.type !== 'page') {
-                    c.redirect(c.pathTo.specialPages);
-                } else if (format === 'json') {
-                    c.send({ redirect: c.pathTo.pages() });
+                    c.send({ redirect: c.pathTo.specialPages() });
                 } else {
-                    c.redirect(c.pathTo.pages);
+                    c.send({ redirect: c.pathTo.pages() });
                 }
             }
         });

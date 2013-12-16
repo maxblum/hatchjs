@@ -64,6 +64,7 @@ en:
     Page:
       messages: 
         saved: Page saved
+        added: Page added
     ImportStream:
       messages:
         saved: Import stream saved
