@@ -31,7 +31,8 @@ $(document).ready(function() {
                 },
 
                 highlight: function (element) { // hightlight error inputs
-					
+					var parent = $(element).parent();
+                    parent.removeClass('success-control').addClass('error-control'); 
                 },
 
                 unhighlight: function (element) { // revert the change done by hightlight
@@ -81,7 +82,8 @@ $(document).ready(function() {
                 },
 
                 highlight: function (element) { // hightlight error inputs
-					
+					var parent = $(element).parent();
+                    parent.removeClass('success-control').addClass('error-control'); 
                 },
 
                 unhighlight: function (element) { // revert the change done by hightlight
@@ -107,7 +109,6 @@ $(document).ready(function() {
                 ignore: "",
                 rules: {
                     form3FirstName: {
-						name: true,
                         minlength: 3,
                         required: true
                     },
@@ -249,13 +250,6 @@ $(document).ready(function() {
 	  		}
 	 });	
 	 
-	 jQuery.validator.addMethod("name", function(value, element)
-		{
-			valid = false;
-			check = /[^-\.a-zA-Z\s\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02AE]/.test(value);
-			if(check==false)
-				valid = true;
-			return this.optional(element) || valid;
-		},jQuery.format("Please enter a proper name."));
+
 });	
 	 

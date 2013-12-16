@@ -40,6 +40,7 @@ and (min-width : 1824px) {
 	.error-main{
 		margin-top:40%;
 	}
+
 }
 
 
@@ -469,7 +470,6 @@ and (orientation : portrait) {
 	
 	.header-seperation{
 		width:100% !important;
-		position:fixed;
 		z-index:999;
 		text-align:center;
 		min-height:60px;
@@ -547,6 +547,8 @@ and (orientation : portrait) {
 		min-height:624px;
 		height:624px;
 	}
+	
+		
 }
 /*** Phones ***/
 @media (max-width: 480px) {

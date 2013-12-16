@@ -249,7 +249,7 @@ $(document).ready(function() {
 		$.sidr('close', 'main-menu');
 		$.sidr('close', 'sidr');		
 		$('#main-menu').removeClass("sidr");	
-		$('#main-menu').removeClass("left");	
+		$('#main-menu').removeClass("left");
 	}
 	
 	}
@@ -261,6 +261,7 @@ $(document).ready(function() {
 	}
 	
 	$('#layout-condensed-toggle').click(function(){
+	  $.sidr('close', 'sidr');
 	 if($('#main-menu').attr('data-inner-menu')=='1'){
 		//Do nothing
 		console.log("Menu is already condensed");
@@ -396,7 +397,9 @@ $(document).ready(function() {
 	
 	 $("img").unveil();
 });
-
+$( window ).resize(function() {
+	  $.sidr('close', 'sidr');
+});
 function calculateHeight(){
 		var contentHeight=parseInt($('.page-content').height());
 		if(911 > contentHeight){	

@@ -1,5 +1,6 @@
 $(document).ready(function() {		
 	$('#login-form').validate({
+
                 focusInvalid: false, 
                 ignore: "",
                 rules: {
@@ -34,9 +35,9 @@ $(document).ready(function() {
 					var parent = $(element).parent('.input-with-icon');
 					parent.removeClass('error-control').addClass('success-control'); 
                 },
-
-                submitHandler: function (form) {	
-                }
+			    submitHandler: function(form) {
+						form.submit();
+				}
             });	
 
 });

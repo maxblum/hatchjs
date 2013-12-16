@@ -199,6 +199,7 @@
     <ul>	
       <li class="start active "> <a href="index.html"> <i class="icon-custom-home"></i> <span class="title">Dashboard</span> <span class="selected"></span> <span class="badge badge-important pull-right">5</span></a> </li>
 	  <li class=""> <a href="email.html"> <i class="icon-envelope"></i> <span class="title">Email</span>  <span class=" badge badge-disable pull-right ">203</span></a> </li>      
+	  <li class=""> <a href="../frontend/index.html"> <i class="icon-flag"></i>  <span class="title">Frontend</span></a></li>   
       <li class=""> <a href="javascript:;"> <i class="icon-custom-ui"></i> <span class="title">UI Elements</span> <span class="arrow "></span> </a>
         <ul class="sub-menu">
 		  <li > <a href="typography.html"> Typography </a> </li>
@@ -238,6 +239,8 @@
       <li class=""> <a href="javascript:;"> <i class="icon-custom-extra"></i> <span class="title">Extra</span> <span class="arrow "></span> </a>
         <ul class="sub-menu">
           <li > <a href="user-profile.html"> User Profile </a> </li>
+          <li > <a href="time_line.html"> Time line </a> </li>
+          <li > <a href="support_ticket.html"> Support Ticket </a> </li>
           <li > <a href="gallery.html"> Gallery</a> </li>
 		  <li class=""><a href="calender.html"> Calendar</a> </li>
           <li > <a href="search_results.html"> Search Results </a> </li>
@@ -316,13 +319,23 @@
   <!-- BEGIN PAGE CONTAINER-->
   <div class="page-content"> 
     <!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
-	<div id="grid-config" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>	
-		 <h3>Your Config</h3>
-		</div>
-		 <div class="modal-body"> Widget settings form goes here </div>	
-	</div>
+	         <div class="modal fade"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="grid-config">
+                   <div class="modal-dialog">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title">Modal title</h4>
+					  </div>
+					  <div class="modal-body">
+						<p>One fine body&hellip;</p>
+					  </div>
+					  <div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary">Save changes</button>
+					  </div>
+					</div><!-- /.modal-content -->
+				  </div><!-- /.modal-dialog -->
+				</div><!-- /.modal -->
     <div class="clearfix"></div>
     <div class="content">                           
      <ul class="breadcrumb">
