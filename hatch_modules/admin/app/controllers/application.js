@@ -26,7 +26,8 @@ function populateLocals(c) {
     this.pageName = c.actionName;
 
     // set the active admin section (main tab)
-    this.sectionName = c.req.originalUrl.split('/')[3].split('?')[0];
+    this.sectionName = c.req.originalUrl.split('/do/')[1].split('/')[1].split('?')[0];
+
     this._ = _;
     this.req = c.req;
     this.tabs = _.sortBy(c.compound.tabs, 'rank');
