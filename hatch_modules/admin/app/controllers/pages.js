@@ -180,7 +180,7 @@ PagesController.prototype.create = function(c) {
     var locals = this;
 
     // TODO: this should come from some kind of JSON/YML template
-    var Page = c.Page;
+    var format = c.req.params.format || c.req.query.format;
     c.body.groupId = c.req.group.id;
     c.body.grid = '02-two-columns';
     c.body.columns = [{widgets: [1, 2]}];
@@ -188,8 +188,8 @@ PagesController.prototype.create = function(c) {
 
     // add the group header and navigation by default
     c.body.widgets = [
-        {type: 'core-widgets/group-header', id: 1},
-        {type: 'core-widgets/mainmenu', id: 2}
+        { type: 'core-widgets/group-header', id: 1 },
+        { type: 'core-widgets/mainmenu', id: 2 }
     ];
     
     var defaults = c.compound.hatch.page.get('default');
@@ -202,12 +202,14 @@ PagesController.prototype.create = function(c) {
     }
 
     //c.Tag.assignTagsForObject(c.req.body, c.req.body.tags, function () {
-        Page.createPage(c.body, function (err, page) {
+        c.Page.createPage(c.body, function (err, page) {
             if (err) {
                 c.next(err);
             } else {
                 if (page.type && page.type !== 'page') {
                     c.redirect(c.pathTo.specialPages);
+                } else if (format === 'json') {
+                    c.send({ redirect: c.pathTo.pages() });
                 } else {
                     c.redirect(c.pathTo.pages);
                 }
@@ -287,7 +289,7 @@ PagesController.prototype.update = function(c) {
  */
 PagesController.prototype.updateOrder = function(c) {
     // find and update the page that was dragged
-    c.Page.find(c.params.page_id, function(err, page) {
+    c.Page.find(c.req.params.id, function(err, page) {
         delete c.body.authencity_token;
         page.update(c.body, function(err, page) {
             // update the order of all pages in the group

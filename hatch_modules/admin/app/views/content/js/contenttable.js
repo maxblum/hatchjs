@@ -81,7 +81,7 @@ $(document).ready(function() {
         "bProcessing": true,
         "bServerSide": true,
         //"iDisplayLength": 20,
-        "sAjaxSource": "<%- pathTo.content({format: 'json'}) %>?filterBy=<%- filterBy %>",
+        "sAjaxSource": "<%- pathTo.filteredContent({ filterBy: filterBy }) %>.json",
         "fnDrawCallback": function() {
             // setup tooltips
             $('#content-table *[rel=tooltip]').tooltip();
@@ -156,7 +156,7 @@ $(document).ready(function() {
                     var html = '<div class="pull-right">';
 
                     if (content.canEdit || true) html += '<a href="<%- pathTo.content %>/' + content.id + '/edit"><%= t('content.actions.edit') %></a>';
-                    html += ' &nbsp; <a href="<%- pathTo.content %>/' + content.id + '" data-remote="true" data-method="DELETE" data-confirm="<%= t('content.actions.destroyConfirm') %>" rel="tooltip" title="<%- t('content.actions.destroy') %>" data-success="<%= t('content.actions.destroyed') %>"><i class="icon-remove"></i></a>';
+                    html += ' &nbsp; <a href="<%- pathTo.content %>/' + content.id + '/destroy" data-remote="true" data-method="DELETE" data-confirm="<%= t('content.actions.destroyConfirm') %>" rel="tooltip" title="<%- t('content.actions.destroy') %>" data-success="<%= t('content.actions.destroyed') %>"><i class="icon-remove"></i></a>';
 
                     html += '</div>';
 

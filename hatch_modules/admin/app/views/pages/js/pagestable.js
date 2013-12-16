@@ -100,7 +100,7 @@ $(document).ready(function() {
 } );
 
 //bind the page creation event
-$("#newPageForm").on("ajax:success", function(e, data) {
+$('body').on('ajax:success', '#newPageForm', function(e, data) {
     //refresh the page tree
     $("#pages-table tbody").html(data.html);
 
@@ -109,16 +109,16 @@ $("#newPageForm").on("ajax:success", function(e, data) {
     $("#newPageForm")[0].reset();
 });
 
-$("#cancelButton").unbind().on("click", function() {
+$('body').on('click', '#cancelButton', function() {
     $(".new-page-form").hide().appendTo($("#pages-table tbody"));
 });
 
-$("#newPageFormInline").unbind().on("ajax:success", function(data) {
+$('body').on('ajax:success', '#newPageFormInline', function(data) {
     $("#pages-table tbody").load('<%- pathTo.renderTree() %>');
 });
 
 //stop delete page from reloading
-$("a[rel=delete-page]").unbind().on("click", function() {
+$('body').on('click', 'a[rel=delete-page]', function() {
     var el = this;
     if(confirm("Are you sure you wish to delete this page?")) {
         $.ajax(this.href, {

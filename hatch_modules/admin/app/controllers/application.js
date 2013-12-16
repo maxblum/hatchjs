@@ -24,7 +24,9 @@ var _ = require('underscore');
 function populateLocals(c) {
     var locals = this;
     this.pageName = c.actionName;
-    this.sectionName = c.controllerName;
+
+    // set the active admin section (main tab)
+    this.sectionName = c.req.originalUrl.split('/')[3].split('?')[0];
     this._ = _;
     this.req = c.req;
     this.tabs = _.sortBy(c.compound.tabs, 'rank');
@@ -94,9 +96,6 @@ module.exports = Application;
  * @param {HttpContext} c - context
  */
 Application.setActiveTab = function (c) {
-    // set the active admin section (main tab)
-    c.locals.sectionName = c.req.originalUrl.split('/')[3].split('?')[0];
-
     if (c.locals.subTabs) {
         // set the active subtab
         c.locals.subTabs.map(function (tab) {
@@ -114,4 +113,11 @@ Application.setActiveTab = function (c) {
             }
         });
     }
+};
+
+/**
+ * Default admin action. Redirect to content.
+ */
+Application.prototype.index = function (c) {
+    c.redirect(c.pathTo.content);
 };

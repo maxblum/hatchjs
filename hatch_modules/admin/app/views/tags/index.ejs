@@ -56,7 +56,7 @@
                                 <td>
                                     <%- linkTo('Edit', pathTo.editTag(type, tag.id.toString())) %>
                                     &nbsp;
-                                    <%- linkTo('<i class="icon-remove"></i>', pathTo.tag(type, tag.id.toString()), { remote: true, method: 'DELETE', "data-confirm": t('tags.help.deleteConfirm') }) %>
+                                    <%- linkTo('<i class="icon-remove"></i>', pathTo.deleteTag(type, tag.id.toString()), { remote: true, method: 'DELETE', "data-confirm": t('tags.help.deleteConfirm') }) %>
                                 </td>
                             </tr>
                         <% }) %>

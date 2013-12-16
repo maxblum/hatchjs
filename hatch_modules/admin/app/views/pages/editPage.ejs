@@ -6,7 +6,7 @@
     <div class="col-md-12">
         <div class="grid simple">
             <div class="grid-body">
-                <%- formTagBegin({action: pathTo.page(page.id), remote: true, id: 'page_form', class: 'form-vertical'}) %>
+                <%- formTagBegin({action: pathTo.updatePage(page.id), remote: true, id: 'page_form', class: 'form-vertical'}) %>
                     <input type="hidden" name="_method" value="PUT" />
 
                     <%- include _pageForm %>

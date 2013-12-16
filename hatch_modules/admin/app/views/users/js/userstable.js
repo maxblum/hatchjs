@@ -76,7 +76,7 @@ $(document).ready(function() {
         "bProcessing": true,
         "bServerSide": true,
         //"iDisplayLength": 20,
-        "sAjaxSource": "<%- pathTo.community %>.json?filterBy=<%- filterBy %>",
+        "sAjaxSource": "<%- pathTo.filteredUsers({ filterBy: filterBy }) %>.json",
         "fnDrawCallback": function() {
             //setup tooltips
             $('#members-table *[rel=tooltip]').tooltip();

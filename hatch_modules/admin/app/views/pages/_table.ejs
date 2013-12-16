@@ -30,7 +30,7 @@
 
 <tr class="new-page-form" style="display : none;">
     <td colspan="5">
-        <%- formTagBegin({action: pathTo.pages({group_id: req.group.id, format: 'json'}), remote: true, id: 'newPageFormInline', class: 'form-new-page' }) %>
+        <%- formTagBegin({action: pathTo.createPage({ group_id: req.group.id }), remote: true, id: 'newPageFormInline', class: 'form-new-page' }) %>
             <input type="hidden" name="parentId" id="parentId" />
             <input type="hidden" name="order" id="order" />
             <input type="hidden" name="inline" value="true" />

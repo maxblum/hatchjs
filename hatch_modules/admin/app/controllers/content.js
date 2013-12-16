@@ -139,7 +139,7 @@ function loadContent(c, callback) {
     };
 
     // filter by tag or content type
-    var filterBy = c.req.query.filterBy || c.req.body.filterBy;
+    var filterBy = c.req.params.filterBy || c.req.query.filterBy || c.req.body.filterBy;
     if (filterBy) {
         if (!isNaN(parseInt(filterBy, 10))) {
             cond = {
@@ -306,6 +306,8 @@ ContentController.prototype.create = function create(c) {
     // if there is no date, set to now. otherwise parse with moment to fix format
     if (data.createdAt.date) {
         data.createdAt = moment(data.createdAt.date + ' ' + data.createdAt.time, c.app.get('datetimeformat')).toDate();
+    } else {
+        data.createdAt = new Date();
     }
 
     // assign tags to the new object and then save after that
@@ -335,6 +337,8 @@ ContentController.prototype.update = function update(c) {
     // parse the date format with moment
     if (data.createdAt.date) {
         data.createdAt = moment(data.createdAt.date + ' ' + data.createdAt.time, c.app.get('datetimeformat')).toDate();
+    } else {
+        delete data.createdAt;
     }
     
     // assign tag names/ids to real tag objects
@@ -359,7 +363,7 @@ ContentController.prototype.update = function update(c) {
  *                       c.id - content item id
  */
 ContentController.prototype.destroy = function(c) {
-    var group = c.req.group;
+    var post = this.post;
 
     post.destroy(function(err) {
         // finally, update the group tag counts

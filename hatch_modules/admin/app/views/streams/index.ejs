@@ -18,7 +18,7 @@
                             <th width="150">
                                 <%- t('streams.headers.lastRun') %>
                             </th>
-                            <th width="75">
+                            <th width="105">
                                 <%- t('streams.headers.actions') %>
                             </th>
                         </tr>
@@ -40,11 +40,9 @@
                                     <%- stream.title %>
                                 </td>
                                 <td>
-                                    <ul class="tags">
-                                        <% stream.tags.forEach(function(tag) { %>
-                                            <li><a href="<%- pathTo.filteredContent(tag.id) %>"><%- tag.title %></a></li>
-                                        <% }) %>
-                                    </ul>
+                                    <% stream.tags.forEach(function(tag) { %>
+                                        <a href="<%- pathTo.filteredContent(tag.id) %>"><span class="label label-info"><%- tag.title %></span></a>
+                                    <% }) %>
                                 </td>
                                 <td>
                                     <%- stream.lastRun ? timeSince(stream.lastRun) : t('common.never') %>

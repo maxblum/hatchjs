@@ -1,6 +1,6 @@
 <% var form = formFor(post, {
     remote: true,
-    action: (post.id ? pathTo.contentEntry(post.id) : pathTo.content) + '.json',
+    action: (post.id ? pathTo.updateContent(post.id) : pathTo.createContent) + '.json',
     id: 'content-form',
     class: 'content-form'
 }) %>

@@ -1,4 +1,3 @@
-
 //
 // Hatch.js is a CMS and social website building framework built in Node.js 
 // Copyright (C) 2013 Inventures Software Ltd
