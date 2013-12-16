@@ -9,13 +9,19 @@
     margin: 8px 0 0 8px;
 }
 
-.brand 
+.brand, .brand:hover
 {
     font-family: 'Open Sans';
     color: #fff;
     font-size: 28px;
     line-height: 58px;
     margin-left: 18px;
+}
+
+.brand img
+{
+    margin: -9px 4px 0 0;
+    height: 32px;
 }
 
 .brand small
