@@ -18,7 +18,6 @@
 
 'use strict';
 
-var _ = require('underscore');
 var googleImages = require('google-images');
 var google = require('google');
 
@@ -37,7 +36,7 @@ function findPage (c) {
         c.Page.find(c.req.query.pageId, function (err, page) {
             c.req.page = page;
             c.next();
-        })
+        });
     } else {
         c.req.group.definePage(c.req.pagePath, c, function (err, page) {
             c.req.page = page;
@@ -67,6 +66,11 @@ PageController.prototype.editconsole = function editConsole(c) {
     // load the widgets to show on the edit console
     c.compound.hatch.widget.getWidgets().forEach(function (w) {
         if (groupModulesIndex[w.module]) {
+            // if the widget is restricted to special pages only, only show if it matches the type
+            if (w.widget.info.special && w.widget.info.special !== c.req.page.type) {
+                return;
+            }
+
             c.req.widgets.push({
                 name: w.name,
                 module: w.module,
@@ -86,7 +90,9 @@ PageController.prototype.editconsole = function editConsole(c) {
         });
     });
 
+    // load the themes
     c.locals.themes = c.compound.hatch.themes.getThemes();
+    
     c.render(view, { layout : false });
 };
 
@@ -96,7 +102,6 @@ PageController.prototype.editconsole = function editConsole(c) {
  * @param  {HttpContext} c - http context
  */
 PageController.prototype.updateGrid = function(c) {
-    var hatch = c.app.parent.parent.compound.hatch;
     var page = c.req.page;
     page.grid = c.body.grid;
 
@@ -110,16 +115,20 @@ PageController.prototype.updateGrid = function(c) {
     if (!page.id) {
         page.save = function(done) {
             c.Page.createPage(page, done);
-        }
+        };
     }
 
     // save the page and re-render the column contents
     page.save(function (err) {
+        if (err) {
+            return c.sendError(err);
+        }
+
         // reload the page to get the latest changes from db
         c.Page.find(page.id, function(err, page) {
             page.renderHtml(c.req, function (err, html) {
                 c.send({html: html});
-            });        
+            });
         });
     });
 };
@@ -133,6 +142,10 @@ PageController.prototype.updateColumns = function(c) {
     c.req.page.columns = JSON.parse(c.body.widgets);
     c.req.page.removeRedundantWidgets();
     c.req.page.save(function (err) {
+        if (err) {
+            return c.sendError(err);
+        }
+        
         c.send('ok');
     });
 };

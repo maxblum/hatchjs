@@ -18,9 +18,6 @@
 
 'use strict';
 
-var _ = require("underscore");
-var async = require("async");
-
 var Application = require('./application');
 
 module.exports = PagesController;
@@ -29,10 +26,9 @@ function PagesController(init) {
     Application.call(this, init);
     init.before(findPage, {only: 'destroy, edit, show, update'});
     init.before(prepareTree, {only: 'index, new, newSpecial, edit'});
-    init.before('setupTabs', PagesController.setupTabs);
 }
 
-PagesController.setupTabs = function(c) {
+Application.installTabGroup('pages', function(c) {
     var subTabs = [];
 
     subTabs.push({ header: 'pages.headers.pages' });
@@ -43,31 +39,28 @@ PagesController.setupTabs = function(c) {
     subTabs.push({ name: 'pages.actions.new', url: c.pathTo.newPage });
     subTabs.push({ name: 'pages.actions.newSpecial', url: c.pathTo.newSpecial });
 
-    c.locals.subTabs = subTabs;
-    c.next();
-};
+    return subTabs;
+});
 
 // find the page by its id
 function findPage(c) {
-    var locals = this;
     c.Page.find(c.req.params.id || c.req.params.page_id || c.req.body.id, function (err, page) {
-        locals.page = page;
+        c.locals.page = page;
         c.next();
     });
 }
 
 // prepare the page tree for display
 function prepareTree(c) {
-    var locals = this;
-    this.specials = Object.keys(c.compound.hatch.page.pages).map(function (sp) {
+    c.locals.specials = Object.keys(c.compound.hatch.page.pages).map(function (sp) {
         return c.compound.hatch.page.pages[sp];
     });
-    this.templates = [];
+    c.locals.templates = [];
     c.req.group.pages(function (err, pages) {
         if (!err) {
             pages.forEach(function (p) {
                 if (p.type === 'template') {
-                    locals.templates.push(p);
+                    c.locals.templates.push(p);
                 }
             });
             c.req.pagesTree = c.Page.tree(pages);
@@ -139,14 +132,9 @@ PagesController.prototype.specials = function(c) {
 
         // force reload when back button pressed
         c.res.setHeader('Cache-Control', 'no-cache, no-store');
-        pages.forEach(function (page) {
-            // TODO: uncomment and handle
-            // var sp = c.compound.hatch.module.getSpecialPage(page.type);
-            // page.icon = sp.icon;
-        });
         c.render({pages: pages});
     });
-}
+};
 
 /**
  * Show the new page form.
@@ -155,7 +143,7 @@ PagesController.prototype.specials = function(c) {
  */
 PagesController.prototype.new = function(c) {
     this.pageName = 'new-page';
-    this.page = new c.Page;
+    this.page = new c.Page();
     c.render('newPage');
 };
 
@@ -166,7 +154,7 @@ PagesController.prototype.new = function(c) {
  */
 PagesController.prototype.newSpecial = function(c) {
     this.type = c.req.params.type;
-    this.page = new c.Page;
+    this.page = new c.Page();
     this.pageName = 'new-special' + (this.type ? '-' + this.type : '');
     c.render('newspecial');
 };
@@ -177,10 +165,7 @@ PagesController.prototype.newSpecial = function(c) {
  * @param  {HttpContext} c - http context
  */
 PagesController.prototype.create = function(c) {
-    var locals = this;
-
     // TODO: this should come from some kind of JSON/YML template
-    var format = c.req.params.format || c.req.query.format;
     c.body.groupId = c.req.group.id;
     c.body.grid = '02-two-columns';
     c.body.columns = [{widgets: [1, 2]}];
@@ -201,34 +186,19 @@ PagesController.prototype.create = function(c) {
         c.body.widgets = defaultPage.widgets;
     }
 
-    //c.Tag.assignTagsForObject(c.req.body, c.req.body.tags, function () {
-        c.Page.createPage(c.body, function (err, page) {
-            if (err) {
-                c.next(err);
+    c.Page.createPage(c.body, function (err, page) {
+        if (err) {
+            c.next(err);
+        } else {
+            c.flash('info', c.t('models.Page.messages.added'));
+
+            if (page.type && page.type !== 'page') {
+                c.send({ redirect: c.pathTo.specialPages() });
             } else {
-                c.flash('info', c.t('models.Page.messages.added'));
-
-                if (page.type && page.type !== 'page') {
-                    c.send({ redirect: c.pathTo.specialPages() });
-                } else {
-                    c.send({ redirect: c.pathTo.pages() });
-                }
+                c.send({ redirect: c.pathTo.pages() });
             }
-        });
-    //});
-
-    function reorderPages(callback) {
-        Page.all({where: {groupId: c.req.group.id}}, function(err, pages) {
-            async.forEach(pages, function(page, next) {
-                if (page.order >= c.body.order) {
-                    page.order++;
-                    page.save(next);
-                } else {
-                    next();
-                }
-            }, callback);
-        });
-    }
+        }
+    });
 };
 
 /**
@@ -257,7 +227,6 @@ PagesController.prototype.edit = function(c) {
  * @param  {HttpContext} c - http context
  */
 PagesController.prototype.update = function(c) {
-    var Page = c.Page;
     var page = this.page;
 
     this.page = page;
@@ -267,19 +236,17 @@ PagesController.prototype.update = function(c) {
     c.flash('info', c.t('models.Page.messages.saved'));
     delete c.body.undefined;
 
-    //c.Tag.assignTagsForObject(page, c.req.body.tags, function () {
-        page.update(c.body, function(err, page) {
-            if (err) {
-                return c.next(new Error(err.message));
-            }
+    page.update(c.body, function(err) {
+        if (err) {
+            return c.next(new Error(err.message));
+        }
 
-            if ([null, '', 'page', 'homepage'].indexOf(c.locals.page.type) != -1) {
-                c.send({ redirect: c.pathTo.pages() });
-            } else {
-                c.send({ redirect: c.pathTo.specialPages() });
-            }
-        });
-    //});
+        if ([null, '', 'page', 'homepage'].indexOf(c.locals.page.type) != -1) {
+            c.send({ redirect: c.pathTo.pages() });
+        } else {
+            c.send({ redirect: c.pathTo.specialPages() });
+        }
+    });
 };
 
 /**
@@ -291,7 +258,11 @@ PagesController.prototype.updateOrder = function(c) {
     // find and update the page that was dragged
     c.Page.find(c.req.params.id, function(err, page) {
         delete c.body.authencity_token;
-        page.update(c.body, function(err, page) {
+        page.update(c.body, function(err) {
+            if (err) {
+                return c.sendError(err);
+            }
+
             // update the order of all pages in the group
             c.Page.all({where: {groupId: c.req.group.id}}, function(err, pages) {
                 if (err || !pages) return;
@@ -333,4 +304,4 @@ PagesController.prototype.updateOrder = function(c) {
             renderPageTree(c);
         }
     }
-}
+};

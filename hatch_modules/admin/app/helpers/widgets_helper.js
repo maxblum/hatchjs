@@ -16,17 +16,17 @@ exports.buildForm = function buildForm(form, data) {
             });
             return select + '</select>';
         },
-        input: function (name, params) {
+        input: function (name) {
             var val = data.hasOwnProperty(name) ? data[name] : '';
             return '<input type="text" name="' + name + '" value="' + val + '" />';
         },
-        textarea: function (name, params) {
+        textarea: function (name) {
             var val = data.hasOwnProperty(name) ? data[name] : '';
             return '<textarea name="' + name + '">' + val + '</textarea>';
         },
-        html: function(name, params) {
+        html: function(name) {
             var val = data.hasOwnProperty(name) ? data[name] : '';
-            return '<textarea class="html" name="' + name + '">' + val + '</textarea>';  
+            return '<textarea class="html" name="' + name + '">' + val + '</textarea>';
         },
         checkbox: function (name, params) {
             var val = data.hasOwnProperty(name) ? data[name] : false;
@@ -35,13 +35,15 @@ exports.buildForm = function buildForm(form, data) {
 
             return html;
         },
+        /*
         checkboxes: function (name, params) {
             return 'TODO checkboxes';
         },
         radiogroup: function (name, params) {
             return 'TODO radiogroup';
         },
-        tags: function(name, params) {
+        */
+        tags: function(name) {
             var val = data.hasOwnProperty(name) ? data[name] : [];
             var html = '<select id="tags" name="tags[]" multiple="multiple" class="chzn-select-create" data-placeholder="' + c.__('Enter tags...') + '">';
 
@@ -52,7 +54,7 @@ exports.buildForm = function buildForm(form, data) {
             html += '</select>';
             return html;
         },
-        productTags: function(name, params) {
+        productTags: function(name) {
             var val = data.hasOwnProperty(name) ? data[name] : [];
             var html = '<select id="tags" name="tags[]" multiple="multiple" class="chzn-select-create" data-placeholder="' + c.__('Enter tags...') + '">';
 
@@ -91,26 +93,26 @@ exports.buildForm = function buildForm(form, data) {
         }
 
         header += '</ul>';
-        content + '</div>';
+        content += '</div>';
 
         return header + '\n\n' +  content;
     }
 
     function formFields(fields) {
         var html = '';
-        for (f in fields) {
+        for (var f in fields) {
             html += '<div class="control-group">' +
                 '<label class="control-label" for="widget-' + f +
                 '">' + c.__(fields[f].title || f) + '</label>\n' +
                 '<div class="controls">' +
-                fieldBuilders[fields[f].type](f, fields[f]) + 
+                fieldBuilders[fields[f].type](f, fields[f]) +
                 (fields[f].type != 'checkbox' && fields[f].description ? '<small class="help-block">' + c.__(fields[f].description) + '</small>' : ''
                 ) +
                 '</div></div>';
         }
         return html;
     }
-}
+};
 
 exports.widgetCoreAction = function (s) {
     return [this.req.pagePath, 'do/admin/widget', this.locals.widget.id || 'NOWID', s].join('/');

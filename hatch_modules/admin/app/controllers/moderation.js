@@ -26,8 +26,6 @@ var Content = require('./content');
 module.exports = ModerationController;
 
 function ModerationController(init) {
-    'use strict';
-
     Content.call(this, init);
 }
 
@@ -35,8 +33,6 @@ require('util').inherits(ModerationController, Content);
 
 // loads all of the content or comments for this controller
 function loadContentOrComments(c, callback) {
-    'use strict';
-
     function loadItems(model, callback) {
         var cond = {
             groupId: c.req.group.id,
@@ -100,8 +96,6 @@ function loadContentOrComments(c, callback) {
  *                       c.type - type: content or comments
  */
 ModerationController.prototype.index = function (c) {
-    'use strict';
-
     this.pageName = 'moderation-' + c.req.params.type;
     this.type = c.req.query.type || c.req.params.type;
 
@@ -115,8 +109,6 @@ ModerationController.prototype.index = function (c) {
  *                       c.type - type: content or comments
  */
 ModerationController.prototype.load = function (c) {
-    'use strict';
-
     c.type = c.req.query.type;
 
     loadContentOrComments(c, function(err, posts) {
@@ -138,8 +130,6 @@ ModerationController.prototype.load = function (c) {
  *                       c.type - type: content or comments
  */
 ModerationController.prototype.ids = function ids(c) {
-    'use strict';
-
     c.req.query.limit = 1000000;
     c.req.query.offset = 0;
 
@@ -153,8 +143,6 @@ ModerationController.prototype.ids = function ids(c) {
 };
 
 ModerationController.prototype.destroyComment = function(c) {
-    'use strict';
-
     c.Comment.find(c.params.commentId, function(err, comment) {
         if (err || !comment) {
             return c.sendError(err || new Error('No commment'));

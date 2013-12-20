@@ -20,6 +20,9 @@ module.exports =
     , "prefix":   "dev"
     , "database": 0
     , "fulltext": {
+        driver: 'reds'
+    }
+    , "fulltextSOLR": {
         driver: 'solr',
         host: 'index.websolr.com',
         port: 80,

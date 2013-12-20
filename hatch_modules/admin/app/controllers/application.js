@@ -22,15 +22,19 @@ var _ = require('underscore');
 
 // Load the required data and populate the locals
 function populateLocals(c) {
-    this.pageName = c.actionName;
+    c.locals._ = _;
+    c.locals.subTabs = [];
 
     // set the active admin section (main tab)
-    this.sectionName = c.req.originalUrl.split('/do/')[1].split('/')[1].split('?')[0];
+    c.locals.sectionName = c.req.originalUrl.split('/do/')[1].split('/')[1].split('?')[0];
+    c.locals.pageName = c.actionName;
+    c.locals.tabs = _.sortBy(c.compound.tabs, 'rank');
 
-    this._ = _;
-    this.req = c.req;
-    this.tabs = _.sortBy(c.compound.tabs, 'rank');
+    // request and group for views
+    c.locals.req = c.req;
     c.locals.group = c.req.group;
+
+    // get the page that we are working on
     if (c.req.query.pageId && isNaN(parseInt(c.req.query.pageId, 10))) {
         var url = c.req.query.pageId.replace(/^.*?\//, '/');
         c.req.group.definePage(url, c, function(err, page) {
@@ -53,7 +57,7 @@ function checkPermissions(c) {
     if (isAdmin) {
         c.next();
     } else {
-        c.redirect('//' + c.req.page.url)
+        c.redirect('//' + c.req.page.url);
     }
 }
 
@@ -90,12 +94,43 @@ var Application = function Application(init) {
 
 module.exports = Application;
 
+// tab groups builder functions
+Application.tabGroups = { hashes: [] };
+
 /**
- * Set the active sub-tab and filter tab.
+ * Install a new subTab building function for the specified sectionName
  * 
- * @param {HttpContext} c - context
+ * @param  {String}   sectionName - e.g. content, users, group
+ * @param  {Function} fn          - function (c) { var tabs = []; return tabs; }
  */
-Application.setActiveTab = function (c) {
+Application.installTabGroup = function (sectionName, fn) {
+    if (!Application.tabGroups[sectionName]) {
+        Application.tabGroups[sectionName] = [];
+    }
+
+    // make sure we are not installing the same tab builder twice
+    if (Application.tabGroups.hashes.indexOf(fn.toString()) === -1) {
+        Application.tabGroups[sectionName].push(fn);
+        Application.tabGroups.hashes.push(fn.toString());
+    }
+};
+
+/**
+ * Setup the tabs based in the tab group building functions.
+ * 
+ * @param  {HttpContext} c - context
+ */
+Application.setupTabs = function (c) {
+    if (Application.tabGroups[c.locals.sectionName]) {
+        // TODO: test to see if function container module is enabled for this group
+        Application.tabGroups[c.locals.sectionName].forEach(function (fn) {
+            var subTabs = fn(c);
+            subTabs.forEach(function (tab) {
+                c.locals.subTabs.push(tab);
+            });
+        });
+    }
+
     if (c.locals.subTabs) {
         // set the active subtab
         c.locals.subTabs.map(function (tab) {

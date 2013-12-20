@@ -1,33 +1,21 @@
 static:
-  title: 'Static content'
+  title: Richtext
   description:
   icon: 'icon-edit'
   inlineEditAllowed: on
-  settings:
-    fields:
-      anchor:
-        type: 'checkbox'
-        title: 'Create anchor link'
 
-carousel:
-  title: Carousel
+html:
+  title: HTML
   description:
-  icon: icon-picture
-  settings:
-    custom: true
+  icon: icon-edit
 
 group-header:
   title: Group header
   description:
   icon: icon-globe
 
-html:
-  title: HTML content
-  description:
-  icon: icon-edit
-
 mainmenu:
-  title: Primary navigation
+  title: Navigation
   description: default menu
   icon: icon-sitemap
   settings:
@@ -48,7 +36,7 @@ mainmenu:
         default: 'no'
 
 navigation:
-  title: Sub navigation menu
+  title: Sub navigation
   description:
   icon: icon-list
   settings:
@@ -62,16 +50,3 @@ navigation:
           - 'current+below:This level and below'
           - 'below:Below this level'
         default: 'all'
-
-new-group:
-  title: New group
-  description: Allows to create group
-  icon: icon-plus-sign
-
-newsticker:
-  title: News ticker
-  description:
-  icon: icon-refresh
-  settings:
-    custom: true
-

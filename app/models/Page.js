@@ -394,6 +394,9 @@ module.exports = function (compound, Page) {
         res.render = function (file, viewContext, next) {
             compound.app.render(file, viewContext, next || callback);
         };
+        res.send = function (body) {
+            callback(null, body);
+        };
         res.end = function(body) {
             endCalled = true;
             callback(null, body);

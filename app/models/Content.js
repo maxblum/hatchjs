@@ -37,7 +37,7 @@ module.exports = function (compound, Content) {
     Content.CACHEDCOMMENTS = 3;
     Content.CACHEDLIKES = 3;
 
-    Content.validatesPresenceOf('createdAt', 'title', 'text');
+    Content.validatesPresenceOf('createdAt', 'text');
 
     // register the functions which can be called from the REST api
     Content.allowedApiActions = ['like', 'getLike', 'vote', 'postComment', 'flag', 'clearFlags', 'destroyAndBan', 'registerView'];
@@ -214,15 +214,15 @@ module.exports = function (compound, Content) {
                 }
 
                 return done();
-            })
+            });
         }
         else done();
 
         function slugify(text) {
             text = text.toLowerCase();
             text = text.replace(/[^-a-zA-Z0-9\s]+/ig, '');
-            text = text.replace(/-/gi, "_");
-            text = text.replace(/\s/gi, "-");
+            text = text.replace(/-/gi, '_');
+            text = text.replace(/\s/gi, '-');
             text = text.replace(/-+$/, '');
             return text;
         }
@@ -287,7 +287,7 @@ module.exports = function (compound, Content) {
             });
         });
 
-        if (userIds.length == 0) return callback(null, list);
+        if (userIds.length === 0) return callback(null, list);
 
         function findUser(users, id) {
             var user = _.find(users, function (user) {

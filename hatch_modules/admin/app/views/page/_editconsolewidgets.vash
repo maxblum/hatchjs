@@ -6,7 +6,6 @@
     @model.request.widgets.forEach(function (w) {
         <li>
             <span class="widget">
-                <i class="fa fa-@w.info.icon.replace('icon-', '')"></i> 
                 <a href="#@(w.module + '/' + w.name)">@w.info.title</a>
             </span>
         </li>

@@ -140,6 +140,7 @@ en:
     imported: Imported posts
     manageTags: Manage tags
     newblogpost: New blog post
+    newstatusupdate: New status update
   moderation:
     content: Content
     comments: Comments

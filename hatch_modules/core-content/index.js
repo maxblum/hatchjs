@@ -24,13 +24,14 @@ module.exports = function (c) {
     var contentTypes = {
         statusupdate: {
             icon: 'user',
-            view: __dirname + '/content/statusupdate.ejs'
+            view: __dirname + '/content/statusupdate.ejs',
+            editForm: __dirname + '/content/statusupdate-form.ejs'
         }
-    }
+    };
 
     Object.keys(contentTypes).forEach(function (key) {
         var type = contentTypes[key];
-        c.hatch.contentType.registerContentType(key, type);    
+        c.hatch.contentType.registerContentType(key, type);
         c.hatch.page.register(key, require('./specials/' + key));
     });
     

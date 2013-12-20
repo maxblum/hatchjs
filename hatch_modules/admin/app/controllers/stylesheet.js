@@ -22,7 +22,7 @@ module.exports = StylesheetController;
 
 function StylesheetController(init) {
     init.before(findStylesheet);
-};
+}
 
 // finds the stylesheet for the current group
 function findStylesheet (c) {

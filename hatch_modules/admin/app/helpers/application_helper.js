@@ -8,7 +8,7 @@ exports.renderPartial = function (view) {
     var result = '';
 
     if (view.indexOf('.') < 3) {
-        view = path.join(this.controllerName, view).replace(/\\/g, "/");
+        view = path.join(this.controllerName, view).replace(/\\/g, '/');
         view = this.compound.structure.views[view];
     }
 
@@ -22,7 +22,7 @@ exports.renderPartial = function (view) {
         }
     }
 
-    var res = new String(result);
+    var res = result.toString();
     res.toHtmlString = function() {
         return result;
     };
@@ -35,8 +35,10 @@ exports.specialPagePath = function () {
 };
 
 exports.formInput = function(params, value) {
+    var c = this;
     var view = this.viewContext;
     var html = '';
+    var val;
 
     if(!value) value = '';
 
@@ -55,78 +57,87 @@ exports.formInput = function(params, value) {
 
     // input
     switch (params.type) {
-        case "text":
-        case "password":
-        html += view.inputTag({
-            type: params.type,
-            value: value,
-            id: params.name,
-            name: params.name,
-            class: 'form-control'
-        });
-        break;
-        case "textarea":
-        html += view.textareaTag(value, {id: params.name, name: params.name, rows: 10, class: 'span4'});
-        break;
-        case "select":
-        case "select-list":
-        html += '<select id="' + params.name + '" name="' + params.name + '" class="form-control">';
-        html += '<option value="">Please select</option>';
-
-        params.options.forEach(function(opt) {
-            var text = val = opt.toString();
-            if(typeof opt === 'object') {
-                val = Object.keys(opt)[0];
-                text = opt[val];
-            }
-
-            html += '<option' + (val == value ? ' selected="selected"':'') + ' value="' + val + '">' + text + '</option>'
-        });
-
-        html += '</select>';
-        break;
-        case "radio":
-        case "radio-list":
-        params.options.forEach(function(option) {
-            var optionParams = {
+        case 'text':
+        case 'password':
+            html += view.inputTag({
+                type: params.type,
+                value: value,
+                id: params.name,
                 name: params.name,
-                type: 'radio',
-                value: option
-            };
-            if (option == value) {
-                optionParams.checked = 'checked';
-            }
-            var labelText = view.inputTag(optionParams) + option;
+                class: 'form-control'
+            });
+            break;
+        case 'textarea':
+            html += view.textareaTag(value, {id: params.name, name: params.name, rows: 10, class: 'col-md-4'});
+            break;
+        case 'select':
+        case 'select-list':
+            html += '<select id="' + params.name + '" name="' + params.name + '" class="form-control">';
+            html += '<option value="">Please select</option>';
 
-            html += c.labelTag(labelText, {class: 'radio'});
-        });
-        break;
-        case "checkbox":
-        case "check-list":
-        params.options.forEach(function(option) {
-            var optionParams = {
-                name: params.name,
-                type: 'checkbox',
-                value: option
-            };
-            if (value.indexOf(option) > -1) {
-                optionParams.checked = 'checked';
-            }
-            var labelText = c.tag('input', optionParams) + option;
-            html += view.labelTag(labelText, {class: 'checkbox'});
-        });
-        break;
+            params.options.forEach(function(opt) {
+                var text = opt.toString();
+                val = text;
+                if(typeof opt === 'object') {
+                    val = Object.keys(opt)[0];
+                    text = opt[val];
+                }
+
+                html += '<option' + (val == value ? ' selected="selected"':'') + ' value="' + val + '">' + text + '</option>';
+            });
+
+            html += '</select>';
+            break;
+        case 'radio':
+        case 'radio-list':
+            params.options.forEach(function(option) {
+                var optionParams = {
+                    name: params.name,
+                    type: 'radio',
+                    value: option
+                };
+                if (option == value) {
+                    optionParams.checked = 'checked';
+                }
+                var labelText = view.inputTag(optionParams) + option;
+
+                html += c.labelTag(labelText, {class: 'radio'}) + labelText;
+            });
+            break;
+        case 'checkbox':
+            html = '<div class="form-group">';
+            html += '<div class="checkbox">';
+            html += '<input type="checkbox" name="' + params.name + '" id="' + params.name + '" ' + (value?'checked':'') + '>';
+            html += '<label for="' + params.name + '">' + params.title + '</label>';
+            html += '</div>';
+            html += '</div>';
+
+            break;
+        case 'check-list':
+            params.options.forEach(function(option) {
+                var optionParams = {
+                    name: params.name,
+                    type: 'checkbox',
+                    value: option
+                };
+                if (value.indexOf(option) > -1) {
+                    optionParams.checked = 'checked';
+                }
+                var labelText = view.inputTag(optionParams) + option;
+                html += view.labelTag(labelText, {class: 'checkbox'});
+            });
+            break;
         default:
-        throw new Error('unknown form input type: ' + params.type);
+            throw new Error('unknown form input type: ' + params.type);
     }
 
     //mandatory indicator asterisk
     if (params.mandatory) {
-        html += ' <i class="icon-asterisk text-error" rel="tooltip" title="' + viewContext.__('mandatory field') + '"></i>';
+        html += ' <i class="icon-asterisk text-error" rel="tooltip" title="' + view.__('mandatory field') + '"></i>';
     }
 
     if (params.privacy == 'private') {
-        html += ' <i class="icon-lock" rel="tooltip" title="' + viewContext.__('private field - will not be displayed on your profile') + '"></i>';
+        html += ' <i class="icon-lock" rel="tooltip" title="' + view.__('private field - will not be displayed on your profile') + '"></i>';
     }
 
     if (params.description && params.description.trim() != '<p><br></p>') {
@@ -153,4 +164,4 @@ exports.formatNumber = function formatNumber(num) {
     } else {
         return num;
     }
-};  
+};

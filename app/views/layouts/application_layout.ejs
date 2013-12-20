@@ -6,7 +6,7 @@
     <%- metaTag('keywords', req.page.metaKeywords || req.group.metaKeywords) %>
     <%- metaTag('description', req.page.metaDescription || req.group.metaDescription) %>
 
-    <% if ((req.headers['user-agent'] || '').indexOf('iPad') == -1) { %>
+    <% if ((req.headers['user-agent'] || '').indexOf('iPad') === -1) { %>
         <%- metaTag('viewport', 'width=480, user-scalable=no') %>
     <% } %>
 
@@ -20,15 +20,15 @@
     <link type="text/css" rel="stylesheet" href="<%- getStylesheetPath() %>" id="main-stylesheet" />
     <% if (isPrivileged()) { %>
         <link rel="stylesheet" href="/javascripts/redactor/redactor.css" />
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+        <style id="preview-stylesheet" type="text/css"></style>
     <% } %>
-
-    <style id="preview-stylesheet" type="text/css"></style>
-
-    <link rel="icon" type="image/png" href="<%- group.favicon || '/egg.png' %>">
 
     <script type="text/javascript">
         canEdit = <%- isPrivileged() %>;
     </script>
+
+    <link rel="icon" type="image/png" href="<%- group.favicon || '/egg.png' %>">
 
     <%- javascriptIncludeTag(javascripts()) %>
 </head>
@@ -57,7 +57,6 @@
                     <% } %>
 
                     <% if (isPrivileged()) { %>
-                        <!-- TODO: we need a way of disabling edit console for the entire admin module -->
                         <ul class="nav navbar-nav visible-desktop">
                             <li><%- linkTo(icon('cog') + ' ' + t('layout.manageGroup'),
                                 pathFor('admin').index,
@@ -179,8 +178,6 @@
         <% include _webfonts %>
         <div id="editConsoleHolder"></div>
     <% }%>
-
-    <%- contentFor('javascripts') %>
 
     <% if (req.group.googleAnalyticsId) { %>
         <script type="text/javascript">

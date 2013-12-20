@@ -19,7 +19,6 @@
 'use strict';
 
 var Application = require('./application');
-var async = require('async');
 var _ = require('underscore');
 
 module.exports = TagController;
@@ -27,13 +26,7 @@ module.exports = TagController;
 function TagController(init) {
     Application.call(this, init);
     init.before(loadTags);
-    init.before(setupTabs);
     init.before(findTag, {only: 'new,edit,update,destroy,add,remove'});
-}
-
-function setupTabs(c) {
-    var parent = require('./' + this.type);
-    parent.setupTabs(c);
 }
 
 // gets the name of the active model
@@ -47,12 +40,11 @@ function getModelName(path) {
 
 // loads the tags for the active model
 function loadTags(c) {
-    this.type = this.sectionName = c.params.section;
-    this.modelName = getModelName(this.sectionName);
+    c.locals.type = c.locals.sectionName = c.params.section;
+    c.locals.modelName = getModelName(c.locals.sectionName);
+    c.locals.pageName = c.actionName + '-tags';
 
-    this.pageName = c.actionName + '-tags';
-
-    c.Tag.all({ where: { groupIdByType: c.req.group.id + '-' + this.modelName }}, function (err, tags) {
+    c.Tag.all({ where: { groupIdByType: c.req.group.id + '-' + c.locals.modelName }}, function (err, tags) {
         tags.forEach(function (tag) {
             tag.sortOrder = tag.sortOrder &&
             _.find(getSortOrders(c, c.params.section), function (sortOrder) {
@@ -67,16 +59,15 @@ function loadTags(c) {
 
 // find the tag to edit
 function findTag (c) {
-    var self = this;
     var id = c.req.params.id || c.req.query.id || c.req.body.id;
 
     if (id) {
         c.Tag.find(id, function (err, tag) {
-            self.theTag = c.locals.theTag = tag;
+            c.locals.theTag = c.locals.theTag = tag;
             c.next();
         });
     } else {
-        self.theTag = c.locals.theTag = {};
+        c.locals.theTag = c.locals.theTag = {};
         c.next();
     }
 }
@@ -165,7 +156,7 @@ TagController.prototype.update = TagController.prototype.create = function (c) {
     c.body.permissions = [];
 
     Object.keys(c.req.body).forEach(function(key) {
-        if(key.indexOf('permission-') == 0) {
+        if(key.indexOf('permission-') === 0) {
             c.body.permissions.push(key.substring(key.indexOf('-') +1));
         }
     });
@@ -200,6 +191,10 @@ TagController.prototype.update = TagController.prototype.create = function (c) {
  */
 TagController.prototype.destroy = function (c) {
     this.theTag.destroy(function (err) {
+        if (err) {
+            return c.sendError(err);
+        }
+
         c.flash('info', c.t('models.Tag.messages.deleted'));
         c.send({
             status: 'success',
@@ -219,6 +214,9 @@ TagController.prototype.add = function (c) {
 
     model.iterate({ batchSize: 500, where: { id: { inq: c.req.body.ids }}}, function (obj, next) {
         self.theTag.add(obj, function (err) {
+            if (err) {
+                return c.sendError(err);
+            }
             obj.save(next);
         });
     }, function () {
@@ -240,6 +238,10 @@ TagController.prototype.remove = function (c) {
 
     model.iterate({ batchSize: 500, where: { id: { inq: c.req.body.ids }}}, function (obj, next) {
         self.theTag.remove(obj, function (err) {
+            if (err) {
+                return c.sendError(err);
+            }
+            
             obj.save(next);
         });
     }, function () {

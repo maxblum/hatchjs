@@ -47,7 +47,7 @@ function UsersController(init) {
     Application.call(this, init);
     init.before(findMember, {only: 'edit, update, destroy, resendInvite, accept, remove, upgrade, downgrade, resendInvite'});
     init.before(loadTags);
-    init.before('setupTabs', UsersController.setupTabs);
+    init.before(setupFilterTabs);
 }
 
 module.exports = UsersController;
@@ -60,7 +60,7 @@ require('util').inherits(UsersController, Application);
  * 
  * @param  {HttpContext} c - context
  */
-UsersController.setupSubTabs = function(c) {
+Application.installTabGroup('users', function(c) {
     var subTabs = [];
     
     subTabs.push({ header: 'users.headers.users' });
@@ -94,7 +94,7 @@ UsersController.setupSubTabs = function(c) {
     subTabs.push({ name: 'users.actions.export', url: c.pathTo.export });
 
     return subTabs;
-};
+});
 
 /**
  * Setup the filter tabs.
@@ -102,7 +102,7 @@ UsersController.setupSubTabs = function(c) {
  * @param  {HttpContext} c - context
  * @return {[type]}   [description]
  */
-UsersController.setupFilterTabs = function(c) {
+function setupFilterTabs(c) {
     var filterTabs = [];
 
     filterTabs.push({
@@ -117,20 +117,9 @@ UsersController.setupFilterTabs = function(c) {
         });
     });
 
-    return filterTabs;
-};
-
-/**
- * Setup the subtabs and filter tabs for the users controller.
- * 
- * @param  {HttpContext} c - context
- */
-UsersController.setupTabs = function(c) {
-    c.locals.filterTabs = UsersController.setupFilterTabs(c);
-    c.locals.subTabs = UsersController.setupSubTabs(c);
-
+    c.locals.filterTabs = filterTabs;
     c.next();
-};
+}
 
 // loads all/specified members based on the current context
 function loadMembers(c, next) {
@@ -200,11 +189,11 @@ function loadMembers(c, next) {
                     return _.find(tags, function (t) {
                         return t.id == tag.id;
                     });
-                })
+                });
             });
         }
     });
-};
+}
 
 
 /**
@@ -265,7 +254,11 @@ UsersController.prototype.ids = function ids(c) {
  * @param  {HttpContext} c - http context
  */
 UsersController.prototype.remove = function(c) {
-    this.member.removeMembership(c.req.group.id, function (err, user) {
+    this.member.removeMembership(c.req.group.id, function (err) {
+        if (err) {
+            return c.sendError(err);
+        }
+
         c.send('ok');
     });
 };
@@ -277,9 +270,6 @@ UsersController.prototype.remove = function(c) {
  * @param  {HttpContext} c - http context
  */
 UsersController.prototype.destroy = function(c) {
-    'use strict';
-    console.log('HERE>>>>>>>')
-
     this.member.destroy(function (err) {
         if (err) {
             return c.error({
@@ -372,7 +362,11 @@ UsersController.prototype.unblacklistMembers = function(c) {
  * @param  {HttpContext} c - http context
  */
 UsersController.prototype.upgrade = function(c) {
-    this.member.setMembershipRole(c.req.group.id, 'editor', function (err, user) {
+    this.member.setMembershipRole(c.req.group.id, 'editor', function (err) {
+        if (err) {
+            return c.sendError(err);
+        }
+
         c.send('ok');
     });
 };
@@ -383,7 +377,11 @@ UsersController.prototype.upgrade = function(c) {
  * @param  {HttpContext} c - http context
  */
 UsersController.prototype.downgrade = function(c) {
-    this.member.setMembershipRole(c.req.group.id, 'member', function (err, user) {
+    this.member.setMembershipRole(c.req.group.id, 'member', function (err) {
+        if (err) {
+            return c.sendError(err);
+        }
+
         c.send('ok');
     });
 };
@@ -394,7 +392,11 @@ UsersController.prototype.downgrade = function(c) {
  * @param  {HttpContext} c - http context
  */
 UsersController.prototype.accept = function(c) {
-    this.member.setMembershipState(c.req.group.id, 'accepted', function (err, user) {
+    this.member.setMembershipState(c.req.group.id, 'accepted', function (err) {
+        if (err) {
+            return c.sendError(err);
+        }
+
         c.send('ok');
     });
 };
@@ -466,6 +468,10 @@ UsersController.prototype.sendMessage = function(c) {
         user.notify('message', {groupId: c.req.group.id, subject: subject, message: body });
         next();
     }, function (err) {
+        if (err) {
+            return c.sendError(err);
+        }
+
         c.send({
             message: c.t(['users.help.messageSent', selectedUsers.length || 'all']),
             status: 'success',
@@ -532,6 +538,10 @@ UsersController.prototype.sendInvites = function(c) {
     }, done);
 
     function done(err) {
+        if (err) {
+            return c.sendError(err);
+        }
+
         c.send({
             message: c.t(['users.help.inviteSent', c.body.usernames.length]),
             status: 'success',
@@ -581,7 +591,11 @@ UsersController.prototype.saveProfileField = function(c) {
         });
     }
 
-    c.req.group.saveCustomProfileField(c.req.body, function (err, group) {
+    c.req.group.saveCustomProfileField(c.req.body, function (err) {
+        if (err) {
+            return c.sendError(err);
+        }
+
         c.flash('info', c.t('users.help.fieldSaved'));
         c.redirect(c.pathTo.profileFields());
     });
@@ -604,9 +618,9 @@ UsersController.prototype.reorderProfileFields = function(c) {
             message: c.t('users.help.fieldOrderSaved'),
             status: 'success',
             icon: 'ok'
-        })
+        });
     });
-}
+};
 
 /**
  * Delete a custom profile field.

@@ -120,7 +120,7 @@ $(document).ready(function() {
                     var html = '';
 
                     $(obj.aData.tags).each(function(i, tag) {
-                        html += '<a href="<%- pathTo.community %>/filter/' + tag.id + '"><span class="label label-info">' + tag.title + '</span></a> ';
+                        html += '<a href="<%- pathTo.community %>/filter/' + tag.id + '" class="pjax"><span class="label label-info">' + tag.title + '</span></a> ';
                     });
 
                     return html;

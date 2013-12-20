@@ -4,6 +4,7 @@
             <button class="close" aria-hidden="true">
                 &times;
             </button>
+            <img src="/admin/images/egg.svg">
             @model.t('editconsole.headers.editconsole')
         </div>
         <div class="accordion" id="edit-console-accordion">

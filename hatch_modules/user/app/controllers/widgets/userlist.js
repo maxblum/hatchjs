@@ -1,29 +1,19 @@
-//
-// Hatch.js is a CMS and social website building framework built in Node.js 
-// Copyright (C) 2013 Inventures Software Ltd
-// 
-// This file is part of Hatch.js
-// 
-// Hatch.js is free software: you can redistribute it and/or modify it under the terms of the
-// GNU Affero General Public License as published by the Free Software Foundation, version 3
-// 
-// Hatch.js is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-// 
-// See the GNU Affero General Public License for more details. You should have received a copy of the GNU
-// General Public License along with Hatch.js. If not, see <http://www.gnu.org/licenses/>.
-// 
-// Authors: Marcus Greenwood, Anatoliy Chakkaev and others
-//
-load('widgets/common');
+var _ = require('underscore');
+var Widget = require(process.env.HATCH_WIDGETCONTROLLERPATH);
 
-before(function init(c) {
-    var group = this.group;
-    var User = c.User;
+function UserListController(init) {
+    Widget.call(this, init);
+    init.before(setupUsers);
+}
+
+module.exports = UserListController;
+require('util').inherits(UserListController, Widget);
+
+function setupUsers(c) {
     var cond = {};
 
     var page = parseInt(c.req.query.page || 1);
-    var pageSize = parseInt(this.widget.settings.pageSize || 10);
+    var pageSize = parseInt(c.locals.widget.settings.pageSize || 10);
 
     var limit = pageSize;
     var offset = pageSize * (page -1);
@@ -32,7 +22,7 @@ before(function init(c) {
         where: cond,
         limit: limit,
         offset: offset,
-        order: group.id + ':membership:joinedAt DESC',
+        order: c.req.group.id + ':membership:joinedAt DESC',
         fulltext: c.req.param('query')
     };
 
@@ -53,7 +43,7 @@ before(function init(c) {
     switch(this.widget.settings.displayMode) {
         case 'followers':
             if(user) {
-                User.getFollowersOf(user.id, function(err, ids) {
+                c.User.getFollowersOf(user.id, function(err, ids) {
                     cond.id = ids;
                     runQuery(cond);
                 });
@@ -74,10 +64,10 @@ before(function init(c) {
     runQuery(cond);
 
     function runQuery(cond) {
-        c.locals.profileFields = c.locals._.filter(group.profileFields, function(field) { return field.privacy == 'public'; });
+        c.locals.profileFields = c.locals._.filter(c.req.group.profileFields, function(field) { return field.privacy === 'public'; });
 
         // check for invalid query condition
-        if(Object.keys(cond).length === 0 || (typeof cond.id != 'undefined' && (cond.id == null || cond.id.length == 0))) {
+        if(Object.keys(cond).length === 0 || (typeof cond.id != 'undefined' && (cond.id === null || cond.id.length === 0))) {
             c.locals.letter = c.req.query.letter;
             c.locals.users = [];
             c.locals.pagination = { page: 1, size: pageSize, count: 0 };
@@ -85,9 +75,9 @@ before(function init(c) {
             return c.next();
         }
 
-        User.all(query, function (err, users) {
+        c.User.all(query, function (err, users) {
             // get whether the current user is following each one
-            users.forEach(function(user) { user.isFollowed = locals._.find(c.req.user && c.req.user.ifollow || [], function(id) { return id == user.id; }); });
+            users.forEach(function(user) { user.isFollowed = _.find(c.req.user && c.req.user.ifollow || [], function(id) { return id == user.id; }); });
 
             c.locals.letter = c.req.query.letter;
             c.locals.pagination = { page: page, size: pageSize, count: users.countBeforeLimit };
@@ -97,5 +87,5 @@ before(function init(c) {
             c.next();
         });
     }
-});
+}
 

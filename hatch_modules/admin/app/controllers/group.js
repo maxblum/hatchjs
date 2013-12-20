@@ -18,7 +18,6 @@
 
 'use strict';
 
-var _ = require('underscore');
 var Application = require('./application');
 
 module.exports = GroupController;
@@ -26,16 +25,17 @@ module.exports = GroupController;
 function GroupController(init) {
     Application.call(this, init);
     init.before(loadModules);
-    init.before('setupTabs', GroupController.setupTabs);
     init.before(findModule, {only: ['updateModule', 'disableModule']});
 }
+
+require('util').inherits(GroupController, Application);
 
 /**
  * Setup the tabs for this controller.
  * 
  * @param  {HttpContext} c - context
  */
-GroupController.setupTabs = function(c) {
+Application.installTabGroup('group', function(c) {
     var subTabs = [];
 
     subTabs.push({ header: 'group.headers.groupSettings' });
@@ -61,21 +61,19 @@ GroupController.setupTabs = function(c) {
         });
     }
 
-    c.locals.subTabs = subTabs;
-    c.next();
-};
+    return subTabs;
+});
 
 // finds a specific module for the context
 function findModule(c) {
-    var locals = this;
-    this.group.modules.forEach(function (m, i) {
+    c.req.group.modules.forEach(function (m) {
         if (m &&  (
             m.name === c.req.params.module_id ||
             m.name === c.req.params.id
         )) {
-            locals.groupModule = m;
-            locals.groupModuleIndex = m.id;
-            locals.module = m;
+            c.locals.groupModule = m;
+            c.locals.groupModuleIndex = m.id;
+            c.locals.module = m;
         }
     });
     c.next();
@@ -87,17 +85,15 @@ function loadModules(c) {
 
     Object.keys(c.req.group.modules.items).forEach(function (m) {
         var inst = c.req.group.modules.items[m];
-        inst = { 
+        inst = {
             name: inst.name,
-            module: c.compound.hatch.modules[inst.name] 
+            module: c.compound.hatch.modules[inst.name]
         };
         c.locals.modulesEnabled.push(inst);
     });
 
     c.next();
 }
-
-require('util').inherits(GroupController, Application);
 
 /**
  * Show the group settings form.
@@ -136,7 +132,7 @@ GroupController.prototype.save = function(c) {
             delete inst.module;
         });
 
-        group.updateAttributes(c.req.body, function (err, group) {
+        group.updateAttributes(c.req.body, function (err) {
             if (err) {
                 return c.send({
                     message: 'Error saving settings',
@@ -160,11 +156,11 @@ GroupController.prototype.save = function(c) {
  * @param  {HttpContext} c - http context
  */
 GroupController.prototype.modulesList = function (c) {
-    c.locals.modulesAvailable = Object.keys(c.compound.hatch.modules).map(function (m) {
+    c.locals.modulesAvailableList = Object.keys(c.compound.hatch.modules).map(function (m) {
         return c.compound.hatch.modules[m];
     });
     
-    c.locals.modulesEnabled = Object.keys(c.locals.group.modules).map(function (m) {
+    c.locals.modulesEnabledList = Object.keys(c.locals.group.modules).map(function (m) {
         return c.locals.group.modules[m];
     });
 
@@ -194,7 +190,6 @@ GroupController.prototype.setupModule = function(c) {
  *                       c.module_id - name of the module to enable
  */
 GroupController.prototype.enableModule = function enable(c) {
-    var locals = this;
     var group = this.group;
     var groupModule = {
         name: c.params.name,
@@ -215,12 +210,8 @@ GroupController.prototype.enableModule = function enable(c) {
  */
 GroupController.prototype.updateModule = function(c) {
     var data = c.req.body;
-    delete data.undefined;
-
     var module =  c.req.group.modules.find(c.params.id, 'name');
     module.contract = data;
-
-    console.log(c.req.group)
 
     c.req.group.save(function() {
         c.flash('info', 'Module settings updated');
@@ -236,9 +227,11 @@ GroupController.prototype.updateModule = function(c) {
  */
 GroupController.prototype.disableModule = function (c) {
     this.group.modules.remove(this.groupModuleIndex);
-    this.group.save(function (err, group) {
-        if (!err) {
-            c.redirect(c.pathTo.manageModules);
+    this.group.save(function (err) {
+        if (err) {
+            return c.sendError(err);
         }
+
+        c.redirect(c.pathTo.manageModules);
     });
 };

@@ -33,12 +33,13 @@ function ContentController(init) {
     init.before(setDateTimeFormat);
     init.before(loadTags);
     init.before(findContent);
-    init.before('setupTabs', ContentController.setupTabs);
+    init.before(setupFilterTabs);
 }
 
 require('util').inherits(ContentController, Application);
 
-ContentController.setupSubTabs = function (c) {    
+// install the tab group building function for content
+Application.installTabGroup('content', function (c) {
     var subTabs = [];
     
     // content list
@@ -62,7 +63,7 @@ ContentController.setupSubTabs = function (c) {
     // tag management and filters
     subTabs.push({ header: 'content.header.tags' });
     subTabs.push({ name: 'tags.headers.manageTags', url: c.pathTo.tags('content') });
-    c.locals.tags.forEach(function(tag) { 
+    c.locals.tags.forEach(function(tag) {
         if (tag.count > 0) {
             subTabs.push({
                 name: tag.title,
@@ -73,15 +74,11 @@ ContentController.setupSubTabs = function (c) {
     });
     subTabs.push({ name: 'tags.actions.new', url: c.pathTo.newTag('content') });
 
-    // import streams
-    subTabs.push({ header: 'streams.headers.import' });
-    subTabs.push({ name: 'streams.actions.manage', url: c.pathTo.streams });
-    subTabs.push({ name: 'streams.actions.add', url: c.pathTo.newStream });
-
     return subTabs;
-}
+});
 
-ContentController.setupFilterTabs = function (c) {
+// Setup the filter tabs for content types
+function setupFilterTabs(c) {
     var filterTabs = [];
 
     filterTabs.push({
@@ -96,15 +93,9 @@ ContentController.setupFilterTabs = function (c) {
         });
     });
 
-    return filterTabs;
-}
-
-ContentController.setupTabs = function (c) {
-    c.locals.subTabs = ContentController.setupSubTabs(c);
-    c.locals.filterTabs = ContentController.setupFilterTabs(c);
-
+    c.locals.filterTabs = filterTabs;
     c.next();
-};
+}
 
 // Load the content tags for this group to display on the left navigation
 function loadTags(c) {
@@ -123,9 +114,6 @@ function setDateTimeFormat (c) {
 
 // Render a content type input form which is defined in the contentType API
 function renderInputForm(c, next) {
-    var type = c.locals.post.type;
-    var contentType = c.compound.hatch.contentType.getContentType(type);
-
     c.prepareViewContext();
     c.locals.editForm = c.renderContent(c.locals.post, 'editForm');
 
@@ -144,7 +132,7 @@ function loadContent(c, callback) {
         if (!isNaN(parseInt(filterBy, 10))) {
             cond = {
                 tags: filterBy
-            }
+            };
         } else if (filterBy !== 'all') {
             cond.type = filterBy;
         }
@@ -181,7 +169,6 @@ function loadContent(c, callback) {
 
 // finds the content record for this function
 function findContent (c) {
-    var self = this;
     var id = c.req.params.id || c.req.body.id || c.req.query.id;
     var type = (c.req.params.type || c.req.body.type || c.req.query.type || 'Content').toLowerCase();
 
@@ -189,12 +176,12 @@ function findContent (c) {
         // find the comment or content item for this action
         if (type === 'comment' || type === 'comments') {
             c.Comment.find(id, function (err, post) {
-                self.post = c.locals.post = post;
+                c.post = c.locals.post = post;
                 c.next();
-            })
+            });
         } else {
             c.Content.find(id, function (err, post) {
-                self.post = c.locals.post = post;
+                c.post = c.locals.post = post;
                 c.next();
             });
         }
@@ -314,7 +301,7 @@ ContentController.prototype.create = function create(c) {
     c.Tag.assignTagsForObject(data, data.Content_tags || data.tags, function () {
         c.Content.create(data, function(err) {
             if (err) {
-                err.message = 'One or more fields have errors'
+                err.message = 'One or more fields have errors';
                 c.sendError(err);
             } else {
                 c.flash('info', c.t('models.Content.messages.saved'));
@@ -345,8 +332,6 @@ ContentController.prototype.update = function update(c) {
     c.Tag.assignTagsForObject(data, data.tags, function () {
         post.updateAttributes(data, function (err, content) {
             if (err) {
-                var HelperSet = c.compound.helpers.HelperSet;
-                var helpers = new HelperSet(c);
                 c.sendError(content.errors || err);
             } else {
                 c.flash('info', c.t('post.saved'));
@@ -366,6 +351,10 @@ ContentController.prototype.destroy = function(c) {
     var post = this.post;
 
     post.destroy(function(err) {
+        if (err) {
+            return c.sendError(err);
+        }
+
         // finally, update the group tag counts
         c.Tag.updateCountsForObject(post);
         c.send('ok');
@@ -380,19 +369,22 @@ ContentController.prototype.destroy = function(c) {
  */
 ContentController.prototype.destroyAll = function(c) {
     var Content = c.Content;
-    var group = c.req.group;
     var selectedContent = c.body.selectedContent || [];
     var count = 0;
     var type = (c.req.params.type || c.req.body.type || c.req.query.type || 'Content').toLowerCase();
 
     if (type === 'comment' || type === 'comments') {
         async.forEach(selectedContent, function(id, next) {
-            Comment.find(id, function(err, comment) {
+            c.Comment.find(id, function(err, comment) {
                 if (!comment) {
                     return next();
                 }
 
                 comment.destroy(function(err) {
+                    if (err) {
+                        return next(err);
+                    }
+
                     count++;
                     next();
                 });
@@ -412,6 +404,10 @@ ContentController.prototype.destroyAll = function(c) {
                 }
 
                 content.destroy(function(err) {
+                    if (err) {
+                        return next(err);
+                    }
+
                     count++;
                     next();
                 });
@@ -438,7 +434,11 @@ ContentController.prototype.destroyAll = function(c) {
  *                       c.id - content item id to unflag
  */
 ContentController.prototype.clearFlags = function (c) {
-    post.clearFlags(function (err, post) {
+    c.post.clearFlags(function (err) {
+        if (err) {
+            return c.sendError(err);
+        }
+
         c.send({
             message: 'Flags removed',
             status: 'success',
@@ -454,7 +454,11 @@ ContentController.prototype.clearFlags = function (c) {
  *                       c.id - content item id to delete and ban author
  */
 ContentController.prototype.deleteAndBan = function (c) {
-    post.destroyAndBan(function (err, post) {
+    c.post.destroyAndBan(function (err) {
+        if (err) {
+            return c.sendError(err);
+        }
+        
         c.send({
             message: 'Content deleted and user banned',
             status: 'success',

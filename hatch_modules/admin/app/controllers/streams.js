@@ -19,6 +19,7 @@
 'use strict';
 
 var Content = require('./content');
+var Application = require('./application');
 
 module.exports = StreamsController;
 
@@ -34,11 +35,26 @@ function StreamsController(init) {
     init.before(findStream, {only: ['edit', 'update', 'destroy', 'toggle']});
 }
 
+// install the tab group within content
+Application.installTabGroup('content', function (c) {
+    if(!c.req.group.getModule('admin').contract.streamsEnabled) {
+        return [];
+    }
+
+    var subTabs = [];
+
+    // import streams
+    subTabs.push({ header: 'streams.headers.import' });
+    subTabs.push({ name: 'streams.actions.manage', url: c.pathTo.streams });
+    subTabs.push({ name: 'streams.actions.add', url: c.pathTo.newStream });
+
+    return subTabs;
+});
+
 // finds the stream for the action
 function findStream (c) {
-    var self = this;
     c.ImportStream.find(c.params.id || c.params.stream_id, function(err, stream) {
-        self.stream = c.locals.stream = stream;
+        c.stream = c.locals.stream = stream;
         c.next();
     });
 }
@@ -67,7 +83,7 @@ StreamsController.prototype.index = function(c) {
  */
 StreamsController.prototype.new = function(c) {
     this.pageName = 'new-stream';
-    this.stream = new c.ImportStream;
+    this.stream = new c.ImportStream();
     c.render();
 };
 
@@ -78,7 +94,6 @@ StreamsController.prototype.new = function(c) {
  *                       c.id - import stream id
  */
 StreamsController.prototype.edit = function(c) {
-    var importStream = c.compound.hatch.importStream;
     this.pageName = 'manage-streams';
     c.render();
 };
@@ -97,13 +112,13 @@ StreamsController.prototype.create = function(c) {
     stream.tagModelName = 'Content';
 
     c.Tag.assignTagsForObject(stream, stream.tags, function () {
-        stream.save(function(err, stream) {
+        stream.save(function(err) {
             if(err) {
-                c.sendError(err);
-            } else {
-                c.flash('info', c.t('models.ImportStream.messages.saved'));
-                c.redirect(c.pathTo.streams);
+                return c.sendError(err);
             }
+
+            c.flash('info', c.t('models.ImportStream.messages.saved'));
+            c.redirect(c.pathTo.streams);
         });
     });
 };
@@ -140,11 +155,9 @@ StreamsController.prototype.update = function(c) {
  *                       c.id - import stream id to delete
  */
 StreamsController.prototype.destroy = function(c) {
-    this.stream.destroy(function() {
+    c.stream.destroy(function() {
         c.flash('info', c.t('models.ImportStream.messages.deleted'));
-        c.send({ 
-            redirect: c.pathTo.streams()
-        });
+        c.send({ redirect: c.pathTo.streams() });
     });
 };
 
@@ -158,8 +171,6 @@ StreamsController.prototype.toggle = function(c) {
     this.stream.enabled = !this.stream.enabled;
     this.stream.save(function() {
         c.flash('info', c.t('models.ImportStream.messages.toggled'));
-        c.send({ 
-            redirect: c.pathTo.streams()
-        });
+        c.send({ redirect: c.pathTo.streams() });
     });
 };

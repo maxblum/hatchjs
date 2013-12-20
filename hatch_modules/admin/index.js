@@ -1,10 +1,11 @@
 var Application = require('./app/controllers/application');
+var fs = require('fs');
 
 /**
  * Server module exports method which returns new instance of application
  * server
  *
- * @param {Compound} parent - railway/express parent webserver
+ * @param {Compound} parent - compound/express parent webserver
  * @returns CompoundJS powered express webserver
  */
 var app = module.exports = function getServerInstance(parent) {
@@ -26,14 +27,21 @@ var app = module.exports = function getServerInstance(parent) {
             });
         });
 
-        // set the active subtab before page is rendered
+        // setup tabs and the active subtab before page is rendered
         app.compound.on('render', function (vc, c) {
-            Application.setActiveTab(c);
+            Application.setupTabs(c);
         });
 
         // register the permissions for this module
         var permissions = require(__dirname + '/config/permissions.yml')[0].permissions;
         parent.hatch.permissions.register(permissions);
+
+        // load all controllers to init
+        fs.readdir(__dirname + '/app/controllers', function (err, files) {
+            files.forEach(function (file) {
+                require('./app/controllers/' + file);
+            });
+        });
     }
 
     return app;

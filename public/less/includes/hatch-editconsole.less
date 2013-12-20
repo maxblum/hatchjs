@@ -1,19 +1,36 @@
+// #1b1e24
+// #22262e
+// #6f7b8a
+// 
+// #fff
+// #666
+// #929fa5
+
 .edit-console
 {
     position : fixed;
     font-size : 13px;
-    font-family: Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Neue', Helvetica, Arial;
     line-height : 1.2;
     z-index : 1000;
     width : 249px;
     left : 800px;
     top : 50px;
-    border : solid 5px rgba(0, 0, 0, 0.2);
-    border-radius : 4px;
-    box-shadow : 0 0 8px rgba(0, 0, 0, 0.2);
-    color : #111;
+    border : solid 2px #0aa699;
+    padding: 3px;
+    background: #fff;
+    
+    border-radius : 2px;
+    //box-shadow : 0 0 1px #0aa699;
+    color : #fff;
     text-shadow: none;
-    font-family : 'Helvetica Neue', Helvetica, Arial;
+
+    > div
+    {
+        //border : solid 5px #fff;
+        border-radius : 0px;
+        background: #fff;
+    }
 
     #theme-preview
     {
@@ -31,19 +48,12 @@
     }
 
     a:not(.btn) {
-        color: #369bd7;
+        color: #0aa699;
         text-decoration: none;
     }
 
     a.chzn-default {
         color : #000;
-    }
-    
-    > div
-    {
-        background : #fff;    
-        border-radius : 5px;
-        //overflow : hidden;
     }
     
     #edit-console-widgets
@@ -66,7 +76,7 @@
             border-radius: 3px 3px 0 0;
             border-color: #DDD;
             background: #fff;
-            color : #369bd7;
+            color : #0aa699;
             font-weight: normal;
             text-shadow: none;
             font-size: 13px;
@@ -82,8 +92,8 @@
         .caret, .active .dropdown-toggle .caret, .active .dropdown-toggle:hover .caret
         {
             border-width: 4px 4px 0 4px ! important;
-            border-top-color: #369bd7;
-            border-bottom-color: #369bd7;
+            border-top-color: #0aa699;
+            border-bottom-color: #0aa699;
         }
 
         .dropdown-menu
@@ -127,20 +137,27 @@
         padding: 8px;
         margin: 0;
         cursor: move;
-        color: #999;
-        text-shadow: 0 1px 0 rgba(255, 255, 255, .7);
-        font-family: Helvetica,Arial;
-        font-size: 14px;
+        color: #fff;
+        font-family: 'Open Sans', Helvetica,Arial;
+        font-size: 16px;
         font-weight: bold;
-        background: #e8e8e8;
-        border-radius: 2px 2px 0 0;
+        background: #22262e;
+        //border-radius: 2px 2px 0 0;
         border: 0;
-        border-bottom: solid 1px #CCC;
+        //border-bottom: solid 1px #6f7b8a;
         
         .close
         {
-            font-size : 14px;
+            font-size : 20px;
             color: #aaa; 
+            text-shadow: none;
+        }
+
+        img {
+            height: 20px;
+            margin: -6px 0 0 -2px;
+
+            display: none;
         }
     }
 
@@ -170,6 +187,7 @@
         margin-bottom : 0;
         border: 0;
         background: #fff;
+        color: #111;
 
         .accordion-body
         {
@@ -184,17 +202,16 @@
     
     .accordion-heading
     {
-        background: #eee;
-        border-bottom: solid 1px #ddd;
+        background: #000;
+        //border-bottom: solid 1px #6f7b8a;
         margin: 0;
+        font-family: 'Open Sans', Helevtica;
         
         a
         {
             padding : 8px;
             display: block;
-            color : #111;
-            text-shadow: 0 1px 0 white;
-            font-weight : bold;
+            color : #fff;
         }
         
         a:hover
@@ -212,7 +229,7 @@
     {
         padding: 3px 9px 3px 9px;
         margin : -6px 4px 11px 4px;
-        font-family : monaco, courier;
+        font-family : 'Open Sans', monaco, courier;
         font-size : 10px;
         background-color: #FCF8E3;
         border: 1px solid #FBEED5;

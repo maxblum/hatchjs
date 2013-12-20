@@ -1,6 +1,9 @@
-icon: "icon-cogs"
-name: "admin"
-version: "0.0.1"
-description: "Admin module, manages core entities of the hatch platform"
-system: true
-mode: "application"
+title: Management console
+icon: cogs
+description: Admin module and manages core entities of the hatch platform
+settings:
+  intro: Hatch admin settings
+  fields:
+    streamsEnabled:
+      type: checkbox
+      title: Streams enabled

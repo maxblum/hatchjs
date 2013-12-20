@@ -30,7 +30,7 @@ exports.defaultPage = {
 };
 
 exports.handler = function (c, callback) {
-    if (parseInt(this.specialPageParams.id)) {
+    if (!c.req.post && parseInt(this.specialPageParams.id)) {
         c.Content.find(this.specialPageParams.id, function (err, post) {
             c.req.post = post;
             callback();

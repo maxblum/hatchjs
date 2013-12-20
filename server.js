@@ -4,6 +4,10 @@ var HatchPlatform = require('./lib/hatch').HatchPlatform;
 var createServer = require('compound').createServer;
 var cluster = require('cluster');
 
+// set the hatch path environment variables
+process.env.HATCH_WIDGETCONTROLLERPATH = __dirname + '/app/controllers/widget';
+process.env.HATCH_PATH = __dirname;
+
 /**
  * Server module exports method which returns new instance of application server
  *
