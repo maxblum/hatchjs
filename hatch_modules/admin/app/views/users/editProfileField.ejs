@@ -6,7 +6,7 @@
     <div class="col-md-12">
         <div class="grid simple">
             <div class="grid-body">
-                <%- formTagBegin({ action: pathTo.saveProfileField(), remote: true, id: 'profile-field-form', method: 'POST' }) %>
+                <%- formTagBegin({ action: pathTo.saveProfileField(), remote: true, id: 'profile-field-form', method: 'POST', class: 'form-slim' }) %>
                     <input type="hidden" name="id" value="<%- field.id %>" />
                     <input type="hidden" name="order" value="<%- field.order %>" />
 
@@ -44,8 +44,6 @@
                             <%- t('users.labels.mandatory') %>
                         </label>
                     </div>
-
-                    <hr/>
 
                     <div class="form-group">
                         <label class="control-label" for="privacy"><%- t('users.labels.visibility') %></label>

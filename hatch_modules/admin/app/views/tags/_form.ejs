@@ -1,26 +1,34 @@
 <div class="form-group">
-    <label class="control-label" for="title"><%= t('tags.labels.name') %></label>
-    <input type="text" class="form-control" id="title" name="title" value="<%- theTag.title %>">
+    <label class="form-label" for="title"><%= t('tags.labels.name') %></label>
+    <div class="controls">
+        <input type="text" class="form-control" id="title" name="title" value="<%- theTag.title %>">
+    </div>
 </div>
 
 <div class="form-group">
-    <label class="control-label" for="sortOrder"><%= t('tags.labels.sortOrder') %></label>
-    <select id="sortOrder" name="sortOrder" class="form-control">
-        <% sortOrders.forEach(function (order) { %>
-            <option value="<%- order.value %>" <%- order.value === theTag.sortOrder ? 'selected="selected"':'' %>>
-                <%- order.name %>
-            </option>
-        <% }) %>
-    </select>
+    <label class="form-label" for="sortOrder"><%= t('tags.labels.sortOrder') %></label>
+    <div class="controls">
+        <select id="sortOrder" name="sortOrder" class="form-control">
+            <% sortOrders.forEach(function (order) { %>
+                <option value="<%- order.value %>" <%- order.value === theTag.sortOrder ? 'selected="selected"':'' %>>
+                    <%- order.name %>
+                </option>
+            <% }) %>
+        </select>
+    </div>
 </div>
 
+<!--
 <div class="form-group">
-    <label class="control-label" for="description"><%= t('tags.labels.description') %></label>
-    <textarea id="description" name="description" class="input-xlarge span6 richtext" rows="5"><%- theTag.description %></textarea>
+    <label class="form-label" for="description"><%= t('tags.labels.description') %></label>
+    <div class="controls">
+        <textarea id="description" name="description" class="input-xlarge span6 richtext" rows="5"><%- theTag.description %></textarea>
+    </div>
 </div>
+-->
 
 <div class="form-group">
-    <label class="">
+    <label class="form-label">
         <input type="checkbox" class="" name="filterEnabled" id="filterEnabled" <%- theTag.filter ? 'checked="checked"':'' %> />
         <%= t('tags.labels.filter') %>
     </label>

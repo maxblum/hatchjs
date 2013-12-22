@@ -6,7 +6,9 @@ module.exports = PasswordController;
  * token for changing password without authentication, changing password usign
  * that token
  */
-function PasswordController() {}
+function PasswordController() {
+    
+}
 
 /**
  * Request OTP token (one-time-password) for changing password without

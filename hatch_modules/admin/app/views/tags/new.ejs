@@ -6,7 +6,7 @@
     <div class="col-md-12">
         <div class="grid simple">
             <div class="grid-body">
-                <%- formTagBegin({action: pathTo.createTag(sectionName), remote: true, method: 'POST', id: 'tag-form' }) %>
+                <%- formTagBegin({action: pathTo.createTag(sectionName), remote: true, method: 'POST', id: 'tag-form', class: 'form-slim' }) %>
                     <input type="hidden" name="id" value="<%- tag && tag.id %>" />
 
                     <% include _form %>

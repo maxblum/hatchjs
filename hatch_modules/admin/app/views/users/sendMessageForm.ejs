@@ -15,19 +15,23 @@
                     <% } %>
                 </p>
 
-                <hr>
-
-                <%- formTagBegin({ action: pathTo.sendMessage, remote: true, method: 'post', id: 'send-message-form' }) %>
+                <%- formTagBegin({ action: pathTo.sendMessage, remote: true, method: 'post', id: 'send-message-form', class: 'form-slim' }) %>
+                    <hr>
+                    
                     <input type="hidden" name="selectedUsers" value='<%- JSON.stringify(selectedUsers) %>' />
 
                     <div class="form-group">
-                        <label class="control-label" for="title"><%- t('users.labels.messageSubject') %></label>
-                        <input type="text" class="form-control" id="subject" name="subject" value="">
+                        <label class="form-label" for="title"><%- t('users.labels.messageSubject') %></label>
+                        <div class="controls">
+                            <input type="text" class="form-control" id="subject" name="subject" value="">
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label" for="description"><%- t('users.labels.messageBody') %></label>
-                        <textarea id="body" name="body" class="input-xlarge span6 richtext" rows="10"></textarea>
+                        <label class="form-label" for="description"><%- t('users.labels.messageBody') %></label>
+                        <div class="controls">
+                            <textarea id="body" name="body" class="input-xlarge span6 richtext" rows="10"></textarea>
+                        </div>
                     </div>
 
                     <div class="form-actions">

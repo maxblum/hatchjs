@@ -6,7 +6,7 @@
     <div class="col-md-12">
         <div class="grid simple">
             <div class="grid-body">
-                <%- formTagBegin({ action: pathTo.updateTag(sectionName, theTag.id), remote: true, method: 'PUT', id: 'tag-form' }) %>
+                <%- formTagBegin({ action: pathTo.updateTag(sectionName, theTag.id), remote: true, method: 'PUT', id: 'tag-form', class: 'form-slim' }) %>
                     <input type="hidden" name="type" value="<%- theTag.type %>" />
                     <% include _form %>
 

@@ -53,7 +53,13 @@ exports.formInput = function(params, value) {
     }
     html += view.labelTag(labelText, {class: 'control-label', for: params.name});
 
-    html += '';
+    if (params.description && params.description.trim() != '<p><br></p>') {
+        html += '<span class="help">';
+        html += params.description;
+        html += '</span>';
+    }
+
+    html += '<div class="controls">';
 
     // input
     switch (params.type) {
@@ -140,14 +146,8 @@ exports.formInput = function(params, value) {
         html += ' <i class="icon-lock" rel="tooltip" title="' + view.__('private field - will not be displayed on your profile') + '"></i>';
     }
 
-    if (params.description && params.description.trim() != '<p><br></p>') {
-        html += '<span class="help-block">';
-        html += params.description;
-        html += '</span>';
-    }
-
     // end
-    html += '</div>';
+    html += '</div></div>';
 
     return html;
 };

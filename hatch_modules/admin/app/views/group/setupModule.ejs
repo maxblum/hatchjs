@@ -12,15 +12,15 @@
                     </p>
                 <% } %>
 
-                <hr/>
-
                 <%- formTagBegin({
                     action: pathTo.updateModule(inst.module.name),
                     method: 'PUT',
                     remote: true,
                     id: 'settingsForm',
-                    class: 'form-vertical'
+                    class: 'form-vertical form-slim'
                 }) %>
+                    <hr>
+                    
                     <% Object.keys(inst.module.info.settings.fields).forEach(function(settingName) { 
                         var setting = inst.module.info.settings.fields[settingName]; 
                         setting.name = settingName;

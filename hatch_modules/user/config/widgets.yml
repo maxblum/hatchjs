@@ -12,14 +12,6 @@ userlist:
           - 'following:Following'
           - 'followers:Followers'
         default: 'members'
-      displayType:
-        type: select
-        title: 'Display as'
-        options:
-          - 'simple-list:Simple list'
-          - 'full-details:Full details'
-          - 'thumbnails:Thumbnails'
-        default: 'thumbnails'
       pageSize:
         type: select
         title: 'Users per page'
@@ -55,10 +47,6 @@ userlist:
         options:
           - 'show:Show'
           - 'hide:Hide'
-      alphabeticalIndex:
-        type: checkbox
-        title: 'A-Z index'
-        default: false
 
 account:
   title: User account

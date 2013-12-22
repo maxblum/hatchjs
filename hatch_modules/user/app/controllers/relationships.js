@@ -13,7 +13,7 @@ function RelationshipController(init) {
 }
 
 RelationshipController.prototype.follow = function(c) {
-    c.req.user.followUser(user.id, function() {
+    c.req.user.followUser(c.locals.user.id, function() {
         // TODO: move to model
         c.req.user.isFollowed = _.find(user && user.ifollow || [],
             function(id) { return id == c.req.user.id; });

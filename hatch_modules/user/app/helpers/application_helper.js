@@ -1,3 +1,4 @@
+var _ = require('underscore');
 
 exports.paging = function pagination(paging, url, params, pagingParams) {
     if(!params) params = {};
@@ -17,7 +18,7 @@ exports.paging = function pagination(paging, url, params, pagingParams) {
         }
     }
 
-    if(!paging.pages || paging.pages.length <= 1) return "";
+    if(!paging.pages || paging.pages.length <= 1) return '';
 
     //reduce the pages to the middle five
     var maxLength = 5;
@@ -30,12 +31,12 @@ exports.paging = function pagination(paging, url, params, pagingParams) {
         });
     }
 
-    var html = "";
+    var html = '';
 
     pagingParams = pagingParams || {};
     pagingParams.class = pagingParams.class + ' pagination';
 
-    html += c.tag('div', pagingParams)
+    html += c.tag('div', pagingParams);
     html += c.tag('ul');
 
     //Prev
@@ -59,11 +60,11 @@ exports.paging = function pagination(paging, url, params, pagingParams) {
     if(params.all) {
         html += c.tag('li');
         html += c.linkTemp(c.__('View all'), url + 1 + '&pageSize=99999', params);
-        html += c.end();        
+        html += c.end();
     }
 
     html += c.end();
     html += c.end();
 
     return html;
-}
+};

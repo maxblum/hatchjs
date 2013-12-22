@@ -6,10 +6,12 @@
     <div class="col-md-12">
         <div class="grid simple">
             <div class="grid-body">
-                <%- formTagBegin({ action: pathTo.groupSave, id: 'settingsForm', class: 'form-vertical', method: 'post', enctype: 'multipart/form-data', remote: true }) -%>
+                <%- formTagBegin({ action: pathTo.groupSave, id: 'settingsForm', class: 'form-vertical form-slim', method: 'post', enctype: 'multipart/form-data', remote: true }) -%>
                     <div class="form-group">
-                        <label class="control-label" for="url"><%- t('group.labels.url') %></label>
-                        <input type="text" class="form-control" id="url" name="url" />
+                        <label class="form-label" for="url"><%- t('group.labels.url') %></label>
+                        <div class="controls">
+                            <input type="text" class="form-control" id="url" name="url" />
+                        </div>
                     </div>
 
                     <div class="form-actions">

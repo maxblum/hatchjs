@@ -27,7 +27,7 @@
 
             <div class="form-group">
                 <%- form.label('createdAt', t('post.createdAt')) %>
-                <p class="instructions"><%= t('post.instructions.createdAt') %></p>
+                <p class="help"><%= t('post.instructions.createdAt') %></p>
                 <div class="input-append date col-md-4 no-padding" data-date="<%- post.createdAt && moment(post.createdAt).format(datetimeformat.split(' ')[0]) %>" data-date-format="<%- datetimeformat.split(' ')[0].toLowerCase() %>">
                     <input type="text" class="form-control" name="Content[createdAt[date]" value="<%- post.createdAt && moment(post.createdAt).format(datetimeformat.split(' ')[0]) %>">
                     <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span> 
@@ -44,7 +44,7 @@
 
             <div class="form-group">
                 <%- form.label('tags', t('post.tags')) %>
-                <p class="instructions"><%= t('post.instructions.tags') %></p>
+                <p class="help"><%= t('post.instructions.tags') %></p>
                 <select id="tags" name="Content[tags]" multiple="multiple" class="chzn-select-create form-control" data-placeholder="<%- t('post.actions.enterTags') %>">
                     <% tags.forEach(function (tag) { %>
                         <option value="<%- tag.id %>"<%- post.tags.find(tag.id, 'id') ? ' selected="selected"':'' %>><%- tag.title %></option>

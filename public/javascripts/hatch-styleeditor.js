@@ -105,20 +105,22 @@
 
             for (var x = 0; x < document.styleSheets.length; x++) {
                 var rules = document.styleSheets[x].cssRules;
-                for (var i = 0; i < rules.length; i++) {
-                    try {
-                        if ($(el).is(rules[i].selectorText)) {
-                            var rule = rules[i].selectorText;
-                            if(shouldIgnore(rule)) {
-                                ignored = true;
-                            };
+                if (rules) {
+                    for (var i = 0; i < rules.length; i++) {
+                        try {
+                            if ($(el).is(rules[i].selectorText)) {
+                                var rule = rules[i].selectorText;
+                                if(shouldIgnore(rule)) {
+                                    ignored = true;
+                                };
 
-                            if(appliedRules.indexOf(rule) == -1) {
-                                appliedRules.push(rule);
+                                if(appliedRules.indexOf(rule) == -1) {
+                                    appliedRules.push(rule);
+                                }
                             }
+                        } catch(exception) {
+                            continue;
                         }
-                    } catch(exception) {
-                        continue;
                     }
                 }
             }
@@ -307,11 +309,12 @@
             //disable the style editor whilst we set the style properties
             this.on = false;
             this.currentEl = el;
-            var advanced = $.cookie('styleEditorAdvanced') ? true : false;
+            var advanced = true; //$.cookie('styleEditorAdvanced') ? true : false;
 
             //get the selector by looking at the currently selected element
             if(typeof selector == "undefined") selector = describe(el, false);
             else advanced = true;
+            
             this.currentSelector = selector;
             this.currentSelectorName = describe(selector);
 

@@ -6,11 +6,13 @@
     <div class="col-md-12">
         <div class="grid simple">
             <div class="grid-body">
-                <%- formTagBegin({ action: pathTo.groupSave, id: 'settingsForm', class: 'form-vertical', method: 'post', enctype: 'multipart/form-data', remote: true }) -%>
+                <%- formTagBegin({ action: pathTo.groupSave, id: 'settingsForm', class: 'form-vertical form-slim', method: 'post', enctype: 'multipart/form-data', remote: true }) -%>
                     <div class="form-group">
-                        <label class="control-label" for="googleAnalyticsId"><%- t('group.labels.locale') %></label>
-                        <input type="text" class="form-control" id="locale" name="locale" value="<%- group.locale %>">
-                        <span class="help-block"><%- t('group.help.locale') %></span>
+                        <label class="form-label" for="googleAnalyticsId"><%- t('group.labels.locale') %></label>
+                        <span class="help"><%- t('group.help.locale') %></span>
+                        <div class="controls">
+                            <input type="text" class="form-control" id="locale" name="locale" value="<%- group.locale %>">
+                        </div>
                     </div>
 
                     <div class="form-actions">

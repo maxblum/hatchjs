@@ -1,3 +1,18 @@
+.form-slim hr
+{
+    max-width: 608px ! important;
+}
+
+.form-slim .form-group
+{
+    max-width: 608px;
+}
+
+.form-slim .redactor_box
+{
+    max-width: 608px ! important;
+}
+
 .chzn-container-multi .chzn-choices 
 {
     box-shadow: none;

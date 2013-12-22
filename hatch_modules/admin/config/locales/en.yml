@@ -45,7 +45,7 @@ en:
       inviteSubject: Invitation email subject
       inviteBody: Invitation email body text
       allMembers: all members
-      selectedMembers: '% selected members'
+      selectedMembers: 'selected members'
       messageSubject: Message subject
       messageBody: Message body text
       fullname: Full name

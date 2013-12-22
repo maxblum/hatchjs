@@ -12,7 +12,9 @@
         <div class="col-md-8">
             <div class="form-group">
                 <%- form.label('title', t('post.title'), {class: 'form-label'}) %>
-                <%- form.input('title', {class: 'form-control'}) %>
+                <div class="controls">
+                    <%- form.input('title', {class: 'form-control'}) %>
+                </div>
             </div>
 
             <%- form.textarea('text', {rows: 35, class: 'richtext span6'}) %>
@@ -29,14 +31,16 @@
 
             <div class="form-group">
                 <%- form.label('createdAt', t('post.createdAt')) %>
-                <p class="instructions"><%= t('post.instructions.createdAt') %></p>
-                <div class="input-append date col-md-4 no-padding" data-date="<%- post.createdAt && moment(post.createdAt).format(datetimeformat.split(' ')[0]) %>" data-date-format="<%- datetimeformat.split(' ')[0].toLowerCase() %>">
-                    <input type="text" class="form-control" name="Content[createdAt[date]" value="<%- post.createdAt && moment(post.createdAt).format(datetimeformat.split(' ')[0]) %>">
-                    <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span> 
-                </div>
-                <div class="input-append bootstrap-timepicker-component col-md-5 col-md-offset-2">
-                    <input type="text" class="timepicker-24" name="Content[createdAt[time]" value="<%- post.createdAt && moment(post.createdAt).format(datetimeformat.split(' ')[1]) %>">
-                    <span class="add-on"><span class="arrow"></span><i class="icon-time"></i></span> 
+                <p class="help"><%= t('post.instructions.createdAt') %></p>
+                <div class="controls">
+                    <div class="input-append date col-md-4 no-padding" data-date="<%- post.createdAt && moment(post.createdAt).format(datetimeformat.split(' ')[0]) %>" data-date-format="<%- datetimeformat.split(' ')[0].toLowerCase() %>">
+                        <input type="text" class="form-control" name="Content[createdAt[date]" value="<%- post.createdAt && moment(post.createdAt).format(datetimeformat.split(' ')[0]) %>">
+                        <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span> 
+                    </div>
+                    <div class="input-append bootstrap-timepicker-component col-md-5 col-md-offset-2">
+                        <input type="text" class="timepicker-24" name="Content[createdAt[time]" value="<%- post.createdAt && moment(post.createdAt).format(datetimeformat.split(' ')[1]) %>">
+                        <span class="add-on"><span class="arrow"></span><i class="icon-time"></i></span> 
+                    </div>
                 </div>
 
                 <div class="clearfix"></div>
@@ -46,27 +50,33 @@
 
             <div class="form-group">
                 <%- form.label('tags', t('post.tags')) %>
-                <p class="instructions"><%= t('post.instructions.tags') %></p>
-                <select id="tags" name="Content[tags]" multiple="multiple" class="chzn-select-create form-control" data-placeholder="<%- t('post.actions.enterTags') %>">
-                    <% tags.forEach(function (tag) { %>
-                        <option value="<%- tag.id %>"<%- post.tags.find(tag.id, 'id') ? ' selected="selected"':'' %>><%- tag.title %></option>
-                    <% }) %>
-                </select>
+                <p class="help"><%= t('post.instructions.tags') %></p>
+                <div class="controls">
+                    <select id="tags" name="Content[tags]" multiple="multiple" class="chzn-select-create form-control" data-placeholder="<%- t('post.actions.enterTags') %>">
+                        <% tags.forEach(function (tag) { %>
+                            <option value="<%- tag.id %>"<%- post.tags.find(tag.id, 'id') ? ' selected="selected"':'' %>><%- tag.title %></option>
+                        <% }) %>
+                    </select>
+                </div>
             </div>
 
             <div class="form-group">
                 <%- form.label('excerpt', t('post.excerpt')) %>
-                <p class="instructions"><%= t('post.instructions.excerpt') %></p>
-                <%- form.textarea('excerpt', {rows: 3, class: 'form-control'}) %>
+                <p class="help"><%= t('post.instructions.excerpt') %></p>
+                <div class="controls">
+                    <%- form.textarea('excerpt', {rows: 3, class: 'form-control'}) %>
+                </div>
             </div>
 
             <div class="form-group">
                 <%- form.label('previewImage', t('post.previewImage')) %>
-                <p class="instructions"><%= t('post.instructions.previewImage') %></p>
-                <%- linkTo(icon('picture') + t('post.actions.previewImage'), '#', {id: 'previewImageUploadButton', class: 'btn btn-primary'}) %>
-                &nbsp;
-                <%- linkTo(icon('remove'), '#', {id: 'removePreviewImage', style: 'display: none;'}) %>
-                <%- form.input('previewImage', {type: 'hidden'}) %>
+                <p class="help"><%= t('post.instructions.previewImage') %></p>
+                <div class="controls">
+                    <%- linkTo(icon('picture') + t('post.actions.previewImage'), '#', {id: 'previewImageUploadButton', class: 'btn btn-primary'}) %>
+                    &nbsp;
+                    <%- linkTo(icon('remove'), '#', {id: 'removePreviewImage', style: 'display: none;'}) %>
+                    <%- form.input('previewImage', {type: 'hidden'}) %>
+                </div>
             </div>
 
             <%- imageTag(post.previewImage, {

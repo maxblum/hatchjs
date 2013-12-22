@@ -6,47 +6,55 @@
     <div class="col-md-12">
         <div class="grid simple">
             <div class="grid-body">
-                <%- formTagBegin({ action: pathTo.groupSave, id: 'settingsForm', class: 'form-vertical', method: 'post', enctype: 'multipart/form-data', remote: true }) -%>
+                <%- formTagBegin({ action: pathTo.groupSave, id: 'settingsForm', class: 'form-vertical form-slim', method: 'post', enctype: 'multipart/form-data', remote: true }) -%>
                     <div class="form-group">
-                        <label class="control-label" for="name"><%- t('group.labels.title') %></label>
-                        <input type="text" class="form-control" id="name" name="name" value="<%- group.name %>">
+                        <label class="form-label" for="name"><%- t('group.labels.title') %></label>
+                        <div class="controls">
+                            <input type="text" class="form-control" id="name" name="name" value="<%- group.name %>">
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label" for="joinPermissions">
+                        <label class="form-label" for="joinPermissions">
                             <%- t('group.labels.joinPermissions') %>
                         </label>
-                        <select id="joinPermissions" name="joinPermissions" class="form-control">
-                            <option value="free" <%- group.joinPermissions == "free" ? 'selected="selected"':'' %>><%- t('group.labels.freeToJoin') %></option>
-                            <option value="request" <%- group.joinPermissions == "request" ? 'selected="selected"':'' %>><%- t('group.labels.requestToJoin') %></option>
-                            <option value="closed" <%- group.joinPermissions == "closed" ? 'selected="selected"':'' %>><%- t('group.labels.inviteOnly') %></option>
-                        </select>
+                        <div class="controls">
+                            <select id="joinPermissions" name="joinPermissions" class="form-control">
+                                <option value="free" <%- group.joinPermissions == "free" ? 'selected="selected"':'' %>><%- t('group.labels.freeToJoin') %></option>
+                                <option value="request" <%- group.joinPermissions == "request" ? 'selected="selected"':'' %>><%- t('group.labels.requestToJoin') %></option>
+                                <option value="closed" <%- group.joinPermissions == "closed" ? 'selected="selected"':'' %>><%- t('group.labels.inviteOnly') %></option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-group">
                         <input type="hidden" id="favicon" name="favicon" value="<%- group.favicon %>" />
-                        <label class="control-label" for="favicon"><%- t('group.labels.favicon') %></label>
-                        <a class="btn btn-info" href="#" id="faviconButton"><i class="icon-picture"></i> <%- t('group.actions.uploadFavicon') %></a>
+                        <label class="form-label" for="favicon"><%- t('group.labels.favicon') %></label>
+                        <div class="controls">
+                            <a class="btn btn-info" href="#" id="faviconButton"><i class="icon-picture"></i> <%- t('group.actions.uploadFavicon') %></a>
 
-                        <% if(group.favicon) { %>
-                            <img src="<%- group.favicon %>" id="faviconPreview" width="16" height="16" />
-                        <% } %>
-
-                        <br/>
+                            <% if(group.favicon) { %>
+                                <img src="<%- group.favicon %>" id="faviconPreview" width="16" height="16" />
+                            <% } %>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label" for="metaDescription">
+                        <label class="form-label" for="metaDescription">
                             <%- t(['group.labels.metaDescription', '&lt;metatags&gt;']) %>
                         </label>
-                        <textarea class="form-control" id="metaDescription" name="metaDescription"><%- group.metaDescription %></textarea>
+                        <div class="controls">
+                            <textarea class="form-control" id="metaDescription" name="metaDescription"><%- group.metaDescription %></textarea>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label" for="metaKeywords">
+                        <label class="form-label" for="metaKeywords">
                             <%- t(['group.labels.metaKeywords', '&lt;metatags&gt;']) %>
                         </label>
-                        <input type="text" class="form-control" id="metaKeywords" name="metaKeywords" value="<%- group.metaKeywords %>">
+                        <div class="controls">
+                            <input type="text" class="form-control" id="metaKeywords" name="metaKeywords" value="<%- group.metaKeywords %>">
+                        </div>
                     </div>
 
                     <div class="form-actions">
