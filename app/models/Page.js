@@ -501,6 +501,49 @@ module.exports = function (compound, Page) {
     };
 
     /**
+     * Build a page hierarchy structure.
+     * 
+     * @param  {Page[]} pages - initial page collection
+     * @return {Page[]}
+     */
+    Page.hierarchy = function (pages) {
+        pages.forEach(function (page) {
+            if (page.level === 0) {
+                return;
+            }
+
+            page.pages = pages.filter(function (p) {
+                return p.parentId == page.id;
+            });
+        });
+
+        return pages.filter(function (page) {
+            return page.level === 0 || page.level === 1;
+        });
+    };
+
+    /**
+     * Build the breadcrumb trail for the specified page.
+     * 
+     * @param  {Page[]} pages - initial page collection
+     * @param  {Page}   page  - page that we are on
+     * @return {Page[]}       
+     */
+    Page.breadcrumb = function (pages, page) {
+        var breadcrumb = [page];
+
+        pages = pages.reverse();
+        pages.forEach(function (p) {
+            if (p.id == page.parentId) {
+                breadcrumb.push(p);
+                page = p;
+            }
+        });
+
+        return breadcrumb.reverse();
+    };
+
+    /**
      * builds the page hierarchy tree for navigation display
      * 
      * @param  {[list]} collection [list of pages]

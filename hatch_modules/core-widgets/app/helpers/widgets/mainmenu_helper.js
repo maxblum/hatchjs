@@ -1,7 +1,7 @@
 var _ = require('underscore');
 
 /**
- * Breadcrumb generates the breadcrumb for the specified page, relys on 
+ * Breadcrumb generates the breadcrumb for the specified page, relies on 
  * req.group.pagesCache
  *
  * @param {Page} current page

@@ -1,25 +1,37 @@
+<% function item(p) { %>
+    <li class="<%- p.id == page.id ? 'active' : '' %>">
+        <a href="<%- '//' + p.url %>" class="page-level-<%- p.level %>">
+            <%- p.title %>
+        </a>
+
+        <% if (p.pages && p.pages.length > 0) { %>
+            <% if (p.level <= 1) { %>
+                </li><li class="dropdown <%- p.id == page.id ? 'active' : '' %>">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <span class="caret"></span>
+                    <ul class="dropdown-menu pull-right">
+                        <% p.pages.forEach(item) %>
+                    </ul>
+                </a>
+            <% } else { %>
+                <% p.pages.forEach(item) %>
+            <% } %>
+        <% } %>
+    </li>
+<% } %>
 
 <!-- primary navigation -->
 <nav class="navbar navbar-inverse">
-    <% var breadcrumbPages = breadcrumb(page); %>
-
     <ul class="nav navbar-nav">
         <!-- level 0 and 1 pages are displayed here -->
-        <% group.pagesCache.forEach(function (p) { %>
-            <% if (/true/.test(p.hideFromNavigation)) return; %>
-                <% if ((p.type === 'page' || !p.type) && (p.level === 0 || p.level === 1)) { %>
-                <li class="<%- p.id == page.id ? 'active' : '' %>">
-                    <%- linkTo(p.title, '//' + p.url) %>
-                </li>
-            <% } %>
-        <% }); %>
+        <% pages.forEach(item) %>
     </ul>
 </nav>
 
 <!-- show breadcrumb if we have pages with level > 2 -->
-<% if (breadcrumbPages.length > 1) { %>
+<% if (breadcrumb.length > 2) { %>
     <ol class="breadcrumb">
-        <% breadcrumbPages.forEach(function (p, i) { %>
+        <% breadcrumb.forEach(function (p, i) { %>
             <% if(/true/.test(p.hideFromNavigation)) return; %>
             <li<%- p.selected ? ' class="active"':''%>>
                 <%- linkTo(p.title, '//' + p.url) %>

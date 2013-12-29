@@ -22,7 +22,7 @@ var webrequest = require('request');
 var async = require('async');
 var fs = require("fs");
 var less = require("less");
-var find = require('find-file-sync');
+var finder = require('file-finder');
 var _ = require('underscore');
 var path = require('path');
 
@@ -87,68 +87,74 @@ module.exports = function (compound, Stylesheet) {
             var moduleCss = '';
 
             // get the module and widget stylesheets
-            Object.keys(compound.hatch.modules).forEach(function(key) {
+            async.forEach(Object.keys(compound.hatch.modules), function(key, done) {
                 var module = compound.hatch.modules[key];
-                
+
+                if (!module.path) {
+                    return done();
+                }
+
                 //search for stylesheets
-                var results = find(module.path, '*.less');
+                finder.findFiles(module.path, '.less', function (err, results) {
+                    (results || []).forEach(function(modulePath) {
+                        var css = fs.readFileSync(modulePath, 'utf-8');
+                        moduleCss += css + '\n';
+                    });
 
-                (results || []).forEach(function(modulePath) {
-                    var css = fs.readFileSync(modulePath);
-                    moduleCss += css + '\n';
+                    done();
                 });
-            });
+            }, function (err) {
+                //replace the variables, bootswatch and the module Css
+                str = str.replace("@import \"theme-template-variables.less\";", self.less.variables);
+                str = str.replace("@import \"theme-template-bootswatch.less\";", self.less.bootswatch);
+                str = str.replace("@import \"theme-template-modules.less\";", moduleCss);
 
-            //replace the variables, bootswatch and the module Css
-            str = str.replace("@import \"theme-template-variables.less\";", self.less.variables);
-            str = str.replace("@import \"theme-template-bootswatch.less\";", self.less.bootswatch);
-            str = str.replace("@import \"theme-template-modules.less\";", moduleCss);
+                //add the custom less onto the end
+                str += '\n' + self.less.custom;
 
-            //add the custom less onto the end
-            str += '\n' + self.less.custom;
+                new(less.Parser)({
+                    paths: [path.dirname(templatePath)],
+                    optimization: 0
+                }).parse(str, function (err, tree) {
+                    if (err) {
+                        callback(err);
+                    } else {
+                        try {
+                            css = tree.toCSS({
+                                compress: false
+                            });
 
-            new(less.Parser)({
-                paths: [path.dirname(templatePath)],
-                optimization: 0
-            }).parse(str, function (err, tree) {
-                if (err) {
-                    callback(err);
-                } else {
-                    try {
-                        css = tree.toCSS({
-                            compress: false
-                        });
+                            //css should be a string
+                            if(typeof css == "object") css = css[0];
 
-                        //css should be a string
-                        if(typeof css == "object") css = css[0];
+                            //store in the stylesheet
+                            self.css = css;
+                            self.version ++;
+                            self.lastUpdate = new Date();
 
-                        //store in the stylesheet
-                        self.css = css;
-                        self.version ++;
-                        self.lastUpdate = new Date();
+                            if(self.groupId) {
+                                Group.find(self.groupId, function (err, group) {
+                                    var path = compound.app.get('upload path') + '/' + group.cssVersion + '.css';
 
-                        if(self.groupId) {
-                            Group.find(self.groupId, function (err, group) {
-                                var path = compound.app.get('upload path') + '/' + group.cssVersion + '.css';
-
-                                //save the file
-                                fs.writeFile(path, css, function (err) {
-                                    group.cssUrl = '/upload/' + group.cssVersion + '.css';
-                                    group.save(function (err) {
-                                        if (callback) {
-                                            callback(null, group.cssUrl);
-                                        }
+                                    //save the file
+                                    fs.writeFile(path, css, function (err) {
+                                        group.cssUrl = '/upload/' + group.cssVersion + '.css';
+                                        group.save(function (err) {
+                                            if (callback) {
+                                                callback(null, group.cssUrl);
+                                            }
+                                        });
                                     });
                                 });
-                            });
-                        } else {
-                            //success - callback!
-                            callback(null);
+                            } else {
+                                //success - callback!
+                                callback(null);
+                            }
+                        } catch (err) {
+                            callback(err);
                         }
-                    } catch (err) {
-                        callback(err);
                     }
-                }
+                });
             });
         });
     };
@@ -255,8 +261,6 @@ module.exports = function (compound, Stylesheet) {
             self.less.variables = variables;
             self.less.bootswatch = bootswatch;
             self.less.custom = '/* put your custom css here */';
-
-            console.log('Theme set to ' + name);
 
             // compile the stylesheet to a file
             self.saveAndCompile(callback);

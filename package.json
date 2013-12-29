@@ -51,7 +51,7 @@
     "raven": "~0.5.4",
     "co-docs": "~0.0.1-2",
     "bower": "latest",
-    "find-file-sync": "latest"
+    "file-finder": "https://github.com/ZECTBynmo/file-finder/tarball/master"
   },
   "devDependencies": {
     "mocha": "1.8.1",
