@@ -16,7 +16,9 @@
             var el = $(this);
             var title = el.text();
 
-            if($("input", el).length > 0) return;
+            if($('input', el).length > 0) {
+                return;
+            }
 
             // replace with an input
             var input = $('<input type="text" value="' + title + '" />');
@@ -25,7 +27,7 @@
             input.selectRange(input.val().length, input.val().length);
 
             // save on enter
-            input.bind("keypress", function(e) {
+            input.bind('keypress', function(e) {
                 if(e.which == 13) {
                     var title = input.val();
 
@@ -74,12 +76,12 @@
             destroyEditor = function() { };
              
             //attach the button events
-            $cancelButton.bind("click", function() {
+            $cancelButton.bind('click', function() {
                 //show notification
-                $.noty({text: "<i class='icon-info-sign'></i> Widget contents have been reverted", type: "alert"});
+                $.noty({text: '<i class="icon-info-sign"></i> Widget contents have been reverted', type: 'alert'});
 
                 //hide resize selectors
-                $(".resize-selector, .resize-region").remove();
+                $('.resize-selector, .resize-region').remove();
 
                 $el.html(html); 
                 $el.removeData("active");
@@ -87,15 +89,15 @@
                 $el.hide().fadeIn();
             });
 
-            $saveButton.bind("click", function() {
+            $saveButton.bind('click', function() {
                 // hide resize selectors
-                $(".resize-selector, .resize-region").remove();
+                $('.resize-selector, .resize-region').remove();
 
                 // set the new html
                 destroyEditor();
                 $el.data('html', textarea.val());
                 $el.html(textarea.val());
-                $el.removeData("active");
+                $el.removeData('active');
 
                 // trigger save to database
                 $el.trigger('contents-updated');
@@ -122,7 +124,7 @@
 
                 var editor = ace.edit(div[0].id);
                 editor.setValue(textarea.val());
-                editor.getSession().setMode("ace/mode/html");
+                editor.getSession().setMode('ace/mode/html');
                 editor.clearSelection();
             }
 
@@ -134,7 +136,7 @@
             if($el.hasClass('html')) {
                 if(typeof ace == 'undefined') {
                     $.getScript('/javascripts/ace/ace.js', function() {
-                        ace.config.set('basePath', "/javascripts/ace/");
+                        ace.config.set('basePath', '/javascripts/ace/');
                         setupEditor();
                     });
                 }
@@ -158,8 +160,8 @@
             return false;
         }
 
-        $(".widget:not(.not-editable-widget) .inline-edit").on("dblclick", inlineEdit);
-        $(".inline-edit-link").on("click", function() {
+        $('body').on('dblclick', '.widget:not(.not-editable-widget) .inline-edit', inlineEdit);
+        $('body').on('click', '.inline-edit-link', function() {
             var widget = $(this).parents(".widget");
             var content = $(".inline-edit", widget);
 
@@ -168,7 +170,7 @@
             return false;
         });
 
-        $(".widget:not(.not-editable-widget) .content > h2").on("dblclick", titleEdit);
+        $('body').on('dblclick', '.widget:not(.not-editable-widget) .content > h2', titleEdit);
     }
 
     // EXPORTS

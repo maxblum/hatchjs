@@ -19,6 +19,7 @@
 'use strict';
 
 var _ = require('underscore');
+var async = require('async');
 
 // Load the required data and populate the locals
 function populateLocals(c) {
@@ -120,33 +121,47 @@ Application.installTabGroup = function (sectionName, fn) {
  * 
  * @param  {HttpContext} c - context
  */
-Application.setupTabs = function (c) {
+Application.setupTabs = function (c, next) {
     if (Application.tabGroups[c.locals.sectionName]) {
         // TODO: test to see if function container module is enabled for this group
-        Application.tabGroups[c.locals.sectionName].forEach(function (fn) {
-            var subTabs = fn(c);
-            subTabs.forEach(function (tab) {
-                c.locals.subTabs.push(tab);
+        async.forEach(Application.tabGroups[c.locals.sectionName], function (fn, next) {
+            var subTabs = fn(c, done);
+            if (subTabs) {
+                done(null, subTabs);
+            }
+
+            function done(err, tabs) {
+                tabs.forEach(function (tab) {
+                    c.locals.subTabs.push(tab);
+                });
+
+                next();
+            }
+        }, setActiveTab);
+    }
+
+    function setActiveTab() {
+        if (c.locals.subTabs) {
+            // set the active subtab
+            c.locals.subTabs.map(function (tab) {
+                if (c.req.originalUrl.split('?')[0] == (c.pathTo[tab.url] || tab.url)) {
+                    tab.active = true;
+                }
             });
-        });
-    }
+        }
 
-    if (c.locals.subTabs) {
-        // set the active subtab
-        c.locals.subTabs.map(function (tab) {
-            if (c.req.originalUrl.split('?')[0] == (c.pathTo[tab.url] || tab.url)) {
-                tab.active = true;
-            }
-        });
-    }
+        if (c.locals.filterTabs) {
+            // set the active subtab
+            c.locals.filterTabs.map(function (tab) {
+                if (c.req.originalUrl.split('?')[0] == (c.pathTo[tab.url] || tab.url)) {
+                    tab.active = true;
+                }
+            });
+        }
 
-    if (c.locals.filterTabs) {
-        // set the active subtab
-        c.locals.filterTabs.map(function (tab) {
-            if (c.req.originalUrl.split('?')[0] == (c.pathTo[tab.url] || tab.url)) {
-                tab.active = true;
-            }
-        });
+        if (next) {
+            next();
+        }
     }
 };
 
