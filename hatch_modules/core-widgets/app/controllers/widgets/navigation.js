@@ -9,6 +9,10 @@ function MainMenuController(init) {
 module.exports = MainMenuController;
 require('util').inherits(MainMenuController, Widget);
 
+function isSpecialPage(page) {
+    return [null, '', 'page', 'home'].indexOf(page.type) === -1;
+}
+
 function setupPages (c) {
     var pages;
     var current = c.req.page;
@@ -35,24 +39,25 @@ function setupPages (c) {
             break;
     }
 
+    var lowest = 10;
+
     // filter out special pages
     pages = pages.filter(function(page) {
-        return page && [null, '', 'page', 'home'].indexOf(page.type) > -1;
+        if (page.level < lowest) {
+            lowest = page.level;
+        }
+        return !isSpecialPage(page);
     });
-
+   
     // reduce the level by that of the lowest level page
-    var lowest = _.sortBy(pages, function(page) {
-        return -page.level;
-    }).pop();
-
-    if (lowest) {
+    if (lowest > 0) {
         pages = pages.map(function(page) {
             page = _.clone(page);
             page.level -= lowest.level;
             return page;
         });
     }
-
+    
     c.locals.pages = pages;
     c.next();
 }

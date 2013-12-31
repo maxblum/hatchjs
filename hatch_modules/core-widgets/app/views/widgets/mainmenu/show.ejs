@@ -1,18 +1,16 @@
 <% function item(p) { %>
-    <li class="<%- p.id == page.id ? 'active' : '' %>">
+    <li class="<%- p.id == page.id ? 'active' : '' %> <%- p.level <= 1 && p.pages && p.pages.length > 0 ? 'dropdown dropdown-nav':'' %>">
         <a href="<%- '//' + p.url %>" class="page-level-<%- p.level %>">
             <%- p.title %>
         </a>
-
         <% if (p.pages && p.pages.length > 0) { %>
             <% if (p.level <= 1) { %>
-                </li><li class="dropdown <%- p.id == page.id ? 'active' : '' %>">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     <span class="caret"></span>
-                    <ul class="dropdown-menu pull-right">
-                        <% p.pages.forEach(item) %>
-                    </ul>
                 </a>
+                <ul class="dropdown-menu pull-right">
+                    <% p.pages.forEach(item) %>
+                </ul>
             <% } else { %>
                 <% p.pages.forEach(item) %>
             <% } %>

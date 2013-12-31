@@ -213,8 +213,16 @@ module.exports = function (compound, Stylesheet) {
                 return callback(new Error('Theme "' + name + '" not defined!'));
             }
 
-            var variables = "";
-            var bootswatch = "";
+            if (theme.variables.indexOf('/') === 0) {
+                theme.variables = 'http://localhost:3000' + theme.variables;
+            }
+
+            if (theme.bootswatch.indexOf('/') === 0) {
+                theme.bootswatch = 'http://localhost:3000' + theme.bootswatch;
+            }
+
+            var variables = '';
+            var bootswatch = '';
 
             //load the theme data and then process the less
             async.parallel([
