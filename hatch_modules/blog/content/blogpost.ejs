@@ -1,5 +1,3 @@
-<% if(typeof displayComments === 'undefined') displayComments = false; %>
-<% if(typeof permalink === 'undefined' && typeof render === 'undefined') { %>
 <div class="content-item clearfix" data-id="<%- post.id %>">
     <div class="post-header">
         <h3>
@@ -56,68 +54,5 @@
 
     <div class="clearfix"></div>
 
-    <%- partial('tags') %>
-
     <div class="content-footer"></div>
 </div>
-<% } else { %>
-<%- remotePanelFor(post, {
-    class: 'content-item clearfix permalink',
-    id: content.id
-    }) %>
-    <div class="post-header">
-        <h2>
-            <%- post.title %>
-        </h2>
-        <div class="content-metadata">
-            <div class="links clearfix">
-                <span class="link">
-                    By <a href="<%- specialPagePath('profile', { username: post.author.username }) %>" rel="hovercard" data-url="<%- pathFor('user').hovercard(post.author.id) %>"><%- post.author.displayName %></a>
-                </span>
-
-                <span class="link">
-                    <a href="#comments" class="link">
-                        <% if((post.comments || []).length === 0) { %>
-                            <%- __('No comments') %>
-                        <% } else if(post.comments.length === 1) { %>
-                            <%- __('1 comment') %>
-                        <% } else { %>
-                            <%- __('%s comments', post.comments.length) %>
-                        <% } %>
-                    </a>
-                </span>
-
-                <span class="link dropdown hidden-phone">
-                    <a href="#share" class="" data-toggle="dropdown"><%- __('Share') %></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="<%- pathFor('content').share(post.id, 'facebook') %>" rel="popup"><i class="icon-facebook-sign"></i> <%- __('Share on Facebook') %></a></li>
-                        <li><a href="<%- pathFor('content').share(post.id, 'twitter') %>" rel="popup"><i class="icon-twitter-sign"></i> <%- __('Share on Twitter') %></a></li>
-                        <li><a href="<%- pathFor('content').share(post.id, 'linkedin') %>" rel="popup"><i class="icon-linkedin-sign"></i> <%- __('Share on LinkedIn') %></a></li>
-                    </ul>
-                </span>
-
-                <span><%- post.timeSince() %></span>
-
-                <% if(post.location) { %>
-                <span><%- post.location %></span>
-                <% } %>
-            </div>
-        </div>
-    </div>
-
-    <div class="post-text">
-        <%- post.text %>
-    </div>
-
-    <div class="clearfix"></div>
-
-    <%- partial('tags') %>
-
-    <div class="content-footer"></div>
-
-    <div class="content-metadata bottom">
-        <%- partial('links-and-likes') %>
-        <%- partial('discuss') %>
-    </div>
-<%- end() %>
-<% } %>

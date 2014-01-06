@@ -261,7 +261,7 @@
             tolerance: 'pointer',
             handle: '.move, h2',
             placeholder: 'widget-placeholder',
-            revert: true,
+            //revert: true,
             stop: function (event, ui) {
                 // if this is the new widget drag, ignore
                 if(ui.item.is('span')) {

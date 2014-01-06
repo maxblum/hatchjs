@@ -1,0 +1,7 @@
+<% if (widget.settings.title) { %>
+    <h2><%- widget.settings.title %></h2>
+<% } %>
+
+<% posts.forEach(function (post) { %>
+	<%- renderContent(post) %>
+<% }) %>

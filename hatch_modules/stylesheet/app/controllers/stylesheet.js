@@ -16,7 +16,6 @@
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
 
-var fs = require('fs');
 var zlib = require('zlib');
 var express = require('express');
 var fontStatic = express.static(__dirname + '/../../../../bower_components/font-awesome', { maxAge: 31557600000 });
@@ -35,7 +34,6 @@ function StylesheetController() {
  * @param  {context} c - http context
  */
 StylesheetController.prototype.css = function (c) {
-    var cssVersion = c.req.params.version;
     var css = null;
     
     // get the stylesheet object
@@ -52,17 +50,17 @@ StylesheetController.prototype.css = function (c) {
             });
         } else {
             if (stylesheet.less && (stylesheet.lastUpdate < c.Stylesheet.lastUpdate || typeof stylesheet.lastUpdate === 'undefined')) {
-                console.log("Stylesheet: out of date stylesheet - recompiling");
+                console.log('Stylesheet: out of date stylesheet - recompiling');
 
                 stylesheet.compile(function () {
                     stylesheet.save(function () {
-                        output(stylesheet.css);    
+                        output(stylesheet.css);
                     });
                 });
             } else {
                 css = stylesheet.css;
                 output(css);
-            }            
+            }
         }
 
         // sends the css output to the browser
@@ -88,17 +86,16 @@ StylesheetController.prototype.css = function (c) {
  * @param  {context} c - http context
  */
 StylesheetController.prototype.theme = function (c) {
-    var cssVersion = c.req.params.version;
-    var css = null;
+    var stylesheet;
 
     c.Stylesheet.all({ where: { name: c.req.params.name }}, function(err, stylesheets) {
         if(stylesheets.length === 0) {
-            var stylesheet = new c.Stylesheet();
+            stylesheet = new c.Stylesheet();
             stylesheet.name = c.req.params.name;
             stylesheet.version = 0;
 
             stylesheet.setTheme(c.req.params.name, function(err, stylesheet) {
-                if (err) { 
+                if (err) {
                     return c.sendError({
                         error: err
                     });
@@ -107,12 +104,12 @@ StylesheetController.prototype.theme = function (c) {
             });
         }
         else {
-            var stylesheet = stylesheets[0];
+            stylesheet = stylesheets[0];
             
             if(stylesheet.less && (stylesheet.lastUpdate < c.Stylesheet.lastUpdate || typeof stylesheet.lastUpdate == 'undefined')) {
-                console.log("Stylesheet: out of date stylesheet - recompiling");
+                console.log('Stylesheet: out of date stylesheet - recompiling');
                 stylesheet.setTheme(stylesheet.name, function () {
-                    output(stylesheet.css);    
+                    output(stylesheet.css);
                 });
             }
             else {
@@ -147,7 +144,7 @@ StylesheetController.prototype.theme = function (c) {
  * @param  {context} c - http context
  */
 StylesheetController.prototype.font = function (c) {
-    fontStatic(c.req, c.res, function (err) {
+    fontStatic(c.req, c.res, function () {
         c.send('404. Error loading: ' + c.req.url);
     });
 };

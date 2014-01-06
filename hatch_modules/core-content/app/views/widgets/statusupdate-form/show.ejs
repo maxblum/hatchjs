@@ -1,0 +1,16 @@
+<% if (widget.settings.title) { %>
+    <h2><%- widget.settings.title %></h2>
+<% } %>
+
+<form role="form" data-remote="true" action="<%- widgetCoreAction('post') %>" method="POST">
+	<div class="form-group">
+		<textarea class="form-control input-lg" rows="3" placeholder="<%- widget.settings.prompt %>" name="text"></textarea>
+	</div>
+	<div class="form-group">
+		<button class="btn btn-primary" type="submit">Submit</button>
+	</div>
+</form>
+
+<script type="text/javascript">
+	<% include js/handler.js %>
+</script>

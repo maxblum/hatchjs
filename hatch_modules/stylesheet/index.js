@@ -20,13 +20,9 @@
 
 var compound = require('compound');
 var fs = require('fs');
-var path = require('path');
 var fsTools = require('fs-tools');
 
 module.exports = function (c) {
-    // register the default themes
-    var themes = [];
-
     // register the default bootstrap theme
     c.hatch.themes.registerTheme({
         title: 'Bootstrap',
@@ -34,25 +30,6 @@ module.exports = function (c) {
         thumbnail: '/images/bootstrap-thumbnail.png',
         variables: '/bootstrap/less/variables.less',
         bootswatch: '/less/bootswatch-blank.less'
-    });
-
-    var bootswatchDir = path.join(__dirname, '../../bower_components/bootswatch');
-    var themeDirs = fs.readdirSync(bootswatchDir);
-
-    themeDirs.forEach(function (dir) {
-        var themeDir = path.join(bootswatchDir, dir);
-        
-        if (fs.existsSync(themeDir + '/bootswatch.less') && fs.existsSync(themeDir + '/variables.less')) {
-            themes.push(dir);
-        }
-    });
-
-    themes.forEach(function (name) {
-        // ignore custom - it is not a valid bootswatch theme
-        if (name === 'custom') {
-            return;
-        }
-        c.hatch.themes.registerTheme({ title: name.substring(0, 1).toUpperCase() + name.substring(1), name: name.toLowerCase() });
     });
 
     // set the default - for new groups with no theme defined

@@ -45,20 +45,9 @@ exports.buildForm = function buildForm(form, data) {
         */
         tags: function(name) {
             var val = data.hasOwnProperty(name) ? data[name] : [];
-            var html = '<select id="tags" name="tags[]" multiple="multiple" class="chzn-select-create" data-placeholder="' + c.__('Enter tags...') + '">';
+            var html = '<select id="tags" name="tags[]" multiple="multiple" class="chzn-select-create col-md-12" data-placeholder="' + c.__('Enter tags...') + '">';
 
             (c.req.group.tags || []).forEach(function(tag) {
-                html += '<option' + (val.indexOf(tag.name) > -1 ? ' selected="selected"':'') + '>' + tag.name + '</option>';
-            });
-
-            html += '</select>';
-            return html;
-        },
-        productTags: function(name) {
-            var val = data.hasOwnProperty(name) ? data[name] : [];
-            var html = '<select id="tags" name="tags[]" multiple="multiple" class="chzn-select-create" data-placeholder="' + c.__('Enter tags...') + '">';
-
-            (c.req.group.productTags || []).forEach(function(tag) {
                 html += '<option' + (val.indexOf(tag.name) > -1 ? ' selected="selected"':'') + '>' + tag.name + '</option>';
             });
 

@@ -18,7 +18,7 @@ test-all: test
 
 GITBRANCH = $(shell git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
 
-REPO = marcusgreenwood/hatchjs
+REPO = inventures/hatchjs
 FROM = $(GITBRANCH)
 TO = $(GITBRANCH)
 
@@ -67,7 +67,7 @@ safe-update: gst-clean
 	endif
 
 pr: push
-	open "https://github.com/$(REPO)/pull/new/marcusgreenwood:master...$(GITBRANCH)"
+	open "https://github.com/$(REPO)/pull/new/inventures:master...$(GITBRANCH)"
 
 # MAN DOCS
 

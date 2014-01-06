@@ -43,12 +43,24 @@ exports.buildForm = function buildForm(form, data) {
         },
         tags: function(name, params) {
             var val = data.hasOwnProperty(name) ? data[name] : [];
-            var html = '<select id="tags" name="tags[]" multiple="multiple" class="chzn-select-create" data-placeholder="' + c.__('Enter tags...') + '">';
+            var html = '<select id="tags" name="tags[]" multiple="multiple" class="chzn-select-create col-md-12 form-control" data-placeholder="' + c.__('Enter tags...') + '">';
 
             (c.req.group.tags || []).forEach(function(tag) {
                 if (!params.tagType || params.tagType === tag.type) {
                     html += '<option value="' + tag.id + '" ' + (val.indexOf(tag.id) > -1 ? ' selected="selected"':'') + '>' + tag.title + '</option>';
                 }
+            });
+
+            html += '</select>';
+            return html;
+        },
+        contentType: function (name, params) {
+            var val = data.hasOwnProperty(name) ? data[name] : '';
+            var html = '<select name="' + name + '" id="' + name + '" class="form-control">';
+            html += '<option value="">All content types</option>';
+
+            c.compound.hatch.contentType.getAll().forEach(function (type) {
+                html += '<option value="' + type.name + '" ' + (val === type.name ? 'selected':'') + '>' + type.name + '</option>';
             });
 
             html += '</select>';

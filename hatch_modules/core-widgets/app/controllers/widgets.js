@@ -60,7 +60,7 @@ function findPageAndWidget(c) {
 WidgetController.prototype.__missingAction = function __missingAction(c) {
     //this.page.widgetAction(this.widget.id, c.requestedActionName, c.req.body, c.req, function (err, res) {
     try {
-        this.page.renderWidgetAction(c.req, this.widget, c.requestedActionName, c.req.body, function (err, res) {
+        this.page.renderWidgetAction(c.req, this.widget, c.requestedActionName.replace('.json', ''), c.req.body, function (err, res) {
             if (typeof res === 'string') {
                 c.send(res);
             } else if (res) {

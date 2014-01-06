@@ -7,7 +7,7 @@
         <p><%- __('No users to display') %></p>
     <% } %>
 
-    <table class="table table-striped member-list">
+    <table class="table member-list">
         <tbody>
         <% users.forEach(function(user) { %>
             <tr>
@@ -48,14 +48,14 @@
 <% } %>
 
 <script type="text/javascript">
-    $('.module[data-id=<%- widget.id %>] a[rel=follow]').unbind().on('ajax:success', function(e, data) {
+    $('.widget[data-id=<%- widget.id %>] a[rel=follow]').unbind().on('ajax:success', function(e, data) {
         $.noty({
             type: data.status,
             text: '<i class="icon-' + (data.icon || 'ok') + '"></i> ' + data.message
         });
 
         //refresh the widget
-        $('.module[data-id=<%- widget.id %>]').load('<%- widgetAction('index') %>?page=' + $('.module[data-id=<%- widget.id %>] div[data-page]').attr('data-page'), function(html) {
+        $('.widget[data-id=<%- widget.id %>]').load('<%- widgetAction('index') %>?page=' + $('.widget[data-id=<%- widget.id %>] div[data-page]').attr('data-page'), function(html) {
             $(this).replaceWith(html);
         });
     });

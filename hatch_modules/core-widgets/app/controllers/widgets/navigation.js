@@ -14,28 +14,27 @@ function isSpecialPage(page) {
 }
 
 function setupPages (c) {
-    var pages;
+    var pages = c.Page.tree(c.locals.group.pagesCache);
     var current = c.req.page;
 
     switch (this.widget.settings.display) {
         case 'current':
-            pages = c.locals.group.pagesCache.filter(function(page) {
+            pages = pages.filter(function(page) {
                 return page.parentId == current.parentId;
             });
             break;
         case 'current+below':
-            pages = c.locals.group.pagesCache.filter(function(page) {
+            pages = pages.filter(function(page) {
                 return page.parentId == current.id || page.parentId == current.parentId;
             });
             break;
         case 'below':
-            pages = c.locals.group.pagesCache.filter(function(page) {
+            pages = pages.filter(function(page) {
                 return page.parentId == current.id;
             });
             break;
         case 'all':
         case '':
-            pages = c.locals.group.pagesCache;
             break;
     }
 
@@ -57,7 +56,7 @@ function setupPages (c) {
             return page;
         });
     }
-    
+
     c.locals.pages = pages;
     c.next();
 }

@@ -18,6 +18,7 @@
 // 
 // Authors: Marcus Greenwood, Anatoliy Chakkaev and others
 //
+
 var compound = require('compound');
 
 module.exports = function (c) {
