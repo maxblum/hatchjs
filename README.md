@@ -4,6 +4,36 @@ Hatch-compound is CMS platform with social features. This package is an
 express application which can be extended with additional modules. All parts of
 this application are accesible via [CompoundJS API][compound-api].
 
+## Dependencies
+
+Hatch.js requires Node 0.8+ and Redis 2.6+ to be installed.
+
+## Installation
+
+Use Hatch.js as an npm:
+
+	npm install hatchjs
+
+or standalone:
+
+	git clone https://github.com/inventures/hatchjs
+
+Then:
+
+	npm install
+	bower install
+
+## Running Hatch.js
+
+Hatch.js runs by default on port 3000. We recommend using Nginx or similar to 
+proxy requests via port 80 or 443.
+
+	node server
+
+Running in production mode is recommended for live sites:
+
+	NODE_ENV=production node server
+
 ## Package Structure Overview
 
 ### [./server.js][server.js]
@@ -90,6 +120,7 @@ When feature is done, run
 
 command to create pull request in GitHub
 
+[tests]: ./test
 [server.js]: ./server.js
 [app]: ./app
 [lib]: ./lib
