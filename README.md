@@ -34,6 +34,8 @@ Running in production mode is recommended for live sites:
 
 	NODE_ENV=production node server
 
+Visit http://hostname:3000 to get started with your first group.
+
 ## Package Structure Overview
 
 ### [./server.js][server.js]
@@ -56,6 +58,10 @@ Hatch core. Contains API and core implementation.
 
 Built-in modules for hatch. Each module is separate application mounted to root
 application on `/do/{moduleName}` route.
+
+Modules can modify the existing functionality or models or provide new features.
+They can be enabled or disabled on a per-group or per-application basis via the
+management area.
 
 ### [./test][tests]
 
