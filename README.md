@@ -1,12 +1,12 @@
 # About
 
-Hatch-compound is CMS platform with social features. This package is just
-express application which could be extended with additional modules. Any part of
-this application accesible via [CompoundJS API][compound-api].
+Hatch-compound is CMS platform with social features. This package is an
+express application which can be extended with additional modules. All parts of
+this application are accesible via [CompoundJS API][compound-api].
 
 ## Package Structure Overview
 
-### ./index.js
+### ./server.js
 
 Exports application server builder function. This is main entry point to
 application. When you run `node .` or `compound server 3003` this file
@@ -32,6 +32,7 @@ application on `/do/{moduleName}` route.
 Before running tests ensure you have installed dev dependencies:
 
     npm install
+    bower install
 
 Use `make test` command to run all tests. While debugging / TDD use `make
 testing` command which is the same as previous, but with `--watch` flag. For
@@ -89,10 +90,10 @@ When feature is done, run
 
 command to create pull request in GitHub
 
-[lib]: https://github.com/marcusgreenwood/hatch-compound/tree/master/lib
-[modules]: https://github.com/marcusgreenwood/hatch-compound/tree/master/hatch_modules
+[lib]: https://github.com/inventures/hatch-compound/tree/master/lib
+[modules]: https://github.com/inventures/hatch-compound/tree/master/hatch_modules
 [compound-api]: http://compoundjs.github.com/guides
 [gitflow]: http://nvie.com/posts/a-successful-git-branching-model/
-[pull]: https://github.com/marcusgreenwood/hatchjs/blob/master/README.md#11-make-pull-pulling-changes
-[feature]: https://github.com/marcusgreenwood/hatchjs/blob/master/README.md#2-make-feature-working-on-feature
-[pr]: https://github.com/marcusgreenwood/hatchjs/blob/master/README.md#3-make-pr-make-pull-request
+[pull]: https://github.com/inventures/hatchjs/blob/master/README.md#11-make-pull-pulling-changes
+[feature]: https://github.com/inventures/hatchjs/blob/master/README.md#2-make-feature-working-on-feature
+[pr]: https://github.com/inventures/hatchjs/blob/master/README.md#3-make-pr-make-pull-request
