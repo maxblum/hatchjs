@@ -6,13 +6,13 @@ this application are accesible via [CompoundJS API][compound-api].
 
 ## Package Structure Overview
 
-### ./server.js
+### [./server.js][server.js]
 
 Exports application server builder function. This is main entry point to
 application. When you run `node .` or `compound server 3003` this file
 automatically included.
 
-### ./app
+### [./app][app]
 
 Hatch-compound is express app structurized with Compound MVC, so this is
 standard directory structure for MVC app. It contains core models, controllers,
@@ -27,7 +27,7 @@ Hatch core. Contains API and core implementation.
 Built-in modules for hatch. Each module is separate application mounted to root
 application on `/do/{moduleName}` route.
 
-### ./test
+### [./test][tests]
 
 Before running tests ensure you have installed dev dependencies:
 
@@ -90,8 +90,10 @@ When feature is done, run
 
 command to create pull request in GitHub
 
-[lib]: https://github.com/inventures/hatch-compound/tree/master/lib
-[modules]: https://github.com/inventures/hatch-compound/tree/master/hatch_modules
+[server.js] ./server.js
+[app] ./app
+[lib]: https://github.com/inventures/hatchjs/tree/master/lib
+[modules]: https://github.com/inventures/hatchjs/tree/master/hatch_modules
 [compound-api]: http://compoundjs.github.com/guides
 [gitflow]: http://nvie.com/posts/a-successful-git-branching-model/
 [pull]: https://github.com/inventures/hatchjs/blob/master/README.md#11-make-pull-pulling-changes
