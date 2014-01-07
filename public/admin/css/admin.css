@@ -25,11 +25,6 @@
     margin: 8px 0 0 8px;
 }
 
-.chzn-container-multi .chzn-choices .search-field input
-{
-    height: auto;
-}
-
 .brand, .brand:hover
 {
     font-family: 'Open Sans';

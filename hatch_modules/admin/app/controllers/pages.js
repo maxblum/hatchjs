@@ -285,6 +285,11 @@ PagesController.prototype.updateOrder = function(c) {
                         ok();
                     } else {
                         var page = ind[id];
+                        
+                        if (!page) {
+                            return;
+                        }
+
                         //page.updateAttribute('order', i, ok);
                         page.order = i;
                         page.save(ok);

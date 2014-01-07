@@ -4,37 +4,38 @@
         <h2><%- widget.settings && widget.settings.title %></h2>
     <% } %>
 
-    <div class="row profile-row">
-        <div class="span2 span3-1">
-            <img src="<%- user.avatar %>" class="img-rounded" />
+    <div class="row">
+        <div class="col-md-6">
+            <img src="<%- user.avatar %>" class="col-md-12" />
         </div>
 
-        <div class="offset2 nofloat span3-2 span2-2 span3-offset0 span2-offset0">
+        <div class="col-md-6">
             <h4><%- user.displayName %></h4>
             <p>
                 <%- user.oneLiner %>
             </p>
         </div>
     </div>
-    <div class="row profile-stats profile-row">
+    <div class="">
         <hr/>
-        <div class="">
+        <div class="col-md-4">
             <h3><%- numberOfPosts %></h3>
             <p><%- __('posts') %></p>
         </div>
-        <div class="">
+        <div class="col-md-4">
             <h3><%- numberOfFollowers %></h3>
             <p><%- __('followers') %></p>
         </div>
-        <div class="">
+        <div class="col-md-4">
             <h3><%- numberOfFriends %></h3>
             <p><%- __('following') %></p>
         </div>
     </div>
     <% if(req.user) { %>
-        <div class="row profile-row">
+        <div class="clearfix">
             <hr/>
-            <div class="wide span2-2">
+            
+            <div class="col-md-12">
                 <% if(req.user.id != user.id) { %>
                     <% if(user.isFollowed) { %>
                         <%- linkTo(icon('remove') + ' <span class="text">' + __('Unfollow') + ' ' + user.displayName + '</span>', pathTo.unfollow(user.id), { remote: true, class: 'btn btn-primary wide', 'data-target-id': 'nothing', rel: 'follow' }) %>
@@ -48,7 +49,7 @@
         </div>
     <% } %>
     <% if(profileFields.length > 0 && user.otherFields) { %>
-        <div class="row profile-row">
+        <div class="">
             <hr/>
             <div class="wide">
                 <dl class="dl-nospace">

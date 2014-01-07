@@ -3,7 +3,7 @@
     data-path="<%- page.url %>">
         <td>
             <i class="<%- page.icon || 'icon-star' %>"></i>
-            <span class="page-title"><%= page.title %> (<%- page.type %>)</span> </td>
+            <%= page.title %> (<%- page.type %>)
         <td>
             <%- linkTo('/' + page.url.replace(req.group.homepage.url, ''), '//' + page.url) %>
         </td>
@@ -16,7 +16,7 @@
         <td>
             <%- linkTo(t('pages.actions.edit'), pathTo.editPage(page), {class: '' }) %>
             &nbsp;
-            <%- linkTo('<i class="icon-remove"></i>', pathTo.page(page.id), {remote: true, rel: 'tooltip', method: 'delete', 'data-original-title': t('pages.help.delete'), rel: 'delete-page'}) %>
+            <%- linkTo('<i class="icon-remove"></i>', pathTo.deletePage(page.id), {remote: true, rel: 'tooltip', method: 'delete', 'data-original-title': t('pages.help.delete'), rel: 'delete-page'}) %>
         </td>
     </tr>
 <% }); %>

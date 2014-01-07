@@ -1,4 +1,4 @@
-<div class="widget<%- widget.notEditable ? ' not-editable-widget' : ''%> contrast-<%- widget.settings.contrastMode || '0' %> <%- widget.settings.visibility %>" data-id="<%- widget.id %>" data-remote-id="<%- widget.id %>" id="<%- widget.id %>">
+<div class="widget<%- widget.notEditable ? ' not-editable-widget' : ''%> contrast-<%- widget.settings.contrastMode || '0' %> <%- widget.settings.visibility %>" data-id="<%- widget.id %>" data-remote-id="<%- widget.id %>" id="<%- widget.id %>" data-type="<%- widget.type %>">
 
 	<% if (canEdit && !widget.hasOwnProperty('notEditable')) { %>
 		<div class="pull-right">

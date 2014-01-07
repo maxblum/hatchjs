@@ -23,7 +23,6 @@ module.exports = function (compound, Group) {
     var Page = compound.models.Page;
     var Content = compound.models.Content;
     var User = compound.models.User;
-    var Content = compound.models.Content;
     var _ = require('underscore');
     var async = require('async');
 
@@ -83,7 +82,7 @@ module.exports = function (compound, Group) {
      */
     Group.updatePageUrls = function (group, callback) {
         Page.all({ where: { groupId: group.id }}, function (err, pages) {
-            pages = _.filter(pages, function (page) { return page != null && page.url; });
+            pages = _.filter(pages, function (page) { return page !== null && page.url; });
             group.pageUrls = _.pluck(pages, 'url');
             callback();
         });
@@ -159,13 +158,15 @@ module.exports = function (compound, Group) {
             var params = special[1];
             if (page && page.defaultPage) {
                 found = group.pages.build(page.defaultPage);
-                found.url = fullPagePath;
-                found.type = special.type;
+                found.url = this.homepage.url + '/' + page.defaultPath;
+                found.type = found.type || special.type;
                 found.grid = found.grid || '02-two-columns';
                 found.handler = page.handler;
                 found.specialPageParams = params;
             }
         }
+
+        console.log(found)
 
         return found;
     };
@@ -221,7 +222,7 @@ module.exports = function (compound, Group) {
                 callback(err, page);
             }
         }
-    }
+    };
 
     /**
      * Get a cached page from this group's pagesCache.

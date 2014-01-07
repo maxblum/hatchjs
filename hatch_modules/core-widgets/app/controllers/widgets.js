@@ -63,12 +63,11 @@ WidgetController.prototype.__missingAction = function __missingAction(c) {
         this.page.renderWidgetAction(c.req, this.widget, c.requestedActionName.replace('.json', ''), c.req.body, function (err, res) {
             if (typeof res === 'string') {
                 c.send(res);
-            } else if (res) {
-                c.send({
-                    code: err ? 500 : 200,
-                    res: res,
-                    error: err
-                });
+            } else if (res.error) {
+                c.res.status(res.code);
+                c.send(res);
+            } else {
+                c.send(res);
             }
         });
     } catch(err) {

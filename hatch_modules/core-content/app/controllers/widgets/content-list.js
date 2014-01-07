@@ -34,6 +34,13 @@ ContentListController.prototype.show = function (c) {
 		groupId: c.req.group.id
 	};
 
+	// filter by profile user
+	if (c.req.selectedUser) {
+		cond = {
+			authorId: c.req.selectedUser.id
+		};
+	}
+
 	// filter by tags
 	if (widget.settings.tags) {
 		cond = {
@@ -53,7 +60,9 @@ ContentListController.prototype.show = function (c) {
 	};
 
 	c.Content.all(query, function (err, posts) {
-		c.locals.posts = posts;
-		c.render({ layout: 'widgets' });
+		c.Content.populateUsers(posts, function (err, posts) {
+			c.locals.posts = posts;
+			c.render({ layout: 'widgets' });
+		});
 	});
 };

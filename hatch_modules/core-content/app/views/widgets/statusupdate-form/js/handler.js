@@ -1,14 +1,23 @@
 (function () {
 	$('#<%- widget.id %>.widget form').on('ajax:success', function (data) {
-		// show noty
-		$.noty({ text: '<i class="icon-ok"></i> Post successful', type: 'success' });
+		$.noty({ text: '<i class="fa fa-check"></i> Post successful', type: 'success' });
 
 		// refresh all widgets on the page
 		$('.widget').each(function (i, widget) {
 			var $widget = $(widget);
 			var id = $widget.data('id');
 
-			widgetAction('render:' + id);
+			// only refresh content-list widgets
+			if ($widget.data('type') === 'core-content/content-list') {
+				widgetAction('render:' + id);
+			}
 		});
+
+		// clear the form text
+		$('#<%- widget.id %>.widget form textarea').val('');
+	});
+
+	$('#<%- widget.id %>.widget form').on('ajax:error', function (xhr, res) {
+		$.noty({ text: '<i class="fa fa-minus-circle"></i> Please enter some text', type: 'error' });
 	});
 })();

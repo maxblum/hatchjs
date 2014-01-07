@@ -21,13 +21,15 @@ exports.defaultPath = 'profile/:username';
 exports.defaultPage = {
     title: 'User profile',
     grid: '03-three-columns',
-    columns: [{size: 12, widgets: [1, 2]}, {size: 3, widgets: [3]}, {size: 6, widgets: []}, {size: 3, widgets: [4, 5]}],
+    type: 'profile',
+    columns: [{size: 12, widgets: [1, 2]}, {size: 3, widgets: [3]}, {size: 6, widgets: [6]}, {size: 3, widgets: [4, 5]}],
     widgets: [
         {id: 1, type: 'core-widgets/group-header'},
         {id: 2, type: 'core-widgets/mainmenu'},
         {id: 3, type: 'user/profile'},
         {id: 4, type: 'user/userlist', settings: { title: 'Following', displayType: 'thumbnails', displayMode: 'following', pageSize: 10}},
-        {id: 5, type: 'user/userlist', settings: { title: 'Followers', displayType: 'thumbnails', displayMode: 'followers', pageSize: 10}}
+        {id: 5, type: 'user/userlist', settings: { title: 'Followers', displayType: 'thumbnails', displayMode: 'followers', pageSize: 10}},
+        {id: 6, type: 'core-content/content-list', settings: { title: '', pageSize: 10 }}
     ]
 };
 

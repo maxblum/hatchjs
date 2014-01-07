@@ -1,8 +1,8 @@
 exports.routes = function (map) {
     // user management
     map.post('register.:format?', 'users#create');
-    map.post('update', 'users#update');
-    map.post('updatepassword', 'users#updatePassword', {as: 'updatepassword'});
+    map.post('update.:format?', 'users#update');
+    map.post('updatepassword.:format?', 'users#updatePassword', {as: 'updatepassword'});
     map.get('join', 'users#join');
     map.get('join/:invitationCode?', 'users#join');
     map.post('reject', 'users#rejectInvitation', {as: 'rejectInvitation'});

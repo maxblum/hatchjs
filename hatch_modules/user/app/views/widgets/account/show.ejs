@@ -3,75 +3,85 @@
 <% } %>
 
 <% if(req.user) { %>
-    <%- formTagBegin({action:pathTo.update(), remote: true, method: 'post', class: 'form form-horizontal', id: 'accountForm' }) %>
+    <%- formTagBegin({action:pathTo.update(), remote: true, method: 'post', class: 'form', id: 'accountForm' }) %>
         <% if(req.user.type != "temporary") { %>
-            <div class="control-group">
-                <label class="control-label" for="username"><%- __('Username') %></label>
+            <div class="form-group">
+                <label for="username">Username</label>
                 <div class="controls">
-                    <span class="span4 uneditable-input"><%- req.user.username %></span>
+                    <p class="form-control-static"><%- req.user.username %></p>
                 </div>
             </div>
         <% } else { %>
             <p>
                 <%- __('Please complete your registration by filling out the remaining details using the form below') %>
             </p>
-            <div class="control-group">
-                <label class="control-label" for="username"><%- __('Username') %></label>
+            <div class="form-group">
+                <label for="username"><%- __('Username') %></label>
                 <div class="controls">
-                    <input type="text" class="span4" id="username" name="username" value="<%- req.user.username %>">
+                    <input type="text" class="form-control" id="username" name="username" value="<%- req.user.username %>">
                     <i class="icon-asterisk text-error" rel="tooltip" title="<%- __('mandatory field') %>"></i>
                     <p class="help-block"><%- __('Please enter your username') %></p>
                 </div>
             </div>
         <% } %>
 
-        <div class="control-group">
+        <div class="form-group">
             <input type="hidden" id="avatar" name="avatar" value="<%- req.user.avatar %>" />
-            <label class="control-label" for="avatar"><%- __('Profile picture') %></label>
+            <label for="avatar"><%- __('Profile picture') %></label>
             <div class="controls">
                 <div class="btn-group">
-                    <a class="btn" href="#" id="avatarButton"><i class="icon-picture"></i> <%- __('Click to upload a profile picture') %></a>
-                    <a href="#" id="remove-avatar" class="btn"><i class="icon-remove"></i></a>
+                    <a class="btn btn-primary" href="#" id="avatarButton"><i class="icon-picture"></i> <%- __('Click to upload a profile picture') %></a>
+                    <a href="#" id="remove-avatar" class="btn btn-primary"><i class="fa fa-trash-o"></i></a>
                 </div>
 
                 <div id="avatar-preview-holder" <%- req.user.avatar ? '':' style="display : none;"' %>>
                     <br/>
-                    <img src="<%- req.user.avatar %>" id="avatarPreview" width="64" height="64" class="thumbnail" />
+                    <img src="<%- req.user.avatar %>" id="avatarPreview" width="90" height="90" class="" />
                 </div>
             </div>
         </div>
 
-        <div class="control-group">
-            <label class="control-label" for="firstname"><%- __('Full name') %></label>
+        <div class="form-group">
+            <label for="firstname"><%- __('Full name') %></label>
             <div class="controls">
-                <input type="text" class="span2" id="firstname" name="firstname" value="<%- req.user.firstname %>">
-                <input type="text" class="span2" id="lastname" name="lastname" value="<%- req.user.lastname %>">
-                <div class="clearfix"></div>
-                <p class="help-block"><%- __('Your full name is shown on your profile and in the group user directory') %></p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="firstname" name="firstname" value="<%- req.user.firstname %>">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="lastname" name="lastname" value="<%- req.user.lastname %>">
+                    </div>
+                </div>
             </div>
+
+            <p class="help-block">
+                <%- __('Your full name is shown on your profile and in the group user directory') %>
+            </p>
         </div>
 
-        <div class="control-group">
+        <div class="form-group">
             <label class="control-label" for="oneLiner"><%- __('One liner') %></label>
             <div class="controls">
-                <textarea id="oneLiner" name="oneLiner" class="span4" rows="2"><%- req.user.oneLiner %></textarea>
+                <textarea id="oneLiner" name="oneLiner" class="form-control" rows="2"><%- req.user.oneLiner %></textarea>
                 <p class="help-block"><%- __('Enter a line or two to describe yourself to other members') %></p>
             </div>
         </div>
 
-        <div class="control-group">
+        <div class="form-group">
             <label class="control-label" for="email"><%- __('Email address') %></label>
             <div class="controls">
-                <input type="text" class="span4" id="email" name="email" value="<%- req.user.email || '' %>">
+                <input type="text" class="form-control" id="email" name="email" value="<%- req.user.email || '' %>">
                 <i class="icon-asterisk text-error" rel="tooltip" title="<%- __('mandatory field') %>"></i>
                 <i class="icon-lock" rel="tooltip" title="<%- __('private field - will not be displayed on your profile') %>"></i>
-                <p class="help-block"><%- __('We will send you email notifications to keep you up to date with activity on this group') %></p>
             </div>
+            <p class="help-block">
+                <%- __('We will send you email notifications to keep you up to date with activity on this group') %>
+            </p>
         </div>
 
-        <% if(req.user.type != 'temporary') { %>
-            <div class="control-group">
-                <label class="control-label" for=""><%- __('Receive emails for') %></label>
+        <% if(req.user.type != 'temporary' && Object.keys(mailTypes).length > 0) { %>
+            <div class="form-group">
+                <label for=""><%- __('Receive emails for') %></label>
                 <div class="controls">
                     <% Object.keys(mailTypes).forEach(function(mailType) { %>
                         <label class="checkbox">
@@ -96,40 +106,42 @@
         <hr/>
 
         <% if(req.user.type != 'temporary') { %>
-            <div class="control-group" id="change-password-button-holder">
-                <label class="control-label"><%- __('Password') %></label>
+            <div class="form-group" id="change-password-button-holder">
+                <label><%- __('Password') %></label>
                 <div class="controls">
-                    <a class="btn btn-link" href="#" id="change-password-button"><i class="icon-lock"></i> <%- __('Click to change password') %></label></a>
+                    <a class="btn btn-default" href="#" id="change-password-button"><i class="icon-lock"></i> <%- __('Click to change password') %></label></a>
                 </div>
             </div>
         <% } %>
 
         <div id="change-password" style="<%- req.user.type == 'temporary' && !req.user.hasPassword? '':'display: none;' %>">
             <% if(req.user.type != 'temporary') { %>
-                <div class="control-group">
-                    <label class="control-label" for="currentPassword"><%- __('Current password') %></label>
+                <div class="form-group">
+                    <label for="currentPassword"><%- __('Current password') %></label>
                     <div class="controls">
-                        <input type="password" class="input-xlarge" id="currentPassword" name="currentPassword" value="">
+                        <input type="password" class="form-control" id="currentPassword" name="currentPassword" value="">
                     </div>
                 </div>
             <% } %>
 
-            <div class="control-group">
-                <label class="control-label" for="password"><%- __('New password') %></label>
+            <div class="form-group">
+                <label for="password"><%- __('New password') %></label>
                 <div class="controls">
-                    <input type="password" class="input-xlarge" id="password" name="password" value="">
+                    <input type="password" class="form-control" id="password" name="password" value="">
                     <i class="icon-asterisk text-error"></i>
                 </div>
             </div>
 
-            <div class="control-group">
-                <label class="control-label" for="confirmPassword"><%- __('Confirm password') %></label>
+            <div class="form-group">
+                <label for="confirmPassword"><%- __('Confirm password') %></label>
                 <div class="controls">
-                    <input type="password" class="input-xlarge" id="confirmPassword" name="confirmPassword" value="">
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" value="">
                     <i class="icon-asterisk text-error"></i>
                 </div>
             </div>
         </div>
+
+        <hr>
 
         <% if(req.user.type == 'temporary') { %>
             <div class="form-actions">
@@ -150,8 +162,6 @@
         $(document).ready(function() {
             //bind the form ajax
             $('#accountForm').bind('ajax:success', function(e, data) {
-                $.noty({text: '<i class="icon-' + data.icon + '"></i> ' + data.message, type: data.status});
-
                 var redirect = '<%- redirect %>';
 
                 if(data.status == "success") {

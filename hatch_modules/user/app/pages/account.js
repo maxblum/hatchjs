@@ -21,8 +21,8 @@ exports.defaultPath = 'account';
 
 exports.defaultPage = {
     title: 'Edit account',
-    grid: '01-one-column',
-    columns: [{size: 12, widgets: [1, 2]}, {size: 12, widgets: [3]}],
+    grid: '02-two-columns',
+    columns: [{size: 12, widgets: [1, 2]}, {size: 6, widgets: [3]}, {size: 6, widgets: []}],
     widgets: [
         {id: 1, type: 'core-widgets/group-header'},
         {id: 2, type: 'core-widgets/mainmenu'},

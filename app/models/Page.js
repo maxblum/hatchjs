@@ -518,7 +518,7 @@ module.exports = function (compound, Page) {
         });
 
         return pages.filter(function (page) {
-            return page.level === 0 || page.level === 1;
+            return (page.level === 0 || page.level === 1) && [null, 'page', 'homepage'].indexOf(page.type) > -1;
         });
     };
 

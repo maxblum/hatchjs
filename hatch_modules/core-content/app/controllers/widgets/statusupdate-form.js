@@ -42,7 +42,10 @@ StatusUpdateFormController.prototype.post = function (c) {
 	c.Tag.assignTagsForObject(data, data.tags, function () {
 		c.Content.create(data, function (err, post) {
 			if (err) {
-				return c.sendError(err);
+				return c.send({
+					code: 400,
+					error: post.errors
+				});
 			}
 
 			c.send({
