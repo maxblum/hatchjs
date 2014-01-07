@@ -92,10 +92,10 @@ command to create pull request in GitHub
 
 [server.js]: ./server.js
 [app]: ./app
-[lib]: https://github.com/inventures/hatchjs/tree/master/lib
-[modules]: https://github.com/inventures/hatchjs/tree/master/hatch_modules
+[lib]: ./lib
+[modules]: ./hatch_modules
+[pull]: ./README.md#11-make-pull-pulling-changes
+[feature]: ./README.md#2-make-feature-working-on-feature
+[pr]: ./README.md#3-make-pr-make-pull-request
 [compound-api]: http://compoundjs.github.com/guides
 [gitflow]: http://nvie.com/posts/a-successful-git-branching-model/
-[pull]: https://github.com/inventures/hatchjs/blob/master/README.md#11-make-pull-pulling-changes
-[feature]: https://github.com/inventures/hatchjs/blob/master/README.md#2-make-feature-working-on-feature
-[pr]: https://github.com/inventures/hatchjs/blob/master/README.md#3-make-pr-make-pull-request
