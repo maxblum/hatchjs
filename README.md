@@ -90,8 +90,8 @@ When feature is done, run
 
 command to create pull request in GitHub
 
-[server.js] ./server.js
-[app] ./app
+[server.js]: ./server.js
+[app]: ./app
 [lib]: https://github.com/inventures/hatchjs/tree/master/lib
 [modules]: https://github.com/inventures/hatchjs/tree/master/hatch_modules
 [compound-api]: http://compoundjs.github.com/guides
