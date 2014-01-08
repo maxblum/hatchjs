@@ -6,11 +6,13 @@ this application are accesible via [CompoundJS API][compound-api].
 
 ## Dependencies
 
-Hatch.js requires Node 0.8+ and Redis 2.6+ to be installed.
+Hatch.js requires Node 0.8+ and Redis 2.6+ to be installed. Bower is also required to install client-side dependencies.
+
+	npm install -g bower
 
 ## Installation
 
-Use Hatch.js as an npm:
+Use Hatch.js as an npm. Please see the examples for how to use Hatch.js in this way:
 
 	npm install hatchjs
 
@@ -25,24 +27,23 @@ Then:
 
 ## Running Hatch.js
 
-Hatch.js runs by default on port 3000. We recommend using Nginx or similar to 
+Like most node apps, Hatch.js listens by default on port 3000. We recommend using Nginx or similar to 
 proxy requests via port 80 or 443.
 
 	node server
 
-Running in production mode is recommended for live sites:
+Running in production mode is strongly recommended for live sites. Assets are automatically combined, minified and strongly cached, view templates are pre-compiled resulting in better performance all round:
 
 	NODE_ENV=production node server
 
-Visit http://hostname:3000 to get started with your first group.
+Visit [http://hostname:3000][localhost] to get started with your first group.
 
 ## Package Structure Overview
 
 ### [./server.js][server.js]
 
 Exports application server builder function. This is main entry point to
-application. When you run `node .` or `compound server 3003` this file
-automatically included.
+application. 
 
 ### [./app][app]
 
@@ -52,7 +53,9 @@ views, helpers, assets and mailers.
 
 ### [./lib][lib]
 
-Hatch core. Contains API and core implementation.
+Hatch core. Contains API and core implementation. API is accessible in code as follows:
+
+	
 
 ### [./hatch_modules][modules]
 
@@ -126,6 +129,7 @@ When feature is done, run
 
 command to create pull request in GitHub
 
+[localhost]: http://localhost:3000
 [tests]: ./test
 [server.js]: ./server.js
 [app]: ./app
