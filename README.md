@@ -55,13 +55,13 @@ views, helpers, assets and mailers.
 
 Hatch core. Contains API and core implementation. Hatch APIs are accessible in code as follows:
 
-```javascript
+```JavaScript
 c.compound.hatch.apiName.functionName();
 ```
 	
 or
 
-```
+```JavaScript
 var compound = require('compound');
 compound.hatch.apiName.functionName();
 ```
