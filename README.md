@@ -16,7 +16,7 @@ Use Hatch.js as an npm. Please see the [examples][examples] for how to use Hatch
 
 	npm install hatchjs
 
-or standalone:
+Or standalone:
 
 	git clone https://github.com/inventures/hatchjs
 
@@ -47,9 +47,7 @@ application.
 
 ### [./app][app]
 
-Hatch.js is express app structurized with [Compound MVC][compound], so this is
-standard directory structure for MVC app. It contains core models, controllers,
-views, helpers, assets and mailers.
+Hatch.js is express app structurized with [Compound MVC][compound], so this is standard directory structure for MVC app. It contains core models, controllers, views, helpers, assets and mailers.
 
 ### [./app/models][models]
 
@@ -71,15 +69,17 @@ c.Content.all({ where: { groupId: 1 }}, function (err, posts) {
 
 Hatch.js uses the RedisHQ driver which is part of [JugglingDB][jugglingdb]. Redis may seem like an unusual choice for a primary database. It was chosen because the requirements of Hatch.js and derived apps are usually fairly data-light + traffic-heavy. Redis is an ideal choice because of it's lightning quick performance. Due to the asynchronous nature of Node.js + Redis and the optimised implementation of MULTI batching within the [RedisHQ][redishq] driver, multiple duplicate requests within the same i/o callback context are also able to share queries and results-sets meaning that performance and scalability of the solution is significantly improved over what is achievable using a more conventional database such as MongoDB or MySQL. On rudimentary hardware (e.g. a standard 1 thread AWS micro instance), Hatch.js is easily able to cope with significant levels of traffic and a large number of concurrent users. We estimate the base performance is roughly 20-30x that of platforms such as Wordpress.
 
+The Hatch.js database schema is simple and self-explanatory and can be found [here](./db/schema.js).
+
 ### [./lib][lib]
 
-Hatch core. Contains API and core implementation. Hatch APIs are accessible in code as follows:
+Hatch core. Contains API and core implementation. Hatch APIs are accessible via the context in code as follows:
 
 ```JavaScript
 c.compound.hatch.apiName.functionName();
 ```
 	
-or
+Or globally:
 
 ```JavaScript
 var compound = require('compound');
