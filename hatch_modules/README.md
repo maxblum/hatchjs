@@ -51,3 +51,20 @@ exports.routes = function (map) {
 ```
 
 The URL for this route becomes `/do/module-name/mynewroute` and it can be accessed via the `pathFor('module-name').mynewroute()` helper within an HTML template.
+
+The controller defining the method for this route might look like this:
+
+```JavaScript
+function Controller() {
+
+}
+
+module.exports = Controller;
+
+Controller.prototype.mynewroute = function (c) {
+    // c in the active request context from CompoundJS
+    c.render();
+};
+```
+
+`c.render()` will render the view template with the same name within `app/views/{controllerName}`. In the above example it could be `app/views/controller/mynewroute.ejs`. Hatch.js supports any rendering engine supported by Express.
