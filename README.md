@@ -53,9 +53,18 @@ views, helpers, assets and mailers.
 
 ### [./lib][lib]
 
-Hatch core. Contains API and core implementation. API is accessible in code as follows:
+Hatch core. Contains API and core implementation. Hatch APIs are accessible in code as follows:
 
+```javascript
+c.compound.hatch.apiName.functionName();
+```
 	
+or
+
+```
+var compound = require('compound');
+compound.hatch.apiName.functionName();
+```
 
 ### [./hatch_modules][modules]
 
