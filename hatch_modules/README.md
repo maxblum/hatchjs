@@ -37,3 +37,17 @@ module.exports = function (compound, User) {
     };
 };
 ```
+
+## Routes
+
+Routes can be defined within your module by adding a routes file at `config/routes.js` and then 1 or more controller files in `app/controllers`.
+
+A `routes.js` file looks like this:
+
+```JavaScript
+exports.routes = function (map) {
+    map.get('mynewroute', 'controller#mynewroute');
+};
+```
+
+The URL for this route becomes `/do/module-name/mynewroute` and it can be accessed via the `pathFor('module-name').mynewroute()` helper within an HTML template.
