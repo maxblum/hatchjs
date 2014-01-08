@@ -1,6 +1,6 @@
-# About
+# About Hatch.js
 
-Hatch-compound is CMS platform with social features. This package is an
+Hatch.js is CMS platform with social features. This package is an
 express application which can be extended with additional modules. All parts of
 this application are accesible via [CompoundJS API][compound-api].
 
@@ -40,20 +40,20 @@ Visit [http://hostname:3000][localhost] to get started with your first group.
 
 ## Package Structure Overview
 
-### [./server.js][server.js]
+### [./server.js](./server.js)
 
 Exports application server builder function. This is main entry point to
 application. 
 
 ### [./app][app]
 
-Hatch.js is express app structurized with Compound MVC, so this is
+Hatch.js is express app structurized with [Compound MVC][compound], so this is
 standard directory structure for MVC app. It contains core models, controllers,
 views, helpers, assets and mailers.
 
 ### [./app/models][models]
 
-Hatch.js models define all of the business object classes within the application. These can be extended by placing model class files within the /app/models folder of your app or your app's modules.
+Hatch.js models define all of the business object classes within the application. These can be extended by placing model class files within the `/app/models` folder of your app or your app's modules.
 
 Models are accessed via the application context as follows:
 
@@ -86,7 +86,7 @@ var compound = require('compound');
 compound.hatch.apiName.functionName();
 ```
 
-The available APIs and their functions can be found here: [./lib/api][apis]
+The available APIs, documentation and their functions can be found here: [./lib/api][apis]
 
 ### [./hatch_modules][modules]
 
@@ -95,7 +95,7 @@ application on `/do/{moduleName}` route.
 
 Modules can modify the existing functionality or models or provide new features.
 They can be enabled or disabled on a per-group or per-application basis via the
-management area.
+management area of each group.
 
 ### [./test][tests]
 
@@ -115,7 +115,7 @@ Every piece of code should be tested (ideally). Make sure tests included in pull
 We are using workflow similar to [gitflow][gitflow], general idea: make commit
 for some feature development into separate branch, then publish it and make pull
 request to the `master` branch. It is recommended to start feature branches with
-`feature-` refix.
+`feature/` refix.
 
 This project uses Makefile to organize workflow as easy as [1][pull], [2][feature], [3][pr]
 
@@ -160,6 +160,7 @@ When feature is done, run
 
 command to create pull request in GitHub
 
+[compound]: https://github.com/1602/compound
 [redishq]: https://github.com/jugglingdb/redis-hq-adapter
 [jugglingdb]: http://jugglingdb.co/
 [models]: /app/models
