@@ -6,7 +6,7 @@ this application are accesible via [CompoundJS API][compound-api].
 
 ## Dependencies
 
-Hatch.js requires Node 0.8+ and Redis 2.6+ to be installed. Bower is also required to install client-side dependencies.
+Hatch.js requires [Node 0.8+][node] and [Redis 2.6+][redis] to be installed. Bower is also required to install client-side dependencies.
 
 	npm install -g bower
 
@@ -160,6 +160,8 @@ When feature is done, run
 
 command to create pull request in GitHub
 
+[node]: http://nodejs.org/
+[redis]: http://redis.io/
 [compound]: https://github.com/1602/compound
 [redishq]: https://github.com/jugglingdb/redis-hq-adapter
 [jugglingdb]: http://jugglingdb.co/
