@@ -1,4 +1,4 @@
-# About Hatch.js
+# Hatch.js documentation
 
 Hatch.js is CMS platform with social features. This package is an
 [Express][express] application which can be extended with additional modules. All parts of
