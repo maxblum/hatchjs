@@ -25,7 +25,6 @@ describe('api/audit', function() {
 
     it('should retrieve events for particular day', function(done) {
         Event.all({where: {day: '1-event-' + Math.floor(Date.now() / 86400000)}}, function(err, events) {
-            console.log(events);
             done();
         });
     });

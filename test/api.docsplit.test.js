@@ -1,7 +1,7 @@
 var should = require('./');
 var DocSplit = require('../lib/api/docsplit.js');
 
-describe('api/docsplit', function() {
+describe.skip('api/docsplit', function() {
 
     var docsplit = new DocSplit;
 
