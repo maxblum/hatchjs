@@ -1,7 +1,7 @@
 # About Hatch.js
 
 Hatch.js is CMS platform with social features. This package is an
-express application which can be extended with additional modules. All parts of
+[Express][express] application which can be extended with additional modules. All parts of
 this application are accesible via [CompoundJS API][compound-api].
 
 ## Dependencies
@@ -12,7 +12,7 @@ Hatch.js requires [Node 0.8+][node] and [Redis 2.6+][redis] to be installed. Bow
 
 ## Installation
 
-Use Hatch.js as an npm. Please see the examples for how to use Hatch.js in this way:
+Use Hatch.js as an npm. Please see the [examples][examples] for how to use Hatch.js in this way:
 
 	npm install hatchjs
 
@@ -160,6 +160,8 @@ When feature is done, run
 
 command to create pull request in GitHub
 
+[examples]: ./examples
+[express]: http://expressjs.com/
 [node]: http://nodejs.org/
 [redis]: http://redis.io/
 [compound]: https://github.com/1602/compound
