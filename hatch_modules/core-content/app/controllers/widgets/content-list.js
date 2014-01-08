@@ -59,7 +59,7 @@ ContentListController.prototype.show = function (c) {
 		where: cond
 	};
 
-	c.Content.all(query, function (err, posts) {
+	c.Content.allWithLikes(query, c.req.user, function (err, posts) {
 		c.Content.populateUsers(posts, function (err, posts) {
 			c.locals.posts = posts;
 			c.render({ layout: 'widgets' });

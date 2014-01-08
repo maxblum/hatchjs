@@ -62,6 +62,7 @@
                         </ul>
                     </div>
                     <div class="header-quick-nav">
+                        <!--
                         <div class="pull-left"> 
                             <ul class="nav quick-section">
                                 <li>
@@ -72,9 +73,10 @@
                                 </li>
                             </ul>
                         </div>
+                        -->
                         <div class="pull-right">
                             <div class="chat-toggler">
-                                <a href="#">
+                                <a href="<%- specialPagePath('profile', { username: request.user.username }) %>">
                                     <div class="user-details">
                                         <div class="username">
                                             <strong><%- request.user.displayName %></strong>

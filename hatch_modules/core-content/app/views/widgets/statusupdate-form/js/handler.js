@@ -18,6 +18,6 @@
 	});
 
 	$('#<%- widget.id %>.widget form').on('ajax:error', function (xhr, res) {
-		$.noty({ text: '<i class="fa fa-minus-circle"></i> Please enter some text', type: 'error' });
+		$.noty({ text: '<i class="fa fa-exclamation-triangle"></i> Please enter some text', type: 'error' });
 	});
 })();

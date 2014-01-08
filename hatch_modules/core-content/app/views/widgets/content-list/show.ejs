@@ -5,3 +5,9 @@
 <% posts.forEach(function (post) { %>
 	<%- renderContent(post) %>
 <% }) %>
+
+<% if (posts.length === 0) { %>
+	<p>
+		No posts to display
+	</p>
+<% } %>

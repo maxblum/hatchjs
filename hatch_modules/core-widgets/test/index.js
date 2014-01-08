@@ -13,7 +13,7 @@ if (!process.env.TRAVIS) {
         });
     }
 
-    semicov.init(['lib', 'app'], 'Hatch.js Core-Widgets Module');
+    //semicov.init(['lib', 'app'], 'Hatch.js Core-Widgets Module');
 }
 
 var app, dashboard, cw;

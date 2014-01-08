@@ -1,11 +1,22 @@
 <div class="media">
 	<a href="<%- specialPagePath('profile', { username: post.author.username }) %>" class="pull-left">
-    	<img src="<%- post.author.avatar %>" style="width: 64px;">
+    	<img src="<%- post.author.avatar %>" width="64">
     </a>
 
     <div class="media-body">
     	<a href="<%- specialPagePath('profile', { username: post.author.username }) %>"><%- post.author.displayName %></a>
-    	<br>
-    	<%- post.text %>
+    	<p>
+    		<%- post.text %>
+    	</p>
+
+		<small>
+    		<a href="#">Like</a>
+    		<span class="text-muted">&bullet;</span>
+    		<a href="#">Comment</a>
+    		<span class="text-muted">&bullet;</span>
+    		<%- post.timeSince %>
+    	</small>
     </div>
+
+    <hr>
 </div>
