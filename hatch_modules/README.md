@@ -62,7 +62,8 @@ function Controller() {
 module.exports = Controller;
 
 Controller.prototype.mynewroute = function (c) {
-    // c in the active request context from CompoundJS
+    // c is the active request context from CompoundJS
+    
     c.render();
 };
 ```
