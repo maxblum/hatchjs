@@ -47,9 +47,29 @@ application.
 
 ### [./app][app]
 
-Hatch-compound is express app structurized with Compound MVC, so this is
+Hatch.js is express app structurized with Compound MVC, so this is
 standard directory structure for MVC app. It contains core models, controllers,
 views, helpers, assets and mailers.
+
+### [./app/models][models]
+
+Hatch.js models define all of the business object classes within the application. These can be extended by placing model class files within the /app/models folder of your app or your app's modules.
+
+Models are accessed via the application context as follows:
+
+```JavaScript
+c.ModelName.functionName();
+```
+
+E.g.
+
+```JavaScript
+c.Content.all({ where: { groupId: 1 }}, function (err, posts) { 
+	// do some stuff with the results
+});
+```
+
+Hatch.js uses the Redis-HQ driver which is part of [JugglingDB][jugglingdb]. Redis may seem like an unusual choice for a primary database. It was chosen because the requirements of Hatch.js and derived apps are usually fairly data-light + traffic-heavy. Redis is an ideal choice because of it's lightning quick performance. Due to the asynchronous nature of Node.js + Redis and the optimised implementation of MULTI batching within the [RedisHQ][redishq] driver, multiple duplicate requests within the same i/o callback context are also able to share queries and results-sets meaning that performance and scalability of the solution is significantly improved over what is achievable using a more conventional database such as MongoDB or MySQL. 
 
 ### [./lib][lib]
 
@@ -65,6 +85,8 @@ or
 var compound = require('compound');
 compound.hatch.apiName.functionName();
 ```
+
+The available APIs and their functions can be found here: [./lib/api][apis]
 
 ### [./hatch_modules][modules]
 
@@ -138,6 +160,10 @@ When feature is done, run
 
 command to create pull request in GitHub
 
+[redishq]: https://github.com/jugglingdb/redis-hq-adapter
+[jugglingdb]: http://jugglingdb.co/
+[models]: /app/models
+[apis]: /lib/api/index.js
 [localhost]: http://localhost:3000
 [tests]: ./test
 [server.js]: ./server.js
