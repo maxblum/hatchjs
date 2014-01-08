@@ -47,3 +47,5 @@ When feature is done, run
     make pr
 
 command to create pull request in GitHub
+
+[gitflow]: http://nvie.com/posts/a-successful-git-branching-model/
