@@ -38,6 +38,8 @@ Running in production mode is strongly recommended for live sites. Assets are au
 
 Visit [http://hostname:3000][localhost] to get started with your first group.
 
+By default Hatch.js connects to Redis DB 0 on 127.0.0.1. You can change this by modifying `./config/database.js`.
+
 ## Package Structure Overview
 
 ### [./server.js](./server.js)
@@ -90,12 +92,14 @@ The available APIs, documentation and their functions can be found here: [./lib/
 
 ### [./hatch_modules][modules]
 
-Built-in modules for hatch. Each module is separate application mounted to root
+Built-in modules for Hatch.js. Each module is separate application mounted to root
 application on `/do/{moduleName}` route.
 
 Modules can modify the existing functionality or models or provide new features.
 They can be enabled or disabled on a per-group or per-application basis via the
 management area of each group.
+
+Modules documentation can be found within the [README][modules-readme].
 
 ### [./test][tests]
 
@@ -175,6 +179,7 @@ command to create pull request in GitHub
 [app]: ./app
 [lib]: ./lib
 [modules]: ./hatch_modules
+[modules-readme]: ./hatch_modules/README.md
 [pull]: ./README.md#11-make-pull-pulling-changes
 [feature]: ./README.md#2-make-feature-working-on-feature
 [pr]: ./README.md#3-make-pr-make-pull-request
