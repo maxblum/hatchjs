@@ -71,22 +71,6 @@ pr: push
 
 # MAN DOCS
 
-CLI_MAN = $(shell find doc/cli -name '*.md' \
-               |sed 's|.md|.1|g' \
-               |sed 's|doc/cli/|man/|g' )
-
-API_MAN = $(shell find doc/api -name '*.md' \
-               |sed 's|.md|.3|g' \
-               |sed 's|doc/api/|man/|g' )
-
-CLI_WEB = $(shell find doc/cli -name '*.md' \
-               |sed 's|.md|.1.html|g' \
-               |sed 's|doc/cli/|man/html/|g' )
-
-API_WEB = $(shell find doc/api -name '*.md' \
-               |sed 's|.md|.3.html|g' \
-               |sed 's|doc/api/|man/html/|g' ) \
-
 man/%.1: doc/cli/%.md scripts/doc.sh
 	@[ -d man ] || mkdir man
 	scripts/doc.sh $< $@

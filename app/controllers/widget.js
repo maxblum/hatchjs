@@ -23,6 +23,11 @@ function initEnv(c) {
     c.locals.canEdit = c.req.user && c.req.group && c.req.user.adminOf(c.req.group);
     c.locals.inlineEditAllowed = false;
 
+    // skip the rest of initialisation if we already know the page
+    if (c.locals.page) {
+        return c.next();
+    }
+
     c.locals.group.definePage(c.req.pagePath, c, function (err, page) {
         if (err || !page) {
             return c.send('Widget not found');
