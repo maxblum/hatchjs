@@ -34,7 +34,8 @@ proxy requests via port 80 or 443.
 
 Running in production mode is strongly recommended for live sites. Assets are automatically combined, minified and strongly cached, view templates are pre-compiled resulting in better performance all round:
 
-	NODE_ENV=production node server
+	NODE_ENV=production node .
+	NODE_ENV=production CLUSTER=1 node .
 
 Visit [http://hostname:3000][localhost] to get started with your first group.
 
