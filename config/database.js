@@ -2,7 +2,7 @@ module.exports =
   { "development":
     { "driver":   "redis-hq"
     , "prefix":   "dev"
-    , "database": 4
+    , "database": 0
     , "fulltext": {
         driver: 'reds'
     }
