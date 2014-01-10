@@ -42,7 +42,8 @@ module.exports = function (compound) {
         app.enable('trust proxy');
 
         app.use(express.static(app.root + '/public', { maxAge: 86400000 }));
-        app.use(express.bodyParser());
+        app.use(express.urlencoded());
+        app.use(express.json());
         app.use(express.cookieParser('secret'));
         app.use(express.session({
             secret: '~:hatch1#6Platform0*2%',
