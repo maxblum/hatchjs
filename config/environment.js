@@ -14,9 +14,9 @@ module.exports = function (compound) {
         app.set('database', dbConfig);
         app.set('errors-reporting', require(__dirname + '/errors-reporting.yml')[0][env]);
         var sessionStore = isTest ?
-            new MemoryStore :
+            new MemoryStore() :
             new RedisStore({
-                ttl: 86400 * 365, 
+                ttl: 86400 * 365,
                 db: dbConfig.session && dbConfig.session.database,
                 host: dbConfig.session && dbConfig.session.host,
                 port: dbConfig.session && dbConfig.session.port,
@@ -43,7 +43,8 @@ module.exports = function (compound) {
 
         app.use(express.static(app.root + '/public', { maxAge: 86400000 }));
         app.use(express.static(app.root + '/bower_components', { maxAge: 86400000 }));
-        app.use(express.bodyParser());
+        app.use(express.urlencoded());
+        app.use(express.json());
         app.use(express.cookieParser('secret'));
         app.use(express.session({
             secret: '~:hatch1#6Platform0*2%',
