@@ -69,7 +69,11 @@ WidgetController.prototype.configure = function (c) {
             return c.sendError(err);
         }
 
-        c.send('ok');
+        c.send({
+            status: 'success',
+            message: 'Widget settings saved',
+            widget: c.locals.widget
+        });
     });
 };
 
@@ -81,7 +85,11 @@ WidgetController.prototype.configure = function (c) {
 WidgetController.prototype.settitle = function(c) {
     c.locals.widget.settings.title = c.req.body.title;
     c.locals.widget.save(function () {
-        c.send('ok');
+        c.send({
+            status: 'success',
+            message: 'Widget title updated',
+            widget: c.locals.widget
+        });
     });
 };
 
@@ -101,6 +109,10 @@ WidgetController.prototype.contrast = function(c) {
     }
 
     c.locals.widget.save(function() {
-        c.send('ok');
+        c.send({
+            status: 'success',
+            message: 'Widget contrast mode set to ' + settings.contrastMode,
+            widget: c.locals.widget
+        });
     });
 };

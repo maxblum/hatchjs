@@ -29,8 +29,8 @@
                         <%= module.info.description || '' %>
                     </td>
                     <td>
-                        <% if (module.info && module.info.name) { %>
-                            <%- moduleEnabled(module.info.name) ? icon(moduleConfigured(module.info.name) ? 'ok' : 'warning-sign') : '' %>
+                        <% if (moduleEnabled(module.name)) { %>
+                            <%- moduleEnabled(module.name) ? icon(moduleConfigured(module.name) ? 'ok' : 'warning-sign') : '' %>
                         <% } %>
                     </td>
                     <td nowrap="nowrap" align="right">

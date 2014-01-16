@@ -406,7 +406,7 @@
             $modalContainer.empty().append(modal);
 
             modal.modal('show');
-            hatchModalInit();
+            window.hatch.setupModal();
         });
         $('*[data-target-id]').on('ajax:success', function(e, html) {
             var id = $(this).attr('data-target-id');

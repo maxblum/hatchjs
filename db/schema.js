@@ -165,6 +165,7 @@ var Content = define('Content', function () {
     property('replyToId', Number, {index: true });
     property('tagString', String, {index: true });
     property('authorId', Number, {index: true });
+    property('author', JSON);
     property('privacy', String, {index: true });
     property('createdAt', Date, {index: true, sort: true });
     property('updatedAt', Date, {index: true });

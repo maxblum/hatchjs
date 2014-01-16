@@ -15,7 +15,7 @@ statusupdate-form:
         default: What's up?
       tags:
         type: tags
-        title: Content tags
+        title: Tag posts with
 content-list:
   title: Content list
   icon: icon-align-left
@@ -74,7 +74,7 @@ content-list:
         title: Paging
         options:
           - 'none:None'
-          - 'numbers:Page numbers'
+          - 'button:Show more button'
           - 'scroll:Auto-load on scroll'
         default: numbers
       contentType:

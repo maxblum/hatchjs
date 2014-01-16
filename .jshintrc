@@ -2,7 +2,7 @@
   // Details: https://github.com/victorporof/Sublime-JSHint#using-your-own-jshintrc-options
   // Example: https://github.com/jshint/jshint/blob/master/examples/.jshintrc
   // Documentation: http://www.jshint.com/docs/
-  "browser": false,
+  "browser": true,
   "esnext": true,
   "globals": {},
   "globalstrict": false,

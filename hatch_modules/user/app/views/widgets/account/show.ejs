@@ -180,26 +180,17 @@
                 return false;
             });
 
-            //setup the file uploader
-            var uploader = new qq.FileUploader({
-                params: { _csrf: $('meta[name=csrf-token]').attr('content') },
-                element: $('#avatarButton').get(0),
-                action: '<%- pathFor('upload').add -%>',
-                uploadButtonText: $('#avatarButton').html(),
-                encoding: 'multipart',
-                sizeLimit: 524288, //512k
-                allowedExtensions: ['png', 'jpg', 'jpeg', 'gif'],
-                onComplete: function(id, filename, data) {
-                    $('#avatar').val(data.url);
-                    $('#avatarPreview').attr('src', data.url);
+            $('#avatarButton').on('click', function () {
+                window.hatch.upload.upload({}, function (err, data) {
+                    var url = data.media.url;
+
+                    $('#avatar').val(url);
+                    $('#avatarPreview').attr('src', url);
                     $('#avatar-preview-holder').show();
 
-                    $.noty({ text: '<i class="icon-ok"></i> <%- __('Profile picture uploaded') %>', type: 'success' });
-                }
+                    $.noty({ text: '<i class="icon-ok"></i> Profile picture uploaded', type: 'success' });
+                });
             });
-
-            //convert richtexts
-            setupRichtextEditors();
 
             //bind save password button to show the form
             $('#change-password-button').bind("click", function() {
@@ -210,7 +201,7 @@
             });
 
             $('#reset-button').bind("click", function() {
-                if(confirm('<%- __('You will lose all changes. Are you sure?') %>')) {
+                if(confirm('You will lose all changes. Are you sure?')) {
                     window.location = window.location;
                 };
             });

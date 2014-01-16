@@ -45,7 +45,7 @@ UploadController.prototype.upload = function (c) {
     var url = c.req.param('url');
 
     if (url) {
-        c.Media.createWithUrl(url, params, callback)
+        c.Media.createWithUrl(url, params, callback);
     } else {
         c.Media.createWithFiles(c.req.files, params, callback);
     }

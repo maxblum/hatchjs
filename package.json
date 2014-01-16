@@ -51,7 +51,13 @@
     "raven": "~0.5.4",
     "co-docs": "~0.0.1-2",
     "bower": "latest",
-    "file-finder": "https://github.com/ZECTBynmo/file-finder/tarball/master"
+    "file-finder": "https://github.com/ZECTBynmo/file-finder/tarball/master",
+
+    "hatch-blog": "latest",
+    "hatch-auth-facebook": "latest",
+    "hatch-auth-linkedin": "latest",
+    "hatch-auth-twitter": "latest",
+    "hatch-s3": "latest"
   },
   "devDependencies": {
     "mocha": "1.8.1",

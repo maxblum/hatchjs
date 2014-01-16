@@ -1,4 +1,4 @@
-;(function() {
+;(function($) {
     'use strict';
 
     var minSpanSize = 2;
@@ -54,7 +54,7 @@
 
             var maxSize = parentTotalSpanSize - total;
             return maxSize;
-        }
+        };
 
         // gets the column size
         this.getSize = function() {
@@ -62,7 +62,7 @@
                 return parseInt(($(this.el).attr('class')).substring($(this.el).attr('class').indexOf('col-md-') + 7));
             }
             return 0;
-        }
+        };
 
         this.size = this.getSize();
     }
@@ -74,7 +74,7 @@
         var nextEl = $(this.el).next();
         if(nextEl.length > 0) return nextEl[0].column;
         else return null;
-    }
+    };
 
     /**
      * Get the previous column
@@ -83,7 +83,7 @@
         var prevEl = $(this.el).prev();
         if(prevEl.length > 0) return prevEl[0].column;
         else return null;
-    }
+    };
 
     /**
      * Set the size of this column.
@@ -92,7 +92,7 @@
      */
     Column.prototype.setSize = function(size) {
         this.adjustSize(size - this.size);
-    }
+    };
 
     /**
      * Adjust the size of this column.
@@ -103,7 +103,7 @@
      */
     Column.prototype.adjustSize = function(delta, direction, stack) {
         //if there is no change, do nothing
-        if(delta == 0) {
+        if(delta === 0) {
             return true;
         }
 
@@ -124,10 +124,10 @@
         var size = this.size + delta;
 
         //if this column is greater than the max size, do nothing
-        if(size > this.getMaxSize() && direction != 0) return false;
+        if(size > this.getMaxSize() && direction !== 0) return false;
 
         //making the column larger - adjust columns to the right
-        if(direction != 0) {
+        if(direction !== 0) {
             if(delta > 0) {
                 //resize the column to the right by -delta
                 var next = this.next();
@@ -149,16 +149,20 @@
 
                 //now resize the column to the right by -delta
                 if(direction == delta) {
-                    var next = this.next();
-                    if(next) next.adjustSize(-delta, 0, stack);
+                    var nextCol = this.next();
+                    if(nextCol) {
+                        nextCol.adjustSize(-delta, 0, stack);
+                    }
                 }
 
                 //if we are trying to set a smaller than minSpanSize, try to resize the columns to the left
                 if(size < this.minSize) {
                     var diff = this.minSize - size;
-                    var prev = direction > 0 ? this.next() : this.prev();
+                    var prevCol = direction > 0 ? this.next() : this.prev();
 
-                    if(prev) prev.adjustSize(-diff, direction, stack);
+                    if(prevCol) {
+                        prevCol.adjustSize(-diff, direction, stack);
+                    }
 
                     return true;
                 }
@@ -182,7 +186,7 @@
         }
 
         return true;
-    }
+    };
 
     /**
      * Instantiate a new drag drop controller object
@@ -199,12 +203,14 @@
 
         this.makeColumnsResizable();
         this.makeModulesDraggable();
-    }
+    };
         
     /**
      * Makes columns resizable by dragging them via jQuery-ui controls.
      */
     DragDropController.prototype.makeColumnsResizable = function() {
+        var self = this;
+
         // if we are using a template, don't allow column resizing
         if($('.using-template').length > 0) {
             return;
@@ -226,12 +232,7 @@
                 var pageWidth = $('.container').outerWidth();
                 var pageSpans = 12;
                 var spanWidth = pageWidth / pageSpans;
-
                 var col = ui.element;
-                var parentEl = col.parent();
-                var totalSpans = parseInt($(parentEl).outerWidth() / spanWidth);
-                var cols = $('> .column', parentEl);
-
                 var spanSize = parseInt(ui.size.width / spanWidth + 0.5);
 
                 col[0].column.setSize(spanSize);
@@ -241,7 +242,7 @@
                 $(ui.element).css({ width: '', height: '' });
 
                 // save via AJAX
-                $(document).trigger('order-changed');
+                self.saveWidgets();
             }
         });
     };
@@ -250,6 +251,8 @@
      * Makes widgets draggable around the page.
      */
     DragDropController.prototype.makeModulesDraggable = function () {
+        var self = this;
+
         $('.widget-list').each(function () {
             var $m = $(this);
             if ($m.find('.widget.not-editable-widget').size() === 0) {
@@ -269,11 +272,34 @@
                 }
 
                 // save via AJAX
-                $(document).trigger('order-changed');
+                self.saveWidgets();
+            }
+        });
+    };
+
+    DragDropController.prototype.saveWidgets = function (hideNotifications) {
+        var res = [];
+        $('.column').each(function () {
+            var size = $(this).attr('class').match(/col\-md\-(\d\d?)/)[1];
+            var widgetList = $(this).hasClass("widget-list") ? this : $(".widget-list:first-child", this);
+
+            var mods = [];
+            $(widgetList).find('> .widget').each(function () {
+                mods.push(parseInt($(this).attr('data-id'), 10));
+            });
+            res.push({
+                size: size,
+                widgets: mods
+            });
+        });
+
+        window.hatch.ajax.send('admin/page/columns', 'POST', { widgets: JSON.stringify(res) }, function (err, data) {
+            if (!hideNotifications) {
+                $.noty({text: "<i class='icon-ok'></i> Page layout saved", type: "success"});
             }
         });
     };
 
     // EXPORTS
     window.DragDropController = DragDropController;
-})();
+})($);

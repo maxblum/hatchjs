@@ -1,4 +1,4 @@
-;(function () {
+;(function ($) {
 	'use strict';
 
 	/**
@@ -45,13 +45,13 @@
      * Show the edit console.
      */
     EditConsoleController.prototype.show = function() {
-    	var self = this;
+        var self = this;
 
         $('#edit-page-link i.fa-eye-slash').show();
         $('#edit-page-link i.fa-eye').hide();
 
         if ($('#editConsole').length === 0) {
-            $('#editConsoleHolder').load(pathTo('admin/page/editconsole'), function() {
+            $('#editConsoleHolder').load(window.hatch.pathTo('admin/page/editconsole'), function() {
                 $('.edit-console').fadeIn();
 
                 //set the position
@@ -60,12 +60,12 @@
                 //allow widget dragging
                 $('#edit-console-widgets li span.widget').draggable({
                     appendTo: 'body',
-                    helper: function(event) {
+                    helper: function() {
                         return $('<div class="drag-helper">' + $(this).html() + '</div>');
                     },
                     connectToSortable: '.widget-list.editable',
-                    stop: function(event, ui) {
-                    	var widget = $('a', this).attr('href').replace('#', '');
+                    stop: function() {
+                        var widget = $('a', this).attr('href').replace('#', '');
                         var $placeholder = $('.widget-list .widget.ui-draggable');
 
                         var row = $placeholder.index();
@@ -82,7 +82,7 @@
                         $placeholder.remove();
 
                         //add the new widget
-                        createWidget(widget, col, row);
+                        self.createWidget(widget, col, row);
                     }
                 });
 
@@ -109,7 +109,7 @@
             self.position();
 
             //reload the layouts tab
-            $('#edit-console-layouts').load(pathTo('admin/page/editconsole?tab=layouts'));
+            $('#edit-console-layouts').load(window.hatch.pathTo('admin/page/editconsole?tab=layouts'));
         }
     };
 
@@ -135,6 +135,83 @@
         }
     };
 
+    /**
+     * Create a widget and add it to the page in the specified position.
+     * 
+     * @param  {String} type - widget type
+     * @param  {Number} col  - column number
+     * @param  {Number} row  - row number
+     */
+    EditConsoleController.prototype.createWidget = function (type, col, row) {
+        var name = type.split('/').pop();
+        window.hatch.ajax.sendToWidget(null, null, 'POST', {addWidget: type}, function (err, data) {
+            if (data.error) {
+                $.noty({text: "<i class='icon-warning-sign'></i> " + data.error.message, type: "error"});
+            } else {
+                var $widget = $(data.html);
+                $.noty({text: "<i class='icon-ok'></i> Widget added", type: "success"});
+                var $home;
+                if (typeof col != 'undefined') {
+                    $home = $('.widget-list:eq(' + col + ')');
+                } else if (name === 'mainmenu' || name === 'group-header') {
+                    $home = $('.widget-list:eq(0)');
+                } else {
+                    var first = true;
+                    $('.widget-list').each(function () {
+                        if (first) {
+                            first = false;
+                            return;
+                        }
+                        if (!$home && $(this).find('.not-editable-widget').size() === 0) {
+                            $home = $(this);
+                        }
+                    });
+                }
+                if ($home && $home.size()) {
+                    if(typeof row != 'undefined' && row > 0) {
+                        if(row >= $home.children().length) $home.append($widget);
+                        else $($widget).insertBefore($($home.children()[row]));
+                    } else {
+                        $home.prepend($widget);
+                    }
+
+                    $widget.hide().slideDown();
+
+                    window.hatch.dragdrop.saveWidgets(true);
+                }
+            }
+        });
+        return false;
+    };
+
+    /**
+     * Change the grid to the specified type.
+     * 
+     * @param  {String}      type - grid type
+     * @param  {HTMLElement} el   - element defining the grid
+     */
+    EditConsoleController.prototype.selectGrid = function (type, el) {
+        $(el).parent().find('li.selected-grid').removeClass('selected-grid');
+        $('#templates-layouts input').attr("checked", null);
+
+        window.hatch.ajax.send('page/grid', 'POST', {grid: type}, function (err, data) {
+            $('.widget-list:first').closest('#row-content').html(data.html);
+
+            //re-intialise the dragdrop
+            dragdrop.init();
+
+            //display notification
+            $.noty({
+                text: "<i class='icon-ok'></i> Page layout changed", 
+                type: "success"
+            });
+
+            $(el).addClass('selected-grid');
+        });
+
+        return false;
+    };
+
     // EXPORTS
     window.EditConsoleController = EditConsoleController;
-})();
+})($);

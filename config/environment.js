@@ -35,6 +35,7 @@ module.exports = function (compound) {
         app.set('timeformat', 'HH:mm:ss');
         app.set('datetimeformat', app.get('dateformat') + ' ' + app.get('timeformat'));
         app.set('csrf secret', '~aJlsk029p2$3Hka8*2+$');
+        app.set('images proxy', '//images.hatchjs.com/?url=');
 
         compound.injectMiddlewareAt(2, hatch.middleware.timeLogger(compound));
 
@@ -43,8 +44,11 @@ module.exports = function (compound) {
 
         app.use(express.static(app.root + '/public', { maxAge: 86400000 }));
         app.use(express.static(app.root + '/bower_components', { maxAge: 86400000 }));
+        
         app.use(express.urlencoded());
         app.use(express.json());
+        app.use(express.multipart());
+        
         app.use(express.cookieParser('secret'));
         app.use(express.session({
             secret: '~:hatch1#6Platform0*2%',

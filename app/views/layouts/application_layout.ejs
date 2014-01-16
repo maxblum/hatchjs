@@ -31,6 +31,13 @@
     <link rel="icon" type="image/png" href="<%- group.favicon || '/egg.png' %>">
 
     <%- javascriptIncludeTag(javascripts()) %>
+
+    <script type="text/javascript">
+        window.hatch = new Hatch({ admin: canEdit });
+        $(document).ready(function () {
+            window.hatch.init();
+        });
+    </script>
 </head>
 <body class="<%- req.group.navBarType === 'fixed' ? 'navbar-fixed' : '' %>">
     <div id="blank-modal" class="modal fade"></div>

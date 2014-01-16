@@ -2,17 +2,13 @@
     <h2><%- widget.settings.title %></h2>
 <% } %>
 
-<form role="form" data-remote="true" action="<%- widgetCoreAction('post') %>" method="POST">
+<form role="form" rel="ajax" action="<%- widgetCoreAction('post') %>" method="POST">
 	<div class="form-group">
-		<textarea class="form-control input-lg" rows="3" placeholder="<%- widget.settings.prompt %>" name="text"></textarea>
+		<textarea class="form-control input-lg" rows="3" placeholder="<%- widget.settings.prompt %>" name="text" id="text" rel="submitcommandenter"></textarea>
 	</div>
+
 	<div class="form-group">
-		<a href="#" class="btn btn-default">
-			<i class="fa fa-camera"></i>
-		</a>&nbsp;
-		<a href="#" class="btn btn-default">
-			<i class="fa fa-map-marker"></i>
-		</a>
+		<a href="#add-file-<%- widget.id %>" class="btn btn-default" rel="selectfile"><i class="fa fa-camera"></i></a>	
 		<button class="btn btn-primary pull-right" type="submit">Post update</button>
 	</div>
 

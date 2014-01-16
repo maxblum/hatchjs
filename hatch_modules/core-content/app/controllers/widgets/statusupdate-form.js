@@ -30,6 +30,13 @@ StatusUpdateFormController.prototype.show = function (c) {
 };
 
 StatusUpdateFormController.prototype.post = function (c) {
+	if (!c.req.user) {
+		return c.send({ 
+			code: 400, 
+			error: 'You must be logged in to do that' 
+		});
+	}
+
 	var data = {
 		createdAt: new Date(),
 		type: 'statusupdate',

@@ -112,9 +112,9 @@
                                 var rule = rules[i].selectorText;
                                 if(shouldIgnore(rule)) {
                                     ignored = true;
-                                };
+                                }
 
-                                if(appliedRules.indexOf(rule) == -1) {
+                                if(appliedRules.indexOf(rule) === -1) {
                                     appliedRules.push(rule);
                                 }
                             }
@@ -140,7 +140,7 @@
                 return match;
             }
 
-            if(appliedRules.length == 0 && ignored && !all) return false;
+            if(appliedRules.length === 0 && ignored && !all) return false;
             return appliedRules;
         }    
         
@@ -148,7 +148,7 @@
         function colorToHex(color) {
             //blank,transparent,hex,rgba: return original value
             if(color == "rgba(0, 0, 0, 0)") return "";
-            if(color == "" || color == "transparent" || color.substr(0, 1) === '#' || color.indexOf("rgba") == 0) return color;
+            if(color == "" || color == "transparent" || color.substr(0, 1) === '#' || color.indexOf("rgba") === 0) return color;
 
             try {
                 var digits = /(.*?)rgb\((\d+), (\d+), (\d+)\)/.exec(color);
@@ -162,7 +162,7 @@
             } catch(exception) {
                 return color;
             }
-        };
+        }
         
         //starts the css selector element highlighter
         function highlightMouseOverElement(explicit) {
@@ -179,7 +179,7 @@
 
             //click event - shows the selector style edit tools and unbinds
             function click(e) {
-                if($(e.target).parents(".edit-console").length == 0) {
+                if($(e.target).parents(".edit-console").length === 0) {
                     c.stopHighlight();
 
                     //select the current element
@@ -221,7 +221,7 @@
             };
 
             function checkStopHighlight() {
-                if((!$('#style-properties').is(':visible') && !$('#style-select').is(':visible')) || $('#collapseThree').height() == 0) {
+                if((!$('#style-properties').is(':visible') && !$('#style-select').is(':visible')) || $('#collapseThree').height() === 0) {
                     $('.outlineActive').removeClass('outlineActive');
                     c.stopHighlight();
                     c.els.selectedLabel.hide();
@@ -231,7 +231,7 @@
                 else {
                     setTimeout(checkStopHighlight, 1000);
                 }
-            };
+            }
 
             //check to see if we should stop highlighting
             setTimeout(checkStopHighlight, 1000);
@@ -243,7 +243,7 @@
                 else {
                     setTimeout(checkResumeHighlight, 1000);
                 }
-            };
+            }
 
             //mousemove event to show active selector
             function mousemove(e) {
@@ -414,7 +414,7 @@
 
         //save changes via AJAX call to the style controller
         function saveChanges() {
-            $.ajax(pathTo('admin/stylesheet/setrules'), {
+            $.ajax(window.hatch.pathTo('admin/stylesheet/setrules'), {
                 data: { rules : c.changes },
                 type: "POST",
                 complete: function() {
@@ -447,7 +447,7 @@
                 color: '#fff' 
             } }); 
              
-            $.ajax(pathTo('admin/stylesheet/theme?name=' + theme), {
+            $.ajax(window.hatch.pathTo('admin/stylesheet/theme?name=' + theme), {
                 type: 'POST',
                 success: function(res) {
                     $.unblockUI();
@@ -482,7 +482,7 @@
         //saves CSS changes from the text area
         function saveCss() {
             var cssText = $("#style-css-textarea").val();
-            $.ajax(pathTo('admin/stylesheet/setless'), {
+            $.ajax(window.hatch.pathTo('admin/stylesheet/setless'), {
                 data: {
                     less: {
                         custom: c.els.textareaCustom.val(),
@@ -656,7 +656,7 @@
 
         //loads the css into the textarea
         function loadCssIntoTextarea() {
-            $.ajax(pathTo('admin/stylesheet/load')).done(function(data) {
+            $.ajax(window.hatch.pathTo('admin/stylesheet/load')).done(function(data) {
                 if (data && data.stylesheet && data.stylesheet.less) {
                     c.els.textareaVariables.val(data.stylesheet.less.variables);
                     c.els.textareaBootswatch.val(data.stylesheet.less.bootswatch);
@@ -669,7 +669,7 @@
                 if(e.keyCode === 9) {
                     return false;
                 }
-            })
+            });
         }
         
         //initialises the style editor, attached events
@@ -716,7 +716,7 @@
             var uploader = new qq.FileUploader({
                 params: { _csrf: $('meta[name=csrf-token]').attr('content') },
                 element: c.els.bgUploadButton.get(0),
-                action: pathTo('upload/add'),
+                action: window.hatch.pathTo('upload/add'),
                 uploadButtonText: c.els.bgUploadButton.html(),
                 encoding: 'multipart',
                 onComplete: function(id, filename, data) {

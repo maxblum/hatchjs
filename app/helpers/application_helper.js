@@ -37,12 +37,10 @@ exports.openGraphTags = function () {
 
 var javascripts = {
     common: [
-        'jquery2.0.0', 'bootstrap', 'bootstrap-typeahead', 'jquery-easyticker',
-        'jquery-hoverintent', 'jquery-blink', 'jquery-valadd',
-        'jquery-textarea-autogrow', 'jquery-noty', 'jquery-cookie',
-        'jquery-pjax', 'jquery-hovercard', 'jquery-highlight', 'uploader',
-        'rails', 'forms', 'hatch-search', 'hatch', 'hatch-io', 'jquery-zoom',
-        'application', 'i18n'
+        'jquery2.0.0', 'jquery-hoverintent', 'jquery-valadd', 
+        'jquery-textarea-autogrow', 'jquery-noty', 'jquery-cookie','jquery-pjax', 
+        'bootstrap',
+        'hatch-ajax', 'hatch-upload', 'hatch-page', 'hatch-widget', 'hatch', 'i18n'
     ],
     privileged: [
         'jquery-ui.min', 'chosen.jquery', 'jquery-rule', 'jquery-datatables',
@@ -62,7 +60,7 @@ exports.javascripts = function () {
     } else {
         return javascripts.common;
     }
-}
+};
 
 exports.isPrivileged = function () {
     return !!(this.req.member && this.req.user.canEdit);

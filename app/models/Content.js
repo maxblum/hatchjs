@@ -37,7 +37,7 @@ module.exports = function (compound, Content) {
     Content.CACHEDCOMMENTS = 3;
     Content.CACHEDLIKES = 3;
 
-    Content.validatesPresenceOf('createdAt', 'text');
+    Content.validatesPresenceOf('createdAt', 'text', { message: 'Please enter some text' });
 
     // register the functions which can be called from the REST api
     Content.allowedApiActions = ['like', 'getLike', 'vote', 'postComment', 'flag', 'clearFlags', 'destroyAndBan', 'registerView'];
@@ -57,7 +57,7 @@ module.exports = function (compound, Content) {
      * @return {Number}
      */
     Content.getter.score = function () {
-        return Math.min(Math.floor(((this.likes || []).length + (this.comments || []).length) / 2), 5);
+        return Math.min(Math.floor((this.likesTotal + this.commentsTotal) / 2), 5);
     };
 
     /**
@@ -171,15 +171,20 @@ module.exports = function (compound, Content) {
             data.previewImage = JSON.parse(data.previewImage);
         }
 
-        // get the group and check all tag filters
-        Group.find(data.groupId, function (err, group) {
-            if (!group) {
-                return done();
-            }
+        // set the author
+        User.find(data.authorId, function (err, user) {
+            data.author = user.toPublicObject();
 
-            Tag.applyMatchingTags(data, function (err, data) {
-                //generate url
-                Content.generateUrl(data, group, done);
+            // get the group and check all tag filters
+            Group.find(data.groupId, function (err, group) {
+                if (!group) {
+                    return done();
+                }
+
+                Tag.applyMatchingTags(data, function (err, data) {
+                    //generate url
+                    Content.generateUrl(data, group, done);
+                });
             });
         });
     };
@@ -549,17 +554,19 @@ module.exports = function (compound, Content) {
         Content.find(contentId, function (err, post) {
             if (post) {
                 Comment.all({ where: { contentId: post.id }, limit: Content.CACHEDCOMMENTS, order: 'createdAt DESC' }, function (err, comments) {
-                    post.commentsTotal = comments.countBeforeLimit;
-                    post.comments.items = [];
+                    Content.populateUsers(comments, function (err, comments) {
+                        post.commentsTotal = comments.countBeforeLimit;
+                        post.comments.items = [];
 
-                    // reverse the comments so we can show latest at the end
-                    comments = comments.reverse();
+                        // reverse the comments so we can show latest at the end
+                        comments = comments.reverse();
 
-                    comments.forEach(function (comment) {
-                        post.comments.push(comment.toObject());
+                        comments.forEach(function (comment) {
+                            post.comments.push(comment.toObject());
+                        });
+
+                        post.save(callback);
                     });
-
-                    post.save(callback);
                 });
             } else if (callback) {
                 callback();
@@ -609,6 +616,18 @@ module.exports = function (compound, Content) {
         var userId = user.id || user;
         Like.all({ where: { userId: userId, contentId: this.id }}, function (err, likes) {
             callback(err, likes[0]);
+        });
+    };
+
+    /**
+     * Get whether the specified user likes this content item.
+     * 
+     * @param  {User}     user     - user or userId
+     * @param  {Function} callback - callback function
+     */
+    Content.prototype.doesUserLike = function (user, callback) {
+        this.getLike(user, function (err, like) {
+            callback(err, like != null);
         });
     };
 

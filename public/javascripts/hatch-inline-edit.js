@@ -1,4 +1,4 @@
-(function () {
+(function ($) {
     'use strict';
 
     /**
@@ -13,16 +13,16 @@
      */
     InlineEditController.prototype.init = function() {
         function titleEdit() {
-            var el = $(this);
-            var title = el.text();
+            var $el = $(this);
+            var title = $el.text();
 
-            if($('input', el).length > 0) {
+            if($('input', $el).length > 0) {
                 return;
             }
 
             // replace with an input
             var input = $('<input type="text" value="' + title + '" />');
-            el.html(input);
+            $el.html(input);
             input.focus();
             input.selectRange(input.val().length, input.val().length);
 
@@ -31,24 +31,19 @@
                 if(e.which == 13) {
                     var title = input.val();
 
-                    var $widget = el.closest('.widget');
+                    var $widget = $el.closest('.widget');
                     var widgetId = $widget.attr('data-id');
 
-                    send('core-widgets/widget/' + widgetId + '/settitle', {
-                        _method: 'PUT',
-                        title: title
-                    }, function (data) {
-                        $.noty({text: "<i class='icon-ok'></i> Widget title updated", type: "success"});
-
-                        if(title) el.html(title);
-                        else el.remove();
+                    window.hatch.ajax.sendToWidget(widgetId, 'settitle', 'PUT', { title: title }, function (err, data) {
+                        if(title) $el.html(title);
+                        else $el.remove();
                     });
                 }
             });
 
             // revert on loss of focus
             input.bind("blur", function(e) {
-                el.html(title);
+                $el.html(title);
             });
         }
 
@@ -100,7 +95,18 @@
                 $el.removeData('active');
 
                 // trigger save to database
-                $el.trigger('contents-updated');
+                var $widget = $el.parents('.widget');
+                var widgetId = $widget.attr('id');
+
+                window.hatch.ajax.sendToWidget(widgetId, 'update', 'PUT', {
+                    _method: 'PUT',
+                    perform: 'update',
+                    'with': {
+                        content: $el.data('html') || $el.html()
+                    }
+                }, function (err, data) {
+                    $.noty({text: "<i class='icon-ok'></i> Widget contents updated", type: "success"});
+                });
             });
 
             // hack: clear any selection
@@ -130,7 +136,7 @@
 
             function destroyEditor() {
                 textarea.val(editor.getValue());
-            };
+            }
 
             // html editor - ACE
             if($el.hasClass('html')) {
@@ -146,7 +152,7 @@
             }
             // richtext editor - redactor
             else {
-                var editor = setupRichtextEditor(textarea, {
+                var editor = window.hatch.page.setupRichtextEditor(textarea, {
                     autoresize : true,
                     css : "inline.css",
                     minHeight : false
@@ -171,8 +177,8 @@
         });
 
         $('body').on('dblclick', '.widget:not(.not-editable-widget) .content > h2', titleEdit);
-    }
+    };
 
     // EXPORTS
     window.InlineEditController = InlineEditController;
-})();
+})($);

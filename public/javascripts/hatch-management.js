@@ -1,2 +1,1 @@
-var dragdrop = new DragDropController();
-var inlineedit = new InlineEditController();
+// add the management controllers to the hatch object

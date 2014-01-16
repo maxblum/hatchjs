@@ -52,7 +52,7 @@ Application.installTabGroup('group', function(c) {
         subTabs.push({ name: 'modules.headers.manageModules', url: c.pathTo.manageModules });
 
         c.locals.modulesEnabled.forEach(function (inst) {
-            if (inst.name && inst.module && inst.module.info.title) {
+            if (inst.name && inst.module && inst.module.info.title && inst.module.info.settings) {
                 subTabs.push({
                     name: inst.module.info.title,
                     url: c.pathTo.setupModule(inst.name)

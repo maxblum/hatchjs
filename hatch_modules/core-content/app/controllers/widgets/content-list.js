@@ -28,6 +28,7 @@ require('util').inherits(ContentListController, Widget);
 ContentListController.prototype.show = function (c) {
 	var widget = c.locals.widget;
 	var offset = c.req.param('offset');
+	var limit = c.req.param('limit');
 
 	// default filter is by group.id
 	var cond = {
@@ -54,15 +55,17 @@ ContentListController.prototype.show = function (c) {
 	}
 
 	var query = {
-		limit: widget.settings.pageSize,
+		limit: limit || widget.settings.pageSize,
 		offset: offset || widget.settings.startAt || 0,
 		where: cond
 	};
 
 	c.Content.allWithLikes(query, c.req.user, function (err, posts) {
-		c.Content.populateUsers(posts, function (err, posts) {
-			c.locals.posts = posts;
-			c.render({ layout: 'widgets' });
-		});
+		c.locals.posts = posts;
+		c.locals.count = posts.countBeforeLimit;
+		c.locals.offset = parseInt(query.offset);
+		c.locals.limit = parseInt(query.limit);
+
+		c.render({ layout: c.req.query.offset ? null : 'widgets' });
 	});
 };
