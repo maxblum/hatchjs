@@ -13,3 +13,12 @@ exports.widgetAction = function (s, type) {
 exports.widgetCoreAction = function (s) {
     return [this.req.pagePath, 'do/core-widgets/widget', this.locals.widget.id || 'NOWID', s].join('/');
 };
+
+exports.widgetTitle = function (def) {
+    var s = this.locals.widget.settings;
+    if (s && s.title || def) {
+        return '<h2>' + (s && s.title || def) + '</h2>';
+    } else {
+        return '';
+    }
+};

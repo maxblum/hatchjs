@@ -1,6 +1,4 @@
-<% if(widget.settings.title.length > 0) { %>
-    <h2><%- widget.settings.title %></h2>
-<% } %>
+<%- widgetTitle() %>
 
 <% if(req.user) { %>
     <%- formTagBegin({action:pathTo.update(), remote: true, method: 'post', class: 'form', id: 'accountForm' }) %>

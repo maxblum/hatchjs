@@ -1,6 +1,4 @@
-<% if(widget.settings.title) { %>
-    <h2><%- widget.settings && widget.settings.title || __('Sign up form') %></h2>
-<% } %>
+<%- widgetTitle() %>
 
 <p>
   <%- __('Welcome to %s', req.group.name) %>

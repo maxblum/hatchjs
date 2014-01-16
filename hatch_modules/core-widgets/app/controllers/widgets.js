@@ -28,6 +28,7 @@ function WidgetController(init) {
     init.before(requireAdmin, {only: ['create', 'configure', 'update', 'destroy', 'settitle', 'contrast' ] });
 }
 
+// make sure the admin user is logged in
 function requireAdmin(c) {
     if (c.canEdit) {
         c.next();

@@ -1,6 +1,4 @@
-<% if (widget.settings.title) { %>
-    <h2><%- widget.settings.title %></h2>
-<% } %>
+<%- widgetTitle() %>
 
 <form role="form" rel="ajax" action="<%- widgetCoreAction('post') %>" method="POST">
 	<div class="form-group">

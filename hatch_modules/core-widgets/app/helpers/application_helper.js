@@ -1,13 +1,3 @@
-
-exports.widgetTitle = function (def) {
-    var s = this.locals.widget.settings;
-    if (s && s.title || def) {
-        return '<h2>' + (s && s.title || def) + '</h2>';
-    } else {
-        return '';
-    }
-};
-
 exports.escape = function (s) {
     return JSON.stringify(s).replace(/\</g, '&lt;').replace(/\>/g, '&gt;');
 };
