@@ -1,6 +1,9 @@
 {
   "name": "hatchjs",
   "version": "1.1.1",
+  "author": "Inventures Software Ltd, UK",
+  "license": "AGPL",
+  "description": "Hatch.js is CMS platform with social features. This package is an Express application which can be extended with additional modules.",
   "engines": [
     "node >= 0.8.0"
   ],
