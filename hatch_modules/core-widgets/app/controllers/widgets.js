@@ -180,7 +180,11 @@ WidgetController.prototype.destroy = function(c) {
     var page = this.page;
     page.widgets.remove(this.widget);
     page.save(function() {
-        c.send('ok');
+        c.send({
+            status: 'success',
+            message: 'Widget removed',
+            widget: c.locals.widget
+        });
     });
 };
 

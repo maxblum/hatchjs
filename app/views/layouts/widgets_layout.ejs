@@ -4,7 +4,7 @@
 		<div class="pull-right">
 			<div class="widget-controls">
 
-				<a href="#move" class="move" rel="tooltip" title="<%= __('drag to move widget') %>"><i class="fa fa-arrows"></i></a>
+				<a href="#move" class="move" rel="tooltip" title="drag to move widget"><i class="fa fa-arrows"></i></a>
 
 				<a href="<%- widgetCoreAction('contrast') %>" data-remote="true" class="adjust" rel="tooltip" title="<%= __('toggle widget style') %>"><i class="fa fa-adjust"></i></a>
 
@@ -15,7 +15,7 @@
 				<a href="<%- widgetCoreAction('settings') %>" data-modal="true" data-remote="true" class="edit" rel="tooltip" title="<%= __('click to edit settings') %>"><i class="fa fa-cog"></i></a>
 
 				<% if (typeof disableDelete === 'undefined') { %> 
-					<a href="#delete" class="delete" rel="tooltip" title="<%= __('click to delete widget') %>"><i class="fa fa-trash-o"></i></a>
+					<a href="<%- widgetCoreAction('destroy') %>" data-remote="true" class="delete" rel="tooltip" title="click to delete widget"><i class="fa fa-trash-o"></i></a>
 				<% } %>
 
 			</div>

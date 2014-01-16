@@ -19,8 +19,14 @@
         });
 
         // refresh the widget on contrast mode change
-        $(document).on('ajax:success', 'a.adjust', function (e, data) {
+        $(document).on('ajax:success', '.widget a.adjust', function (e, data) {
 			self.refresh(data.widget.id);
+        });
+
+        // refresh the widget on contrast mode change
+        $(document).on('ajax:success', '.widget a.delete', function (e, data) {
+			$('#' + data.widget.id).remove();
+			window.hatch.dragdrop.saveWidgets(true);
         });
 	};
 
