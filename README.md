@@ -135,3 +135,7 @@ Every piece of code should be tested (ideally). Make sure tests included in pull
 [feature]: ./README.md#2-make-feature-working-on-feature
 [pr]: ./README.md#3-make-pr-make-pull-request
 [compound-api]: http://compoundjs.github.com/guides
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/inventures/hatchjs/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
