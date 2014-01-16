@@ -127,16 +127,16 @@
                 });
 
                 // create the edit console
-                var editConsole = new EditConsoleController();
+                window.hatch.editConsole = new EditConsoleController();
 
                 // show the edit console?
                 if ($('#editConsoleHolder').length > 0 && $.cookie('edit-console-visible')) {
-                    editConsole.toggle(true);
+                    window.hatch.editConsole.toggle(true);
                 }
 
                 // edit console link
                 $('#edit-page-link').click(function () {
-                    editConsole.toggle();
+                    window.hatch.editConsole.toggle();
                     return false;
                 });
             }

@@ -5,7 +5,14 @@
 	 * Instantiate a new edit console.
 	 */
 	function EditConsoleController () {
+        var self = this;
 
+        if (!window.hatch.checkBound('editconsole')) {
+            $(document).on('click', '.edit-console .widget a', function () {
+                self.createWidget(this.href.split('#')[1], 1, 0);
+                return false;
+            });
+        }
 	}
 
 	/**
@@ -194,11 +201,11 @@
         $(el).parent().find('li.selected-grid').removeClass('selected-grid');
         $('#templates-layouts input').attr("checked", null);
 
-        window.hatch.ajax.send('page/grid', 'POST', {grid: type}, function (err, data) {
+        window.hatch.ajax.send('admin/page/grid', 'POST', {grid: type}, function (err, data) {
             $('.widget-list:first').closest('#row-content').html(data.html);
 
             //re-intialise the dragdrop
-            dragdrop.init();
+            window.hatch.dragdrop.init();
 
             //display notification
             $.noty({
