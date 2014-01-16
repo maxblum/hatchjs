@@ -712,19 +712,6 @@
                 });
             });
 
-            //upload background image
-            var uploader = new qq.FileUploader({
-                params: { _csrf: $('meta[name=csrf-token]').attr('content') },
-                element: c.els.bgUploadButton.get(0),
-                action: window.hatch.pathTo('upload/add'),
-                uploadButtonText: c.els.bgUploadButton.html(),
-                encoding: 'multipart',
-                onComplete: function(id, filename, data) {
-                    $.noty({ text: '<i class="icon-ok"></i> Background image uploaded', type: 'success' });
-                    setCssRule(c.currentSelector, 'background-image', 'url(' + data.url + ')');
-                }
-            });
-
             //remove background image
             c.els.bgNoneButton.bind('click', function() {
                 setCssRule(c.currentSelector, 'background-image', 'none');
