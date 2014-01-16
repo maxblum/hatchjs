@@ -4,6 +4,10 @@ Hatch.js is CMS platform with social features. This package is an
 [Express][express] application which can be extended with additional modules. All parts of
 this application are accesible via [CompoundJS API][compound-api].
 
+## License
+
+Hatch.js dual-licensed under AGPL and Hatch Commercial License. AGPL means that if you fork the Hatch.js code or write a derivative application (an application which runs on the same CPU process), you must open-source and distribute your project freely under the same AGPL terms. Alternatively a commercial closed-source license is available. More details on [our website][pricing].
+
 ## Dependencies
 
 Hatch.js requires [Node 0.8+][node] and [Redis 2.6+][redis] to be installed. Bower is also required to install client-side dependencies.
@@ -115,6 +119,7 @@ verbose output run `make test-verbose`.
 
 Every piece of code should be tested (ideally). Make sure tests included in pull request.
 
+[pricing]: http://hatchjs.com/pricing
 [examples]: ./examples
 [express]: http://expressjs.com/
 [node]: http://nodejs.org/
