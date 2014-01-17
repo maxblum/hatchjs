@@ -26,7 +26,7 @@ module.exports = function (c) {
     // register the default themes
     var themes = [];
 
-    var bootswatchDir = path.join(__dirname, '../../bower_components/bootswatch');
+    var bootswatchDir = path.join(__dirname, '../bootswatch');
     var themeDirs = fs.readdirSync(bootswatchDir);
 
     themeDirs.forEach(function (dir) {
