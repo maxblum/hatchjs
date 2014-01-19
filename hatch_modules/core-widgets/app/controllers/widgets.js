@@ -114,7 +114,7 @@ WidgetController.prototype.create = function(c) {
             return c.sendError(err);
         }
 
-        page.renderWidget(widget, c.req, function (err, html) {
+        page.renderWidgetAction(c.req, widget, 'show', {}, function (err, html) {
             c.send({
                 code: err ? 500 : 200,
                 html: html,

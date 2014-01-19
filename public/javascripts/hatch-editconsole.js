@@ -185,6 +185,7 @@
                     $widget.hide().slideDown();
 
                     window.hatch.dragdrop.saveWidgets(true);
+                    window.hatch.dragdrop.makeModulesDraggable();
                 }
             }
         });

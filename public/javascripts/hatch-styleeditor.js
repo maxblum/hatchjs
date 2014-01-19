@@ -104,7 +104,14 @@
             var ignored = false;
 
             for (var x = 0; x < document.styleSheets.length; x++) {
-                var rules = document.styleSheets[x].cssRules;
+                var rules;
+
+                try {
+                    rules = document.styleSheets[x].cssRules;
+                } catch (err) {
+                    // do nothing - probably a security error
+                }
+
                 if (rules) {
                     for (var i = 0; i < rules.length; i++) {
                         try {
@@ -578,19 +585,28 @@
             var sheets = document.styleSheets, o = {};
             for(var i in sheets) {
                 if(sheets[i].href == null) continue;
-                var rules = sheets[i].rules || sheets[i].cssRules;
-                for(var r in rules) {
-                    var rule = rules[r].selectorText;
-                    if(shouldIgnore(rule)) continue;
+                var rules;
 
-                    if(typeof a == 'string') {
-                        if(a == rules[r].selectorText) {
-                            o = $.extend(o, css2json(rules[r].style));
+                try {
+                    rules = sheets[i].rules || sheets[i].cssRules;
+                } catch (err) {
+                    // do nothing - probably a security error
+                }
+
+                if (rules) {
+                    for(var r in rules) {
+                        var rule = rules[r].selectorText;
+                        if(shouldIgnore(rule)) continue;
+
+                        if(typeof a == 'string') {
+                            if(a == rules[r].selectorText) {
+                                o = $.extend(o, css2json(rules[r].style));
+                            }
                         }
-                    }
-                    else {
-                        if(a.is(rules[r].selectorText)) {
-                            o = $.extend(o, css2json(rules[r].style), css2json(a.attr('style')));
+                        else {
+                            if(a.is(rules[r].selectorText)) {
+                                o = $.extend(o, css2json(rules[r].style), css2json(a.attr('style')));
+                            }
                         }
                     }
                 }
@@ -677,41 +693,6 @@
             //get the colorscheme
             var palette = Object.keys(colorScheme.colors);
 
-            //colorpickers
-            $('#editConsole .color').each(function(i, el) {
-                var input = $('input', el);
-                var swatch = $('.add-on i', el);
-                swatch.css('background-color', input.val());
-
-                $(el).spectrum({
-                    color: input.val(),
-                    showInput: true,
-                    className: "full-spectrum",
-                    showInitial: true,
-                    showAlpha: true,
-                    showPalette: true,
-                    palette: palette,
-                    showSelectionPalette: true,
-                    maxPaletteSize: 20,
-                    preferredFormat: "hex",
-                    localStorageKey: "spectrum." + input.id,
-                    change: function(color) {
-                        //convert to the friendliest format
-                        if(color.alpha == 0) color = 'transparent';
-                        else if(color.alpha == 1) color = color.toHexString();
-                        else color = color.toRgbString();
-
-                        //set the value in the textbox
-                        input.val(color);
-                        swatch.css('background-color', color);
-
-                        //trigger the css property change
-                        var property = input[0].id.replace("style-", "");
-                        setCssRule(c.currentSelector, property, color);
-                    }
-                });
-            });
-
             //remove background image
             c.els.bgNoneButton.bind('click', function() {
                 setCssRule(c.currentSelector, 'background-image', 'none');
@@ -792,7 +773,14 @@
 
             var allRules = [];
             for (var x = 0; x < document.styleSheets.length; x++) {
-                var rules = document.styleSheets[x].cssRules;
+
+                var rules;
+                try {
+                   rules = document.styleSheets[x].cssRules;
+                } catch (err) {
+                    // do nothing - probably a security error
+                }
+
                 if (!rules) continue;
                 for (var i = 0; i < rules.length; i++) {
                     var rule = $.trim(rules[i].selectorText);

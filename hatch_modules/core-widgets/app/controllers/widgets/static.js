@@ -34,7 +34,11 @@ StaticController.prototype.configure = function (c) {
             return c.send(err);
         }
 
-        c.send('ok');
+        c.send({
+            status: 'success',
+            message: 'Widget settings saved',
+            widget: c.locals.widget
+        });
     });
 };
 
@@ -50,6 +54,10 @@ StaticController.prototype.update = function (c) {
             return c.send(err);
         }
 
-        c.send('ok');
+        c.send({
+            status: 'success',
+            message: 'Widget content saved',
+            widget: c.locals.widget
+        });
     });
 };

@@ -22,10 +22,10 @@ exports.openGraphTags = function () {
     };
 
     if (req.content && req.content.previewImage) {
-        og['thumbnail'] = req.content && req.content.previewImage;
+        og.thumbnail = req.content && req.content.previewImage;
     }
 
-    var html = [];
+    html = [];
     for (var property in og) {
         if (og.hasOwnProperty(property)) {
             html.push('<meta property="og:' + property +
@@ -37,17 +37,17 @@ exports.openGraphTags = function () {
 
 var javascripts = {
     common: [
-        'jquery2.0.0', 'jquery-hoverintent', 'jquery-valadd', 
-        'jquery-textarea-autogrow', 'jquery-noty', 'jquery-cookie','jquery-pjax', 
+        'jquery2.0.0', 'jquery-hoverintent', 'jquery-valadd', 'jquery-blink',
+        'jquery-textarea-autogrow', 'jquery-noty', 'jquery-cookie','jquery-pjax',
         'bootstrap',
         'hatch-ajax', 'hatch-upload', 'hatch-page', 'hatch-widget', 'hatch', 'i18n'
     ],
     privileged: [
         'jquery-ui.min', 'chosen.jquery', 'jquery-rule', 'jquery-datatables',
-        'jquery-selectrange', 'jquery-blockui', 'jquery-spectrum',
+        'jquery-selectrange', 'jquery-blockui', 'redactor/redactor',
         'jquery-colorscheme', 'hatch-dragdrop', 'hatch-css-properties',
         'hatch-styleeditor', 'hatch-inline-edit', 'hatch-management',
-        'redactor/redactor', 'hatch-editconsole'
+        'hatch-editconsole'
     ],
     all: null
 };
@@ -68,7 +68,7 @@ exports.isPrivileged = function () {
 
 exports.pageTitle = function () {
     var req = this.req, page = req.page;
-    return req.title || page.metaTitle || page.title + " - " + req.group.name;
+    return req.title || page.metaTitle || page.title + ' - ' + req.group.name;
 };
 
 exports.getStylesheetPath = function () {
@@ -98,5 +98,5 @@ exports.formatNumber = function formatNumber(num) {
     } else {
         return num;
     }
-};  
+};
 

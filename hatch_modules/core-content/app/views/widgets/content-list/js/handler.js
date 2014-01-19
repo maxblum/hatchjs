@@ -9,7 +9,9 @@
 		
 		// handle likes click and refresh the post
 		$(document).on('ajax:success', '#' + widgetId + ' a', function (e, data) {
-			window.hatch.ajax.render($('#post-' + data.post.id), renderPath.replace('{0}', data.post.id));
+			if (data.post) {
+				window.hatch.ajax.render($('#post-' + data.post.id), renderPath.replace('{0}', data.post.id));
+			}
 		});
 
 		// show the comment form when the comment link is clicked

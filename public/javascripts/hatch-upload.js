@@ -47,6 +47,10 @@
 	 * Process the upload result and fire the callback function.
 	 */
 	UploadController.prototype.processCallback = function() {
+		if (!this.callback) {
+			return;
+		}
+
 		this.$overlay.hide();
 		
 		// load the response from the iframe
