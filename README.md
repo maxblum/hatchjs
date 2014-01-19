@@ -8,6 +8,10 @@ this application are accesible via [CompoundJS API][compound-api].
 
 Hatch.js dual-licensed under AGPL and Hatch Commercial License. AGPL means that if you fork the Hatch.js code or write a derivative application (an application which runs on the same CPU process), you must open-source and distribute your project freely under the same AGPL terms. Alternatively a commercial closed-source license is available. More details on [our website][pricing].
 
+#### Partner with us
+
+We believe Hatch.js is a great platform for building social web applications. We are actively seeking partnerships with companies to build commercial products for any purpose on top of the platform. [Contact us][contact] for more information.
+
 ## Dependencies
 
 Hatch.js requires [Node 0.8+][node] and [Redis 2.6+][redis] to be installed. Bower is also required to install client-side dependencies.
@@ -119,6 +123,7 @@ verbose output run `make test-verbose`.
 
 Every piece of code should be tested (ideally). Make sure tests included in pull request.
 
+[contact]: http://hatchjs.com/contact
 [pricing]: http://hatchjs.com/pricing
 [examples]: ./examples
 [express]: http://expressjs.com/
