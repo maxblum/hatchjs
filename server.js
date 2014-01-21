@@ -3,6 +3,13 @@
 var HatchPlatform = require('./lib/hatch').HatchPlatform;
 var createServer = require('compound').createServer;
 var cluster = require('cluster');
+var fs = require('fs');
+var path = require('path');
+
+// check the app has been installed fully
+if (!checkInstall()) {
+    return;
+}
 
 // set the hatch path environment variables
 process.env.HATCH_WIDGETCONTROLLERPATH = __dirname + '/app/controllers/widget';
@@ -49,3 +56,12 @@ if (!module.parent) {
     }
 }
 
+// function to check required components have been installed before the server can be started
+function checkInstall() {
+    if (!fs.existsSync(path.join(__dirname, 'bower_components'))) {
+        console.log('ERROR: You must run "bower install" before running the Hatch server.');
+        return false;
+    }
+
+    return true;
+}

@@ -8,6 +8,11 @@
 
     <%- javascriptIncludeTag(javascripts()) %>
     <%- csrfMetaTag() %>
+
+    <script type="text/javascript">
+        window.hatch = new Hatch();
+        window.hatch.init();
+    </script>
   </head>
 
   <body>
@@ -133,20 +138,15 @@
                     return false;
                 });
 
-                //setup the file uploader
-                var uploader = new qq.FileUploader({
-                    params: { _csrf: $('meta[name=csrf-token]').attr('content') },
-                    element: $('#upload-link').get(0),
-                    action: '/do/upload/add',
-                    uploadButtonText: $('#upload-link').html(),
-                    encoding: 'multipart',
-                    allowedExtensions: ['zip', 'json'],
-                    onComplete: function(id, filename, data) {
+                // setup the file uploader
+                $('#upload-link').on('click', function () {
+                    window.hatch.upload.upload({}, function (err, data) {
                         $('#dataFilename').val(data.url);
                         $.noty({ text: 'Data uploaded successfully', type: 'success' });
-                    }
-                });
+                    });
 
+                    return false;
+                });
             });
         </script>
 
