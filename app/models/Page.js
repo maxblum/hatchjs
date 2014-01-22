@@ -277,20 +277,28 @@ module.exports = function (compound, Page) {
         var result = {}, self = this;
 
         async.forEach(self.widgets.items, function (widget, next) {
-            self.renderWidgetAction(req, widget, function (err, html) {
-                if (!result[widget.id]) {
-                    if (err) {
-                        if (req.app.enabled('show errors')) {
-                            result[widget.id] = err.stack || err;
-                        } else {
-                            result[widget.id] = 'Error in widget rendering';
+            self.canSeeWidget(req.user, widget, req.group, function (err, permission) {
+                if (permission) {
+                    self.renderWidgetAction(req, widget, function (err, html) {
+                        if (!result[widget.id]) {
+                            if (err) {
+                                if (req.app.enabled('show errors')) {
+                                    result[widget.id] = err.stack || err;
+                                } else {
+                                    result[widget.id] = 'Error in widget rendering';
+                                }
+                            } else {
+                                result[widget.id] = html;
+                            }
                         }
-                    } else {
-                        result[widget.id] = html;
-                    }
+                        next();
+                    });
+                } else {
+                    result[widget.id] = '';
+                    next();
                 }
-                next();
             });
+            
         }, done);
 
         function done() {
@@ -324,6 +332,36 @@ module.exports = function (compound, Page) {
                 callback(e);
             }
         }
+    };
+
+    /**
+     * Check a user's permissions to view the specified widget.
+     * 
+     * @param  {User}     user     - user to check
+     * @param  {Widget}   widget   - widget to check
+     * @param  {Group}    group    - group to check
+     * @param  {Function} callback - callback function
+     */
+    Page.prototype.canSeeWidget = function (user, widget, group, callback) {
+        if (widget.settings) {
+            if (widget.settings.privacy === 'members-only') {
+                if (!user) {
+                    return callback(null, false);
+                }
+                return user.hasPermission(group, 'view', callback);
+            } else if (widget.settings.privacy === 'private') {
+                if (!user) {
+                    return callback(null, false);
+                }
+                return user.hasPermission(group, 'edit', callback);
+            } else if (widget.settings.privacy === 'non-registered') {
+                if (user) {
+                    return callback(null, false);
+                }
+            }
+        }
+
+        callback(null, true);
     };
 
     Page.prototype.renderWidgetAction = function renderWidgetAction(parentRequest, widget, action, params, callback) {
@@ -412,7 +450,7 @@ module.exports = function (compound, Page) {
                 }
             }
         });
-    }
+    };
 
     Page.prototype.pathname = function (req) {
         return this.url.replace(req.group.homepage.url, '').replace(/^\/|\/$/g, '');

@@ -201,8 +201,8 @@ WidgetController.prototype.settings = function(c) {
 
     this.visibility = [
           { icon: 'mobile-phone', class: 'success', name: 'All devices', value: 'visible-all', description: 'This widget can be viewed on all devices'},
-          { icon: 'tablet', class: 'warning', name: 'Tablets', value: 'hidden-phone', description: 'This widget can be viewed on tablets and computers'},
-          { icon: 'desktop', class: 'danger', name: 'Computers', value: 'visible-desktop', description: 'This widget can only be viewed on computers'}
+          { icon: 'tablet', class: 'warning', name: 'Tablets', value: 'hidden-xs', description: 'This widget can be viewed on tablets and computers'},
+          { icon: 'desktop', class: 'danger', name: 'Computers', value: 'visible-md', description: 'This widget can only be viewed on computers'}
         ];
     this.visibility.selected = _.find(this.visibility, function(v) { return v.value == (widget.settings && widget.settings.visibility || 'visible-all'); });
 

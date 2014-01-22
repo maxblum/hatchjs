@@ -112,7 +112,7 @@
 		};
 
 		var href = action.indexOf('/do/') > -1 ? action : window.hatch.pathTo(action);
-		
+
 		$.ajax(href, params)
 			.done(function (xhr, status, res) {
 				var json = res.responseJSON;
@@ -139,9 +139,12 @@
 	 * @param  {Function} callback - callback function
 	 */
 	AjaxController.prototype.sendToWidget = function (widgetId, action, method, data, callback) {
-		var href = window.location.href + '/do/core-widgets/widget' + 
+		var href = window.location.pathname + '/do/core-widgets/widget' +
 			(widgetId ? ('/' + widgetId) : '') +
 			(action ? ('/' + action) : '');
+
+		// replace double //
+		href = href.replace('//', '/');
 
 		this.send(href, method, data, callback);
 	};

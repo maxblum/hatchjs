@@ -21,15 +21,15 @@
 					<div class="col-md-4 pull-right">
 						<div class="col-md-7 widget-visibility">
 							<div class="form-group">
-								<input type="hidden" id="visibility" name="visibility" value="<%- visibility.selected.value %>" />
+								<input type="hidden" id="visibility" name="visibility" value='<%- visibility.selected && visibility.selected.value %>' />
 
 								<div id="widget-visibility" class="dropdown">
-									<button class="btn btn-<%- visibility.selected.class %>" data-toggle="dropdown" tabindex="-1"><%- visibility.selected.name %> <span class="caret"></span></button>
+									<button class="btn btn-<%- visibility.selected && visibility.selected.class %>" data-toggle="dropdown" tabindex="-1"><%- visibility.selected && visibility.selected.name %> <span class="caret"></span></button>
 									
 									<ul class="dropdown-menu pull-right">
 										<% visibility.forEach(function (v) { %>
 											<li>
-												<a href="#<%- v.value %>" data-value="<%- escape(JSON.stringify(v)) %>" rel="widget-visibility">
+												<a href="#<%- v.value %>" data-value='<%- JSON.stringify(v) %>' rel="widget-visibility">
 													<i class="icon-<%- v.icon %>"></i>
 													<%- v.name %>
 													<br/>
@@ -43,15 +43,15 @@
 						</div>
 						<div class="col-md-5 widget-privacy">
 							<div class="form-group">
-								<input type="hidden" id="privacy" name="privacy" value="<%- privacy.selected.value %>" />
+								<input type="hidden" id="privacy" name="privacy" value='<%- privacy.selected && privacy.selected.value %>' />
 
 								<div id="widget-privacy" class="dropdown">
-									<button class="btn btn-<%- privacy.selected.class %>" data-toggle="dropdown" tabindex="-1"><%- privacy.selected.name %> <span class="caret"></span></button>
+									<button class="btn btn-<%- privacy.selected && privacy.selected.class %>" data-toggle="dropdown" tabindex="-1"><%- privacy.selected && privacy.selected.name %> <span class="caret"></span></button>
 									
 									<ul class="dropdown-menu pull-right">
 										<% privacy.forEach(function (p) { %>
 											<li>
-												<a href="#<%- p.value %>" data-value="<%- escape(JSON.stringify(p)) %>" rel="widget-privacy">
+												<a href="#<%- p.value %>" data-value='<%- JSON.stringify(p) %>' rel="widget-privacy">
 													<i class="icon-<%- p.icon %>"></i>
 													<%- p.name %>
 													<br/>

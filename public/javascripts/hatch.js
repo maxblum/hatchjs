@@ -89,7 +89,8 @@
      * @return {String}
      */
     Hatch.prototype.pathTo = function (action) {
-        return (window.location.pathname.split('/do/')[0].split('#')[0] + '/do/' + action).replace('//', '/');
+        var path = (window.location.pathname + '/do/' + action).replace('//', '/');
+        return path;
     };
 
     /**

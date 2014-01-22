@@ -90,7 +90,7 @@
                 window.hatch.inlineedit.init();
 
                 // setup the widget settings
-                $('#modal-container').on('show', function() {
+                $(document).on('show.bs.modal', '#modal-container', function() {
                     if ($('#modal-settings').length === 0) {
                         return;
                     }
