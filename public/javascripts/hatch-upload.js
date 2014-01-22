@@ -28,11 +28,19 @@
 	 * @param  {Function} callback - callback function
 	 */
 	UploadController.prototype.upload = function (params, callback) {
+		if (typeof params === 'function' && !callback) {
+			callback = params;
+			params = null;
+		}
+
 		var self = this;
 
 		this.$input.on('change', function () { self.uploadToServer(); });
 		this.$input.trigger('click');
 		this.callback = callback;
+
+		// return false for use as an event handler
+		return false;
 	};
 
 	/**

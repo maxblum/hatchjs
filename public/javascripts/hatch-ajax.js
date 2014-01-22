@@ -39,6 +39,12 @@
 
 		$.ajax(href, { type: method })
 			.done(function (xhr, status, res) {
+				// check for redirect
+				if (xhr.code === 304) {
+					window.location = xhr.location;
+					return;
+				}
+				
 				if (res.responseJSON) {
 					handleJsonResponse(el, res.responseJSON);
 				} else {
@@ -63,6 +69,12 @@
 
 		$.ajax(href, { type: method, data: params })
 			.done(function (xhr, status, res) {
+				// check for redirect
+				if (xhr.code === 304) {
+					window.location = xhr.location;
+					return;
+				}
+
 				// fix non-JSON json
 				if (res.responseText && res.responseText.indexOf('{') === 0) {
 					try {
