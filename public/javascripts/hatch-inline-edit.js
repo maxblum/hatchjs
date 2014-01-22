@@ -35,29 +35,32 @@
                     var widgetId = $widget.attr('data-id');
 
                     window.hatch.ajax.sendToWidget(widgetId, 'settitle', 'PUT', { title: title }, function (err, data) {
-                        if(title) $el.html(title);
-                        else $el.remove();
+                        if(title) {
+                            $el.html(title);
+                        } else {
+                            $el.remove();
+                        }
                     });
                 }
             });
 
             // revert on loss of focus
-            input.bind("blur", function(e) {
+            input.bind('blur', function() {
                 $el.html(title);
             });
         }
 
         function inlineEdit() {
-            if ($(this).data("active")) return;
-            $(this).data("active", true);
+            if ($(this).data('active')) return;
+            $(this).data('active', true);
 
             var $el = $(this);
             var html = $el.data('html');
             if(typeof html == 'undefined' || !html) html = $el.html() || '';
 
             // replace the content with a textarea
-            var textarea = $("<textarea>" + html + "</textarea>");
-            $(textarea).css({ width: $(this).outerWidth() + "px", height: $(this).outerHeight() + 80 + "px" });
+            var textarea = $('<textarea>' + html + '</textarea>');
+            $(textarea).css({ width: $(this).outerWidth() + 'px', height: $(this).outerHeight() + 80 + 'px' });
 
             var $saveButton = $('<button type="submit" class="btn btn-primary">Save changes</button>');
             var $cancelButton = $('<button class="btn">Cancel</button>');
@@ -68,7 +71,7 @@
             $(this).html(textarea);
             $(this).append($buttons);
 
-            destroyEditor = function() { };
+            var destroyEditor = function() { };
              
             //attach the button events
             $cancelButton.bind('click', function() {
@@ -79,7 +82,7 @@
                 $('.resize-selector, .resize-region').remove();
 
                 $el.html(html); 
-                $el.removeData("active");
+                $el.removeData('active');
 
                 $el.hide().fadeIn();
             });
@@ -105,7 +108,7 @@
                         content: $el.data('html') || $el.html()
                     }
                 }, function (err, data) {
-                    $.noty({text: "<i class='icon-ok'></i> Widget contents updated", type: "success"});
+                    $.noty({text: '<i class="fa fa-ok"></i> Widget contents updated', type: 'success'});
                 });
             });
 
@@ -132,17 +135,17 @@
                 editor.setValue(textarea.val());
                 editor.getSession().setMode('ace/mode/html');
                 editor.clearSelection();
-            }
 
-            function destroyEditor() {
-                textarea.val(editor.getValue());
+                destroyEditor = function () {
+                    textarea.val(editor.getValue());
+                };
             }
 
             // html editor - ACE
             if($el.hasClass('html')) {
                 if(typeof ace == 'undefined') {
                     $.getScript('/javascripts/ace/ace.js', function() {
-                        ace.config.set('basePath', '/javascripts/ace/');
+                        window.ace.config.set('basePath', '/javascripts/ace/');
                         setupEditor();
                     });
                 }
@@ -154,7 +157,7 @@
             else {
                 var editor = window.hatch.page.setupRichtextEditor(textarea, {
                     autoresize : true,
-                    css : "inline.css",
+                    css : 'inline.css',
                     minHeight : false
                 });
 
@@ -168,8 +171,8 @@
 
         $('body').on('dblclick', '.widget:not(.not-editable-widget) .inline-edit', inlineEdit);
         $('body').on('click', '.inline-edit-link', function() {
-            var widget = $(this).parents(".widget");
-            var content = $(".inline-edit", widget);
+            var widget = $(this).parents('.widget');
+            var content = $('.inline-edit', widget);
 
             inlineEdit.apply(content);
 
