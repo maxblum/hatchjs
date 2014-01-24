@@ -148,4 +148,4 @@ Every piece of code should be tested (ideally). Make sure tests included in pull
 
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/inventures/hatchjs/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
+![GA Badge](https://ga-beacon.appspot.com/UA-20455884-4/inventures/hatchjs)
