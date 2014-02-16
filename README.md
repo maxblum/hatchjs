@@ -14,7 +14,7 @@ We believe Hatch.js is a great platform for building social web applications. We
 
 ## Dependencies
 
-Hatch.js requires [Node 0.8+][node] and [Redis 2.6+][redis] to be installed. Bower is also required to install client-side dependencies.
+Hatch.js requires [Node 0.8+][node], [Redis 2.6+][redis] and imagemagick to be installed. Bower is also required to install client-side dependencies.
 
 	npm install -g bower
 
